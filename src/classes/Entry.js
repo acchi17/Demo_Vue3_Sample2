@@ -1,51 +1,38 @@
 /**
  * Entry class
- * Superclass that provides common functionality and attributes for Block and Container classes
+ * Class that represents the element that make up a recipe
  */
 export default class Entry {
   /**
+   * Generate UUID using crypto.randomUUID() with fallback
+   * @returns {string} Generated UUID
+   */
+  static generateUUID() {
+    // Use crypto.randomUUID() if available (modern browsers)
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return crypto.randomUUID();
+    }
+    // Fallback implementation for older browsers
+    return Entry.fallbackUUID();
+  }
+  
+  /**
+   * Fallback UUID generation using Math.random()
+   * @returns {string} Generated UUID v4 format
+   */
+  static fallbackUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      const v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  /**
    * Constructor
-   * @param {string} id - Unique ID of the entry
-   * @param {number} x - X coordinate
-   * @param {number} y - Y coordinate
-   * @param {number} width - Width
-   * @param {number} height - Height
+   * @param {string|null} id - Unique ID of the entry (auto-generated if null)
    */
-  constructor(id, x, y, width, height) {
-    this.id = id;          // Unique ID
-    this.x = x;            // X coordinate
-    this.y = y;            // Y coordinate
-    this.width = width;    // Width
-    this.height = height;  // Height
-  }
-
-  /**
-   * Update position method
-   * @param {number} x - New X coordinate
-   * @param {number} y - New Y coordinate
-   */
-  updatePosition(x, y) {
-    this.x = x;
-    this.y = y;
-  }
-
-  /**
-   * Update size method
-   * @param {number} width - New width
-   * @param {number} height - New height
-   */
-  updateSize(width, height) {
-    this.width = width;
-    this.height = height;
-  }
-
-  /**
-   * Prepare for removal method
-   * Pre-removal processing (can be overridden)
-   * @returns {boolean} Whether removal is possible
-   */
-  prepareForRemoval() {
-    // Pre-removal processing (can be overridden)
-    return true;
+  constructor(id = null) {
+    this.id = id || Entry.generateUUID();  // Unique ID (auto-generated if null)
   }
 }
