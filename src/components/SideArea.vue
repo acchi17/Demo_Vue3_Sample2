@@ -1,17 +1,38 @@
 <template>
   <div class="side-area">
     <div class="rect-item">
-      <div class="rect-icon red"></div>
-    </div>
-    <div class="rect-item">
-      <div class="rect-icon green"></div>
+      <div 
+        class="rect-icon whitegray"
+        draggable="true"
+        @dragstart="onDragStartBlock"
+      ></div>
     </div>
   </div>
 </template>
 
 <script>
+import { useDraggable } from '../composables/useDraggable';
+
 export default {
-  name: 'SideArea'
+  name: 'SideArea',
+  
+  setup() {
+    // Get composition API
+    const { 
+      onDragStart: onDragStartBlock, 
+      setOnDragStartCallBack: setBlockDragStartCallback 
+    } = useDraggable();
+
+    // Set custom callbacks for drag start events
+    setBlockDragStartCallback((event) => {
+      event.dataTransfer.setData('entryType', 'block');
+    });
+    
+    // Return values and methods to use in <template>
+    return {
+      onDragStartBlock
+    };
+  }
 }
 </script>
 
@@ -34,13 +55,11 @@ export default {
   height: 100%;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: grab;
 }
 
-.rect-icon.red {
-  background-color: #d32f2f;
-}
-
-.rect-icon.green {
-  background-color: #388e3c;
+.rect-icon.whitegray {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
 }
 </style>
