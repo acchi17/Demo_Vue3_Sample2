@@ -50,13 +50,12 @@ export default {
     // Array of entries
     const entries = ref([])
     
-    // Relocate an entry
     /**
-     * Relocate an entry
-     * @param {string} entryId - ID of the entry to relocate
+     * Reorder an entry
+     * @param {string} entryId - ID of the entry to reorder
      * @param {number} dropIndex - Index of the area where it was dropped
      */
-    const relocateEntry = (entryId, dropIndex) => {
+    const reorderEntry = (entryId, dropIndex) => {
       const currentIndex  = entries.value.findIndex(entry => entry.id === entryId)
       if (currentIndex  !== -1) {
         let targetIndex = dropIndex
@@ -93,8 +92,8 @@ export default {
           entries.value.splice(index, 0, newBlock)
         }
       } else if (entryId) {
-        // Relocate existing block
-        relocateEntry(entryId, index)
+        // Reorder existing block
+        reorderEntry(entryId, index)
       }
     })
     
