@@ -1,20 +1,20 @@
-# Vue.js Study Part 5: Drag-and-drop functionality for reordering UI objects using Vue.j
+# Vue.js Study Part 5: Drag-and-drop functionality for reordering UI objects using Vue.js
 
-Vue.jsを使用した、UIオブジェクトをドラッグ＆ドロップで並べ替える機能について説明します。
+This article explains the functionality of reordering UI objects using drag and drop with Vue.js.
 
 ## An application covered in this article
 
-- 左サイドバーのホワイトグレーのアイコンをドラッグしてメインエリアにドロップすると、メインエリアに長方形のブロックが縦方向に配置されます。
-- メインエリアに配置されたブロックにはブロック固有のIDと削除ボタンが表示されます。
-- メインエリアに配置されたブロックはドラッグドロップにより、配置順を入れ替えることができます。
-- メインエリアに配置されたブロックの削除ボタンをクリックすると、ブロックが削除されます。
+- When you drag a white-gray icon from the left sidebar and drop it into the main area, rectangular blocks are arranged vertically in the main area.
+- Blocks placed in the main area display a block-specific ID and a delete button.
+- Blocks placed in the main area can be reordered by drag and drop.
+- When you click the delete button on a block placed in the main area, the block is deleted.
 
 Source code  
 [https://github.com/acchi17/Demo_Vue3_Sample2/tree/step1](https://github.com/acchi17/Demo_Vue3_Sample2/tree/step1)
 
 ## Source code structure of the Vue application
 
-上記アプリケーションのソース構成は以下の通りです。 
+The source structure of the above application is as follows:
 
 ```
 public/
@@ -40,7 +40,7 @@ src/
 
 ### 1. Shared drag-and-drop functionality
 
-ドラッグアンドドロップに関わる機能(主に各種イベントハンドラ)をuseDraggable.jsとuseDroppable.jsに実装し他のコンポーネントから利用可能にする。このような再利用可能な機能を持つuseDraggable.jsやuseDroppable.jsはVue.jsにおいてcomposableと呼ばれる。
+Implement drag-and-drop related functionality (mainly various event handlers) in useDraggable.js and useDroppable.js to make them available to other components. These reusable functionality files like useDraggable.js and useDroppable.js are called composables in Vue.js.
 
 useDraggable.js
 
@@ -181,7 +181,7 @@ export function useDroppable() {
 
 ### 2. Drag-and-drop functionality for moving icons from the left sidebar to the main area
 
-左サイドバーのアイコンをドラッグ可能にし、メインエリアにドロップすると新しいブロックが作成される機能を実装します。SideArea.vueではuseDraggable composableを使用してドラッグ機能を実装し、MainArea.vueではuseDroppable composableを使用してドロップ機能を実装します。ドラッグ開始時にDataTransferオブジェクトにデータを設定し、ドロップ時にそのデータを取得して新しいブロックを作成します。
+Implement functionality to make icons in the left sidebar draggable and create new blocks when dropped in the main area. SideArea.vue uses the useDraggable composable to implement drag functionality, and MainArea.vue uses the useDroppable composable to implement drop functionality. When dragging starts, data is set in the DataTransfer object, and when dropped, that data is retrieved to create a new block.
 
 SideArea.vue
 
@@ -224,11 +224,11 @@ export default {
 }
 </script>
 
-<!-- スタイル部分は省略 -->
+<!-- Style section omitted -->
 ```
 
-- SideArea.vueでは、`draggable="true"`属性を設定することでアイコンをドラッグ可能にし、`@dragstart`イベントでドラッグ開始時の処理を行います。
-- ドラッグ開始時に`event.dataTransfer.setData('entryType', 'block')`を実行し、ドラッグしているのがブロック型であることを示すデータを設定します。
+- In SideArea.vue, the `draggable="true"` attribute makes the icon draggable, and the `@dragstart` event handles the process when dragging begins.
+- When dragging starts, `event.dataTransfer.setData('entryType', 'block')` is executed to set data indicating that the dragged item is a block type.
 
 MainArea.vue
 
@@ -291,12 +291,12 @@ export default {
      * @param {number} dropIndex - Index of the area where it was dropped
      */
     const reorderEntry = (entryId, dropIndex) => {
-      // 実装詳細は省略
+      // Implementation details omitted
     }
     
     // Remove an entry
     const removeEntry = (id) => {
-      // 実装詳細は省略
+      // Implementation details omitted
     }
     
     // Set custom callbacks for drop event
@@ -331,17 +331,17 @@ export default {
 }
 </script>
 
-<!-- スタイル部分は省略 -->
+<!-- Style section omitted -->
 ```
 
-- MainArea.vueでは、複数のドロップエリア（`.drop-area`）を配置し、各ドロップエリアに`@drop`イベントハンドラを設定します。
-- ドロップ時には`event.dataTransfer.getData('entryType')`でドラッグされたアイテムの種類を取得し、'block'の場合は新しいBlockインスタンスを作成してentriesに追加します。
-- ドラッグ中は`isDragEntering`の値に応じてドロップエリアのスタイルを変更し、視覚的フィードバックを提供します。
-- 各ブロックの間にドロップエリアを配置することで、ブロックの任意の位置に新しいブロックを挿入できるようにしています。
+- In MainArea.vue, multiple drop areas (`.drop-area`) are placed, and each drop area has an `@drop` event handler set.
+- When dropped, `event.dataTransfer.getData('entryType')` retrieves the type of the dragged item, and if it's 'block', a new Block instance is created and added to entries.
+- During dragging, the style of the drop area changes according to the value of `isDragEntering`, providing visual feedback.
+- By placing drop areas between each block, new blocks can be inserted at any position among the blocks.
 
 ### 3. Drag-and-drop functionality for reordering blocks within the main area
 
-メインエリア内に配置されたブロックをドラッグ可能にし、別の位置にドロップすることでブロックの順序を入れ替える機能を実装します。BlockItem.vueではuseDraggable composableを使用してブロックをドラッグ可能にし、MainArea.vueではuseDroppable composableを使用してドロップ機能を実装します。ドラッグ開始時にDataTransferオブジェクトにブロックのIDを設定し、ドロップ時にそのIDを取得して対象ブロックの位置を変更します。
+Implement functionality to make blocks placed in the main area draggable and reorder blocks by dropping them in different positions. BlockItem.vue uses the useDraggable composable to make blocks draggable, and MainArea.vue uses the useDroppable composable to implement drop functionality. When dragging starts, the block's ID is set in the DataTransfer object, and when dropped, that ID is retrieved to change the position of the target block.
 
 BlockItem.vue
 
@@ -413,13 +413,13 @@ export default {
 }
 </script>
 
-<!-- スタイル部分は省略 -->
+<!-- Style section omitted -->
 ```
 
-- BlockItem.vueでは、`draggable="true"`属性を設定することでブロックをドラッグ可能にし、`@dragstart`と`@dragend`イベントでドラッグの開始と終了時の処理を行います。
-- ドラッグ中は`isDragging`の値に基づいて`.dragging`クラスが適用され、ブロックの透明度が変わることでビジュアルフィードバックを提供します。
-- ドラッグ開始時に`event.dataTransfer.setData('entryId', props.entry.id)`を実行し、ドラッグしているブロックのIDをDataTransferオブジェクトに設定します。これにより、ドロップ先でどのブロックが移動されたかを識別できます。
-- `event.stopPropagation()`を使用して、イベントの伝播を停止し、親要素のドラッグイベントが発火するのを防いでいます。
+- In BlockItem.vue, the `draggable="true"` attribute makes the block draggable, and the `@dragstart` and `@dragend` events handle the processes at the start and end of dragging.
+- During dragging, the `.dragging` class is applied based on the value of `isDragging`, providing visual feedback by changing the block's opacity.
+- When dragging starts, `event.dataTransfer.setData('entryId', props.entry.id)` is executed to set the ID of the dragged block in the DataTransfer object. This allows identifying which block was moved at the drop destination.
+- `event.stopPropagation()` is used to stop event propagation, preventing drag events from firing on parent elements.
 
 MainArea.vue
 
@@ -537,12 +537,12 @@ export default {
 }
 </script>
 
-<!-- スタイル部分は省略 -->
+<!-- Style section omitted -->
 ```
 
-- MainArea.vueでは、各ブロックの間に`.drop-area`要素を配置し、ブロックの任意の位置に他のブロックをドロップできるようにしています。
-- ドロップエリアには`@drop`イベントハンドラが設定され、ドロップ時にはそのエリアのインデックス（`index`）が`onDrop`関数に渡されます。
-- `reorderEntry`関数は、ドラッグされたブロックの現在位置（`currentIndex`）とドロップ先の位置（`dropIndex`）を使用して、ブロックの新しい位置を計算します。
-- 特に重要なのは、ドロップ先がドラッグ元より後ろの位置（`dropIndex > currentIndex`）の場合、ターゲットインデックスを1つ減らす処理です。これは、ブロックを取り除いた後に配列のインデックスが変わるためです。
-- ドロップ処理では、まず`event.dataTransfer`から`entryId`と`entryType`を取得し、既存ブロックの移動（`entryId`がある場合）と新規ブロックの作成（`entryType === 'block' && !entryId`の場合）を区別しています。
-- 既存ブロックの移動の場合は`reorderEntry`関数を呼び出し、ブロックの位置を変更します。具体的には、現在の位置からブロックを取り除き（`splice(currentIndex, 1)`）、新しい位置に挿入（`splice(targetIndex, 0, block)`）します。
+- In MainArea.vue, `.drop-area` elements are placed between each block, allowing blocks to be dropped at any position among other blocks.
+- Drop areas have `@drop` event handlers set, and when dropped, the index of that area (`index`) is passed to the `onDrop` function.
+- The `reorderEntry` function uses the current position of the dragged block (`currentIndex`) and the drop destination position (`dropIndex`) to calculate the new position of the block.
+- Particularly important is the process of decreasing the target index by 1 when the drop destination is after the drag source position (`dropIndex > currentIndex`). This is because the array indices change after removing the block.
+- In the drop process, first `entryId` and `entryType` are retrieved from `event.dataTransfer`, distinguishing between moving existing blocks (when `entryId` exists) and creating new blocks (when `entryType === 'block' && !entryId`).
+- In the case of moving existing blocks, the `reorderEntry` function is called to change the position of the block. Specifically, the block is removed from its current position (`splice(currentIndex, 1)`) and inserted at the new position (`splice(targetIndex, 0, block)`).
