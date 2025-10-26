@@ -7,14 +7,16 @@
     @dragend="onDragEnd"
   >
     <div class="block-content">
-      <div :style="textStyle">{{ entry.id }}</div>
-      <div :style="buttonStyle" @click="onRemove">×</div>
+      <div class="block-header">
+        <div :style="textStyle">{{ entry.id }}</div>
+        <div :style="buttonStyle" @click="onRemove">×</div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { computed } from 'vue'
+import { inject } from 'vue'
 import { useDraggable } from '../composables/useDraggable'
 import { useObjectStyle } from '../composables/useObjectStyle'
 
@@ -29,13 +31,28 @@ export default {
   emits: ['remove'],
   
   setup(props, { emit }) {
-    // Get composition API
-    const { isDragging, onDragStart, setOnDragStartCallBack, onDragEnd } = useDraggable()
+    // Get EntryManager instance from the application
+    const entryManager = inject('entryManager')
+    
+    // Get composable
+    const {
+      isDragging,
+      onDragStart,
+      onDragEnd,
+      setOnDragStartCallBack
+    } = useDraggable()
     const { getEntryButtonStyle, getEntryTextStyle } = useObjectStyle()
     
     // Set callback for drag start
     setOnDragStartCallBack((event) => {
+      // Get parent ID
+      const parentId = entryManager.getParentId(props.entry.id)
+
+      // Set data for transfer
       event.dataTransfer.setData('entryId', props.entry.id)
+      event.dataTransfer.setData('entryType', 'block')
+      event.dataTransfer.setData('sourceId', parentId || '')
+      
       event.stopPropagation()
     })
     
@@ -47,10 +64,10 @@ export default {
     }
 
     // Get text style
-    const textStyle = computed(() => getEntryTextStyle())
+    const textStyle = getEntryTextStyle()
 
     // Get button style
-    const buttonStyle = computed(() => getEntryButtonStyle())
+    const buttonStyle = getEntryButtonStyle()
     
     // Return values and methods to use in <template>
     return {
@@ -72,6 +89,7 @@ export default {
   border-radius: 4px;
   background-color: #f0f0f0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 1px solid #AAAAAA;
 }
 
 .block-item.dragging {
@@ -82,6 +100,13 @@ export default {
   height: 100%;
   width: 100%;
   padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.block-header {
+  height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;

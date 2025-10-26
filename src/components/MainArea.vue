@@ -1,21 +1,24 @@
 <template>
   <div 
     class="main-area"
-    @dragenter="onDragEnter"
-    @dragleave="onDragLeave"
   >
     <div class="main-container">
       <!-- First drop area (always displayed) -->
       <div class="drop-area" 
-          :class="{'is-dragEntering': isDragEntering}"
+          :class="{'is-active': dropAllowed}"
           @drop="(event) => onDrop(event, 0)"
           @dragover="onDragOver"
       />
-      <!-- Each block and its drop area below -->
-      <template v-for="(entry, index) in entries" :key="entry.id">
-        <BlockItem :entry="entry" @remove="removeEntry" />
+      <!-- Each entry (block or container) and its drop area below -->
+      <template v-for="(entry, index) in children" :key="entry.id">
+        <!-- Switch component based on entry type -->
+        <component 
+          :is="entry.type === 'block' ? 'BlockItem' : 'ContainerItem'"
+          :entry="entry"
+          @remove="removeChild"
+        />
         <div class="drop-area" 
-            :class="{'is-dragEntering': isDragEntering}"
+            :class="{'is-active': dropAllowed}"
             @drop="(event) => onDrop(event, index + 1)"
             @dragover="onDragOver"
         />
@@ -25,57 +28,42 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { inject, computed } from 'vue'
 import { useDroppable } from '../composables/useDroppable'
 import BlockItem from './BlockItem.vue'
+import ContainerItem from './ContainerItem.vue'
 import Block from '../classes/Block'
+import Container from '../classes/Container'
 
 export default {
   name: 'MainArea',
   components: {
-    BlockItem
+    BlockItem,
+    ContainerItem
   },
   
   setup() {  
-    // Get composition API
+    // Get EntryManager instance from the application
+    const entryManager = inject('entryManager')
+    
+    // Get composable
     const { 
-      isDragEntering,
-      onDragEnter, 
-      onDragLeave, 
+      isDroppable,
       onDragOver, 
       onDrop, 
-      setOnDropCallBack 
+      setOnDropCallBack
     } = useDroppable()
 
-    // Array of entries
-    const entries = ref([])
+    // Create a top-level container & register it in EntryManager
+    const mainContainer = new Container('main-area')
+    entryManager.addEntry(null, mainContainer, 0)
     
     /**
-     * Reorder an entry
-     * @param {string} entryId - ID of the entry to reorder
-     * @param {number} dropIndex - Index of the area where it was dropped
+     * Remove a child entry
+     * @param {string} id - ID of the child to remove
      */
-    const reorderEntry = (entryId, dropIndex) => {
-      const currentIndex  = entries.value.findIndex(entry => entry.id === entryId)
-      if (currentIndex  !== -1) {
-        let targetIndex = dropIndex
-        if (dropIndex > currentIndex) {
-          targetIndex = targetIndex - 1
-        }
-        const block = entries.value.splice(currentIndex , 1)[0]
-        entries.value.splice(targetIndex, 0, block)
-      }
-    }
-    
-    /**
-     * Remove an entry
-     * @param {string} id - ID of the entry to remove
-     */
-    const removeEntry = (id) => {
-      const currentIndex = entries.value.findIndex(entry => entry.id === id)
-      if (currentIndex !== -1) {
-        entries.value.splice(currentIndex, 1)
-      }
+    const removeChild = (id) => {
+      entryManager.removeEntry(id)
     }
     
     // Set custom callbacks for drop event
@@ -83,29 +71,47 @@ export default {
       // Get data directly from event.dataTransfer
       const entryId = event.dataTransfer.getData('entryId')
       const entryType = event.dataTransfer.getData('entryType')
+      const sourceId = event.dataTransfer.getData('sourceId')
       
-      if (entryType === 'block' && !entryId) {
-        // Create and insert a new block
-        // Do nothing if index is null (don't add to entries)
+      if (!entryId) {
+        // Create and insert a new element
         if (index !== null) {
-          const newBlock = new Block()
-          entries.value.splice(index, 0, newBlock)
+          if (entryType === 'block') {
+            // Create a block
+            const newBlock = new Block()
+            // Use EntryManager to add to main container
+            entryManager.addEntry(mainContainer.id, newBlock, index)
+          } else if (entryType === 'container') {
+            // Create a container
+            const newContainer = new Container()
+            // Use EntryManager to add to main container
+            entryManager.addEntry(mainContainer.id, newContainer, index)
+          }
         }
-      } else if (entryId) {
-        // Reorder existing block
-        reorderEntry(entryId, index)
+      } else {
+        if (!sourceId || sourceId === mainContainer.id) {
+          // Reorder within MainArea
+          entryManager.reorderEntry(mainContainer.id, entryId, index)
+        } else {
+          // Drag & drop from a container
+          entryManager.moveEntry(entryId, mainContainer.id, index)
+        }
       }
     })
+
+    // Array of children
+    const children = computed(() => mainContainer.getChildren())
+
+    // For determining whether to allow the drop
+    const dropAllowed = isDroppable(mainContainer.id)
     
     // Return values and methods to use in <template>
     return {
-      entries,
-      isDragEntering,
-      onDragEnter,
-      onDragLeave,
       onDragOver,
       onDrop,
-      removeEntry
+      removeChild,
+      children,
+      dropAllowed
     }
   }
 }
@@ -130,16 +136,16 @@ export default {
 }
 
 .drop-area {
+  height: 10px;
   width: 100%;
-  height: 20px;
   margin: 5px 0;
   border: 2px dashed transparent;
   border-radius: 4px;
   transition: all 0.3s ease;
 }
 
-.drop-area.is-dragEntering {
-  height: 40px;
+.drop-area.is-active {
+  height: 30px;
   border-color: #007bff;
   background-color: rgba(0, 123, 255, 0.1);
 }

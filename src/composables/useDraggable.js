@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { dragDropState } from './useDragDropState'
 
 /**
  * Provides drag functionality as a composable function
@@ -25,8 +26,9 @@ export function useDraggable() {
    */
   const onDragStart = (event) => {
     isDragging.value = true
+    dragDropState.activateDragging()
     if (OnDragStartCallBack) {
-      OnDragStartCallBack(event)
+      OnDragStartCallBack(event, dragDropState)
     }
   }
   
@@ -35,6 +37,7 @@ export function useDraggable() {
    */
   const onDragEnd = () => {
     isDragging.value = false
+    dragDropState.deactivateDragging()
   }
   
   // Return public state and methods

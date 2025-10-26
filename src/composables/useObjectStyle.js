@@ -1,3 +1,5 @@
+import { computed } from 'vue'
+
 /**
  * Common management of object styles
  * @returns {Object} The methods for getting object style
@@ -16,42 +18,45 @@ export function useObjectStyle() {
   
   /**
    * Get the style for entry text
-   * @param {string} text - Text to display
-   * @returns {object} CSS style object (including width, height)
+   * @returns {ComputedRef} CSS style object (including width, height)
    */
   const getEntryTextStyle = () => {
-    return {
-      fontSize: `${FONT_SIZES.text}px`,
-      color: '#333',
-      whiteSpace: 'nowrap',     // Prevent line breaks
-      overflow: 'hidden',       // Hide overflow content
-      textOverflow: 'ellipsis', // Show ellipsis for overflow
-      // The following settings are for centering text within the content
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }
+    return computed(() => {
+      return {
+        fontSize: `${FONT_SIZES.text}px`,
+        color: '#333',
+        whiteSpace: 'nowrap',     // Prevent line breaks
+        overflow: 'hidden',       // Hide overflow content
+        textOverflow: 'ellipsis', // Show ellipsis for overflow
+        // The following settings are for centering text within the content
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }
+    })
   }
 
   /**
    * Get the style for entry buttons
-   * @returns {object} CSS style object
+   * @returns {ComputedRef} CSS style object
    */
   const getEntryButtonStyle = () => {
-    const size = FONT_SIZES.button * LAYOUT_CONSTANTS.buttonSizeRatio
-    return {
-      width: `${size}px`,
-      height: `${size}px`,
-      fontSize: `${FONT_SIZES.button}px`,
-      color: '#333',
-      borderRadius: '50%',
-      backgroundColor: 'rgba(255, 255, 255, 0.7)',
-      cursor: 'pointer',
-      // The following settings are for centering text within the content
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }
+    return computed(() => {
+      const size = FONT_SIZES.button * LAYOUT_CONSTANTS.buttonSizeRatio
+      return {
+        width: `${size}px`,
+        height: `${size}px`,
+        fontSize: `${FONT_SIZES.button}px`,
+        color: '#333',
+        borderRadius: '50%',
+        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+        cursor: 'pointer',
+        // The following settings are for centering text within the content
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }
+    })
   }
   
   return {

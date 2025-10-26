@@ -5,6 +5,15 @@
         class="rect-icon whitegray"
         draggable="true"
         @dragstart="onDragStartBlock"
+        @dragend="onDragEndBlock"
+      ></div>
+    </div>
+    <div class="rect-item">
+      <div 
+        class="rect-icon lime"
+        draggable="true"
+        @dragstart="onDragStartContainer"
+        @dragend="onDragEndContainer"
       ></div>
     </div>
   </div>
@@ -17,20 +26,36 @@ export default {
   name: 'SideArea',
   
   setup() {
-    // Get composition API
+    // Get composable
     const { 
       onDragStart: onDragStartBlock, 
+      onDragEnd: onDragEndBlock,
       setOnDragStartCallBack: setBlockDragStartCallback 
+    } = useDraggable();
+
+    const { 
+      onDragStart: onDragStartContainer,
+      onDragEnd: onDragEndContainer, 
+      setOnDragStartCallBack: setContainerDragStartCallback 
     } = useDraggable();
 
     // Set custom callbacks for drag start events
     setBlockDragStartCallback((event) => {
       event.dataTransfer.setData('entryType', 'block');
+      event.dataTransfer.setData('sourceId', undefined);
+    });
+    
+    setContainerDragStartCallback((event) => {
+      event.dataTransfer.setData('entryType', 'container');
+      event.dataTransfer.setData('sourceId', undefined);
     });
     
     // Return values and methods to use in <template>
     return {
-      onDragStartBlock
+      onDragStartBlock,
+      onDragEndBlock,
+      onDragStartContainer,
+      onDragEndContainer
     };
   }
 }
@@ -61,5 +86,10 @@ export default {
 .rect-icon.whitegray {
   background-color: #f0f0f0;
   border: 1px solid #ccc;
+}
+
+.rect-icon.lime {
+  background-color: #8eec9a;
+  border: 1px solid #7bc97b;
 }
 </style>

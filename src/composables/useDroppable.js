@@ -1,4 +1,5 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { dragDropState } from './useDragDropState'
 
 /**
  * Provides drop functionality as a composable function
@@ -13,6 +14,23 @@ export function useDroppable() {
   
   // Callback function to execute on drop
   let OnDropCallBack = null
+
+  /**
+   * Computed property that determines if the entry can accept drops
+   * @param {string} entryId - ID of this container
+   * @returns {boolean} Whether drops are allowed
+   */
+  const isDroppable = (entryId) => {
+    return computed(() => {
+      // Not droppable if no dragging is occurring
+      if (!dragDropState.isDragging.value) {
+        return false
+      }
+      // Cannot drop onto itself or its descendants
+      const canDrop = !dragDropState.hasDraggedIds(entryId)
+      return canDrop
+    })
+  }
   
   /**
    * Set the callback for drop event
@@ -67,10 +85,10 @@ export function useDroppable() {
       OnDropCallBack(event, index)
     }
   }
-  
+
   // Return public state and methods
   return {
-    isDragEntering,
+    isDroppable,
     setOnDropCallBack,
     onDragEnter,
     onDragLeave,
