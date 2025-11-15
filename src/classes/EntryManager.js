@@ -162,40 +162,40 @@ export default class EntryManager {
     return false;
   }
 
-/**
- * Remove an entry from a parent entry
- * @param {string} entryId - ID of the entry to remove
- * @returns {boolean} Whether the removing was successful
- */
-removeEntry(entryId) {
-  // Get parent entry
-  const parentId = this._parentChildMap.get(entryId);
-  if (!parentId) return false;
-  
-  const parentEntry = this._entriesMap.get(parentId);
-  if (!parentEntry || parentEntry.type !== 'container') return false;
-  
-  // Get child entry
-  const childEntry = this._entriesMap.get(entryId);
-  if (!childEntry) return false;
-  
-  // Remove from parent's children array
-  const index = parentEntry.children.findIndex(child => child.id === entryId);
-  if (index === -1) return false;
-  
-  parentEntry.children.splice(index, 1);
-  
-  // Delete parent-child relationship
-  this._parentChildMap.delete(entryId);
-  
-  // If the entry is a container, recursively remove all its descendants
-  if (childEntry.type === 'container') {
-    this._removeDescendants(childEntry);
+  /**
+   * Remove an entry from a parent entry
+   * @param {string} entryId - ID of the entry to remove
+   * @returns {boolean} Whether the removing was successful
+   */
+  removeEntry(entryId) {
+    // Get parent entry
+    const parentId = this._parentChildMap.get(entryId);
+    if (!parentId) return false;
+    
+    const parentEntry = this._entriesMap.get(parentId);
+    if (!parentEntry || parentEntry.type !== 'container') return false;
+    
+    // Get child entry
+    const childEntry = this._entriesMap.get(entryId);
+    if (!childEntry) return false;
+    
+    // Remove from parent's children array
+    const index = parentEntry.children.findIndex(child => child.id === entryId);
+    if (index === -1) return false;
+    
+    parentEntry.children.splice(index, 1);
+    
+    // Delete parent-child relationship
+    this._parentChildMap.delete(entryId);
+    
+    // If the entry is a container, recursively remove all its descendants
+    if (childEntry.type === 'container') {
+      this._removeDescendants(childEntry);
+    }
+    
+    // Return true to indicate successful removal
+    return true;
   }
-  
-  // Return true to indicate successful removal
-  return true;
-}
 
   /**
    * Reorder an entry within a parent entry
