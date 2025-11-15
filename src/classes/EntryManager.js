@@ -26,6 +26,37 @@ export default class EntryManager {
   }
 
   /**
+   * Detach an entry from its parent
+   * @param {Entry} entry - Entry to detach from its parent
+   * @returns {boolean} Whether the detach operation was successful
+   * @private
+   */
+  _detachEntry(entry) {
+    // Validate entry
+    if (!entry || !entry.id) return false;
+    
+    const entryId = entry.id;
+    
+    // Get parent entry
+    const parentId = this._parentChildMap.get(entryId);
+    if (!parentId) return true;
+    
+    const parentEntry = this._entriesMap.get(parentId);
+    if (!parentEntry || parentEntry.type !== 'container') return false;
+    
+    // Remove from parent's children array
+    const index = parentEntry.children.findIndex(child => child.id === entryId);
+    if (index === -1) return false;
+    
+    parentEntry.children.splice(index, 1);
+    
+    // Delete parent-child relationship
+    this._parentChildMap.delete(entryId);
+    
+    return true;
+  }
+
+  /**
    * Recursively remove all descendants of a entry
    * @param {Entry} entry - Entry whose descendants should be removed
    * @private
@@ -134,23 +165,23 @@ export default class EntryManager {
 /**
  * Remove an entry from a parent entry
  * @param {string} entryId - ID of the entry to remove
- * @returns {Entry|null} Removed entry or null
+ * @returns {boolean} Whether the removing was successful
  */
 removeEntry(entryId) {
   // Get parent entry
   const parentId = this._parentChildMap.get(entryId);
-  if (!parentId) return null;
+  if (!parentId) return false;
   
   const parentEntry = this._entriesMap.get(parentId);
-  if (!parentEntry || parentEntry.type !== 'container') return null;
+  if (!parentEntry || parentEntry.type !== 'container') return false;
   
   // Get child entry
   const childEntry = this._entriesMap.get(entryId);
-  if (!childEntry) return null;
+  if (!childEntry) return false;
   
   // Remove from parent's children array
   const index = parentEntry.children.findIndex(child => child.id === entryId);
-  if (index === -1) return null;
+  if (index === -1) return false;
   
   parentEntry.children.splice(index, 1);
   
@@ -162,7 +193,8 @@ removeEntry(entryId) {
     this._removeDescendants(childEntry);
   }
   
-  return childEntry;
+  // Return true to indicate successful removal
+  return true;
 }
 
   /**
@@ -196,33 +228,18 @@ removeEntry(entryId) {
    * @param {string} entryId - ID of the child entry to move
    * @param {string|null} newParentId - ID of the new parent entry (null to set as parentless)
    * @param {number} index - Target index position
-   * @returns {Entry|null} Moved entry or null (if move failed)
+   * @returns {boolean} Whether the moving was successful
    */
   moveEntry(entryId, newParentId, index) {
-    // Get and remove the entry from its original parent
-    const childEntry = this.removeEntry(entryId);
-    if (!childEntry) {
-      // If no parent (MainArea entry), just get the entry
-      const entry = this._entriesMap.get(entryId);
-      if (!entry) return null;
-      
-      // If no parent-child relationship, return the entry
-      if (!this._parentChildMap.has(entryId)) {
-        return entry;
-      }
-      
-      return null;
-    }
+    // Check if the entry exists
+    const entry = this._entriesMap.get(entryId);
+    if (!entry) return false;
     
-    if (newParentId === null) {
-      // Set as parentless (move to MainArea)
-      // Just delete the parent-child relationship, MainArea component will handle adding it
-      return childEntry;
-    } else {
-      // Add to new parent
-      const success = this.addEntry(newParentId, childEntry, index);
-      return success ? childEntry : null;
-    }
+    // Detach from the current parent
+    this._detachEntry(entry);
+    
+    // Add to the new parent
+    return this.addEntry(newParentId, entry, index);
   }
 
   /**
