@@ -26,6 +26,30 @@ export default class EntryManager {
   }
 
   /**
+   * Recursively remove all descendants of a entry
+   * @param {Entry} entry - Entry whose descendants should be removed
+   * @private
+   */
+  _removeDescendants(entry) {
+    // Process all children of the container
+    for (const child of entry.children) {
+      // Remove parent-child relationship
+      this._parentChildMap.delete(child.id);
+      
+      // If the child is a container, recursively process its descendants
+      if (child.type === 'container') {
+        this._removeDescendants(child);
+      }
+      
+      // Remove from entries map
+      this._entriesMap.delete(child.id);
+    }
+    
+    // Clear the children array
+    entry.children.length = 0;
+  }
+
+  /**
    * Get an entry
    * @param {string} entryId - ID of the entry to get
    * @returns {Entry|null} Retrieved entry or null
@@ -67,7 +91,7 @@ export default class EntryManager {
     if (!entry || entry.type !== 'container') return Array.from(ids);
     
     // Recursively get child entries
-    for (const childEntry of entry._children) {
+    for (const childEntry of entry.children) {
       const childIds = this.getAllDescendantIds(childEntry.id);
       childIds.forEach(id => ids.add(id));
     }
@@ -99,42 +123,47 @@ export default class EntryManager {
     // Set parent-child relationship
     this._parentChildMap.set(entry.id, parentId);
     
-    // Add directly to parent's _children array
-    if (index >= 0 && index <= parentEntry._children.length) {
-      parentEntry._children.splice(index, 0, entry);
+    // Add directly to parent's children array
+    if (index >= 0 && index <= parentEntry.children.length) {
+      parentEntry.children.splice(index, 0, entry);
       return true;
     }
     return false;
   }
 
-  /**
-   * Remove an entry from a parent entry
-   * @param {string} entryId - ID of the entry to remove
-   * @returns {Entry|null} Removed entry or null
-   */
-  removeEntry(entryId) {
-    // Get parent entry
-    const parentId = this._parentChildMap.get(entryId);
-    if (!parentId) return null;
-    
-    const parentEntry = this._entriesMap.get(parentId);
-    if (!parentEntry || parentEntry.type !== 'container') return null;
-    
-    // Get child entry
-    const childEntry = this._entriesMap.get(entryId);
-    if (!childEntry) return null;
-    
-    // Remove from parent's _children array
-    const index = parentEntry._children.findIndex(child => child.id === entryId);
-    if (index !== -1) {
-      parentEntry._children.splice(index, 1);
-      // Delete parent-child relationship
-      this._parentChildMap.delete(entryId);
-      return childEntry;
-    }
-    
-    return null;
+/**
+ * Remove an entry from a parent entry
+ * @param {string} entryId - ID of the entry to remove
+ * @returns {Entry|null} Removed entry or null
+ */
+removeEntry(entryId) {
+  // Get parent entry
+  const parentId = this._parentChildMap.get(entryId);
+  if (!parentId) return null;
+  
+  const parentEntry = this._entriesMap.get(parentId);
+  if (!parentEntry || parentEntry.type !== 'container') return null;
+  
+  // Get child entry
+  const childEntry = this._entriesMap.get(entryId);
+  if (!childEntry) return null;
+  
+  // Remove from parent's children array
+  const index = parentEntry.children.findIndex(child => child.id === entryId);
+  if (index === -1) return null;
+  
+  parentEntry.children.splice(index, 1);
+  
+  // Delete parent-child relationship
+  this._parentChildMap.delete(entryId);
+  
+  // If the entry is a container, recursively remove all its descendants
+  if (childEntry.type === 'container') {
+    this._removeDescendants(childEntry);
   }
+  
+  return childEntry;
+}
 
   /**
    * Reorder an entry within a parent entry
@@ -148,15 +177,15 @@ export default class EntryManager {
     const parentEntry = this._entriesMap.get(parentId);
     if (!parentEntry || parentEntry.type !== 'container') return false;
     
-    // Reorder within parent's _children array
-    const currentIndex = parentEntry._children.findIndex(child => child.id === entryId);
+    // Reorder within parent's children array
+    const currentIndex = parentEntry.children.findIndex(child => child.id === entryId);
     if (currentIndex !== -1) {
       let targetIndex = index;
       if (index > currentIndex) {
         targetIndex = targetIndex - 1;
       }
-      const child = parentEntry._children.splice(currentIndex, 1)[0];
-      parentEntry._children.splice(targetIndex, 0, child);
+      const child = parentEntry.children.splice(currentIndex, 1)[0];
+      parentEntry.children.splice(targetIndex, 0, child);
       return true;
     }
     return false;

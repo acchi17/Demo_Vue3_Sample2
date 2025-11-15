@@ -100,7 +100,7 @@ export default {
     })
 
     // Array of children
-    const children = computed(() => mainContainer.getChildren())
+    const children = computed(() => mainContainer.children)
 
     // For determining whether to allow the drop
     const dropAllowed = isDroppable(mainContainer.id)

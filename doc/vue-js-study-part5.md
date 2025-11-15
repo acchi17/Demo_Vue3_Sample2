@@ -1,4 +1,4 @@
-# Vue.js Study Part 5: Drag-and-drop functionality for reordering UI objects using Vue.j
+# Vue.js Study Part 5: Drag-and-drop functionality for reordering UI objects using Vue.js
 
 Vue.jsを使用した、UIオブジェクトをドラッグ＆ドロップで並べ替える機能について説明します。
 

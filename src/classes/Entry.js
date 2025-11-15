@@ -34,13 +34,6 @@ export default class Entry {
    */
   constructor(id = null) {
     this.id = id || Entry.generateUUID();  // Unique ID (auto-generated if null)
-  }
-  
-  /**
-   * Method to get array of child elements
-   * @returns {Array} Array of child elements (empty array by default)
-   */
-  getChildren() {
-    return [];
+    this.children = []; // Array of child elements (empty array by default)
   }
 }

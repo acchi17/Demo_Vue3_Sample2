@@ -14,14 +14,6 @@ export default class Container extends Entry {
   constructor(id = null) {
     super(id);
     this.type = 'container';  // Container type
-    this._children = reactive([]); // Array of child elements
-  }
-
-  /**
-   * Method to get array of child elements (overrides Entry.getChildren)
-   * @returns {Array} Array of child elements
-   */
-  getChildren() {
-    return this._children;
+    this.children = reactive([]); // Array of child elements
   }
 }

@@ -145,7 +145,7 @@ export default {
     }
 
     // Array of children
-    const children = computed(() => props.entry.getChildren())
+    const children = computed(() => props.entry.children)
 
     // For determining whether to allow the drop
     const dropAllowed = isDroppable(props.entry.id)
