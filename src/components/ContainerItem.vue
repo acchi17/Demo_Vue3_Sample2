@@ -8,7 +8,7 @@
   >
     <div class="container-content">
       <div class="container-header">
-        <div :style="textStyle">{{ entry.name }}</div>
+        <div class="entry-text">{{ entry.name }}</div>
         <div class="entry-button-group">
           <div class="entry-button entry-button-play" @click="onPlay"></div>
           <div class="entry-button entry-button-delete" @click="onRemove"></div>
@@ -44,7 +44,6 @@
 import { computed, inject } from 'vue'
 import { useDraggable } from '../composables/useDraggable'
 import { useDroppable } from '../composables/useDroppable'
-import { useObjectStyle } from '../composables/useObjectStyle'
 import { useEntryExecution } from '../composables/useEntryExecution'
 import BlockItem from './BlockItem.vue'
 import Block from '../classes/Block'
@@ -80,7 +79,6 @@ export default {
       onDrop, 
       setOnDropCallBack,
     } = useDroppable()
-    const { getEntryTextStyle } = useObjectStyle()
     const { executeEntry, isExecuting } = useEntryExecution()
     
     // Set callback for drag start
@@ -172,9 +170,6 @@ export default {
 
     // For determining whether to allow the drop
     const dropAllowed = isDroppable(props.entry.id)
-
-    // Get text style
-    const textStyle = getEntryTextStyle()
     
     // Return values and methods to use in <template>
     return {
@@ -187,8 +182,7 @@ export default {
       onRemove,
       removeChild,
       children,
-      dropAllowed,
-      textStyle
+      dropAllowed
     }
   }
 }
@@ -260,6 +254,15 @@ export default {
 /* Delete button styles */
 .entry-button-delete {
   background-image: var(--entry-button-delete-image);
+}
+
+/* Entry text styles */
+.entry-text {
+  font-size: var(--entry-text-font-size);
+  color: var(--entry-text-color);
+  white-space: var(--entry-text-white-space);
+  overflow: var(--entry-text-overflow);
+  text-overflow: var(--entry-text-text-overflow);
 }
 
 .container-children {

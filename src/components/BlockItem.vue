@@ -7,8 +7,8 @@
     @dragend="onDragEnd"
   >
     <div class="block-content">
-      <div class="block-header">
-        <div :style="textStyle">{{ entry.name }}</div>
+    <div class="block-header">
+        <div class="entry-text">{{ entry.name }}</div>
         <div class="entry-button-group">
           <div class="entry-button entry-button-play" @click="onPlay"></div>
           <div class="entry-button entry-button-delete" @click="onRemove"></div>
@@ -21,7 +21,6 @@
 <script>
 import { inject } from 'vue'
 import { useDraggable } from '../composables/useDraggable'
-import { useObjectStyle } from '../composables/useObjectStyle'
 import { useEntryExecution } from '../composables/useEntryExecution'
 
 export default {
@@ -45,7 +44,6 @@ export default {
       onDragEnd,
       setOnDragStartCallBack
     } = useDraggable()
-    const { getEntryTextStyle } = useObjectStyle()
     const { executeEntry, isExecuting } = useEntryExecution()
     
     // Set callback for drag start
@@ -86,9 +84,6 @@ export default {
     const onRemove = () => {
       emit('remove', props.entry.id)
     }
-
-    // Get text style
-    const textStyle = getEntryTextStyle()
     
     // Return values and methods to use in <template>
     return {
@@ -96,8 +91,7 @@ export default {
       onDragStart,
       onDragEnd,
       onPlay,
-      onRemove,
-      textStyle
+      onRemove
     }
   }
 }
@@ -172,5 +166,14 @@ export default {
 /* Delete button styles */
 .entry-button-delete {
   background-image: var(--entry-button-delete-image);
+}
+
+/* Entry text styles */
+.entry-text {
+  font-size: var(--entry-text-font-size);
+  color: var(--entry-text-color);
+  white-space: var(--entry-text-white-space);
+  overflow: var(--entry-text-overflow);
+  text-overflow: var(--entry-text-text-overflow);
 }
 </style>
