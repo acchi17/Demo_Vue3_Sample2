@@ -30,10 +30,13 @@ export default class Entry {
 
   /**
    * Constructor
+   * @param {string} name - Name of the entry
    * @param {string|null} id - Unique ID of the entry (auto-generated if null)
    */
-  constructor(id = null) {
-    this.id = id || Entry.generateUUID();  // Unique ID (auto-generated if null)
+  constructor(name = '', id = null) {
+    this.name = name; // Name of the entry
+    this.id = id || Entry.generateUUID(); // Unique ID (auto-generated if null)
+    this.type = '';
     this.children = []; // Array of child elements (empty array by default)
   }
 }

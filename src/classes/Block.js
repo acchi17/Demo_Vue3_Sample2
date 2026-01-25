@@ -5,12 +5,13 @@
 import Entry from './Entry';
 
 export default class Block extends Entry {
-/**
- * Constructor
- * @param {string|null} id - Unique ID of the block (auto-generated if null)
- */
-constructor(id = null) {
-  super(id);
-  this.type = 'block';
-}
+  /**
+   * Constructor
+   * @param {string} name - Name of the block
+   * @param {string|null} id - Unique ID of the block (auto-generated if null)
+   */
+  constructor(name = '', id = null) {
+    super(name, id);
+    this.type = 'block';
+  }
 }

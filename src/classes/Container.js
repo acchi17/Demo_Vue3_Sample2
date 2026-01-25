@@ -9,10 +9,11 @@ import Entry from './Entry';
 export default class Container extends Entry {
   /**
    * Constructor
+   * @param {string} name - Name of the container
    * @param {string|null} id - Unique ID of the container (auto-generated if null)
    */
-  constructor(id = null) {
-    super(id);
+  constructor(name = '', id = null) {
+    super(name, id);
     this.type = 'container';  // Container type
     this.children = reactive([]); // Array of child elements
   }
