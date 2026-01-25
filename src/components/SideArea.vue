@@ -6,7 +6,15 @@
         draggable="true"
         @dragstart="onDragStartBlock"
         @dragend="onDragEndBlock"
-      ></div>
+      >Hello</div>
+    </div>
+    <div class="rect-item">
+      <div 
+        class="rect-icon whitegray"
+        draggable="true"
+        @dragstart="onDragStartBlock"
+        @dragend="onDragEndBlock"
+      >World</div>
     </div>
     <div class="rect-item">
       <div 
@@ -42,11 +50,13 @@ export default {
     // Set custom callbacks for drag start events
     setBlockDragStartCallback((event) => {
       event.dataTransfer.setData('entryType', 'block');
+      event.dataTransfer.setData('entryName', event.target.textContent);
       event.dataTransfer.setData('sourceId', undefined);
     });
     
     setContainerDragStartCallback((event) => {
       event.dataTransfer.setData('entryType', 'container');
+      event.dataTransfer.setData('entryName', 'Container');
       event.dataTransfer.setData('sourceId', undefined);
     });
     
@@ -63,12 +73,12 @@ export default {
 
 <style scoped>
 .side-area {
+  width: 300px;
+  height: 100vh;
+  background: #f0f0f0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100%;
-  background: #f0f0f0;
-  border-right: 1px solid #ccc;
 }
 .rect-item {
   margin-top: 32px;
@@ -86,6 +96,13 @@ export default {
 .rect-icon.whitegray {
   background-color: #f0f0f0;
   border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+  box-sizing: border-box;
 }
 
 .rect-icon.lime {

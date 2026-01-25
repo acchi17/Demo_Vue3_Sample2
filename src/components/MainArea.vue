@@ -69,21 +69,20 @@ export default {
     // Set custom callbacks for drop event
     setOnDropCallBack((event, index) => {
       // Get data directly from event.dataTransfer
-      const entryId = event.dataTransfer.getData('entryId')
       const entryType = event.dataTransfer.getData('entryType')
+      const entryName = event.dataTransfer.getData('entryName')
+      const entryId = event.dataTransfer.getData('entryId')
       const sourceId = event.dataTransfer.getData('sourceId')
       
       if (!entryId) {
         // Create and insert a new element
         if (index !== null) {
           if (entryType === 'block') {
-            // Create a block
-            const newBlock = new Block()
+            const newBlock = new Block(entryName)
             // Use EntryManager to add to main container
             entryManager.addEntry(mainContainer.id, newBlock, index)
           } else if (entryType === 'container') {
-            // Create a container
-            const newContainer = new Container()
+            const newContainer = new Container(entryName)
             // Use EntryManager to add to main container
             entryManager.addEntry(mainContainer.id, newContainer, index)
           }
@@ -119,9 +118,9 @@ export default {
 
 <style scoped>
 .main-area {
-  width: 100%;
+  min-width: 800px;
   height: 100vh;
-  padding-left: 100px;
+  padding: 0px 100px;
   box-sizing: border-box;
   background-color: #f5f5f5;
   overflow: auto;

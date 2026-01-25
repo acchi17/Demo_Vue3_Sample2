@@ -8,8 +8,11 @@
   >
     <div class="container-content">
       <div class="container-header">
-        <div :style="textStyle">{{ entry.id }}</div>
-        <div :style="buttonStyle" @click="onRemove">×</div>
+        <div :style="textStyle">{{ entry.name }}</div>
+        <div class="entry-button-group">
+          <div class="entry-button entry-button-play" @click="onPlay"></div>
+          <div class="entry-button entry-button-delete" @click="onRemove"></div>
+        </div>
       </div>
       <div class="container-children">
         <!-- First drop area (always displayed) -->
@@ -42,6 +45,7 @@ import { computed, inject } from 'vue'
 import { useDraggable } from '../composables/useDraggable'
 import { useDroppable } from '../composables/useDroppable'
 import { useObjectStyle } from '../composables/useObjectStyle'
+import { useEntryExecution } from '../composables/useEntryExecution'
 import BlockItem from './BlockItem.vue'
 import Block from '../classes/Block'
 import Container from '../classes/Container'
@@ -76,7 +80,8 @@ export default {
       onDrop, 
       setOnDropCallBack,
     } = useDroppable()
-    const { getEntryButtonStyle, getEntryTextStyle } = useObjectStyle()
+    const { getEntryTextStyle } = useObjectStyle()
+    const { executeEntry, isExecuting } = useEntryExecution()
     
     // Set callback for drag start
     setOnDragStartCallBack((event, dragDropState) => {
@@ -88,8 +93,8 @@ export default {
       const parentId = entryManager.getParentId(props.entry.id)
       
       // Set data for transfer
-      event.dataTransfer.setData('entryId', props.entry.id)
       event.dataTransfer.setData('entryType', 'container')
+      event.dataTransfer.setData('entryId', props.entry.id)
       event.dataTransfer.setData('sourceId', parentId || props.entry.id)
       
       event.stopPropagation()
@@ -98,22 +103,20 @@ export default {
     // Set custom callbacks for drop event
     setOnDropCallBack((event, index) => {
       // Get data directly from event.dataTransfer
-      const entryId = event.dataTransfer.getData('entryId')
       const entryType = event.dataTransfer.getData('entryType')
+      const entryName = event.dataTransfer.getData('entryName')
+      const entryId = event.dataTransfer.getData('entryId')
       const sourceId = event.dataTransfer.getData('sourceId')
 
       if (!entryId) {
         // Create and insert a new element
-        // Do nothing if index is null (don't add to entries)
         if (index !== null) {
           if (entryType === 'block') {
-            // Create a block
-            const newBlock = new Block()
+            const newBlock = new Block(entryName)
             // Use EntryManager to add child entry
             entryManager.addEntry(props.entry.id, newBlock, index)
           } else if (entryType === 'container') {
-            // Create a container
-            const newContainer = new Container()
+            const newContainer = new Container(entryName)
             // Use EntryManager to add child entry
             entryManager.addEntry(props.entry.id, newContainer, index)
           }
@@ -128,6 +131,26 @@ export default {
         }
       }
     })
+
+    /**
+     * Process when the play button is clicked
+     */
+    const onPlay = async () => {
+      // Skip if already executing
+      if (isExecuting.value) {
+        console.log('Another entry is currently executing, please wait')
+        return
+      }
+      
+      try {
+        // Execute the entry using EntryExecutionService
+        await executeEntry(props.entry)
+        console.log('Container execution completed')
+      } catch (error) {
+        console.error('Error executing container:', error)
+      }
+    }
+
     
     /**
      * Process when the remove button is clicked
@@ -152,9 +175,6 @@ export default {
 
     // Get text style
     const textStyle = getEntryTextStyle()
-
-    // Get button style
-    const buttonStyle = getEntryButtonStyle()
     
     // Return values and methods to use in <template>
     return {
@@ -163,12 +183,12 @@ export default {
       onDragEnd,
       onDragOver,
       onDrop,
+      onPlay,
       onRemove,
       removeChild,
       children,
       dropAllowed,
-      textStyle,
-      buttonStyle
+      textStyle
     }
   }
 }
@@ -178,7 +198,7 @@ export default {
 .container-item {
   width: fit-content;
   border-radius: 4px;
-  background-color: #8eec9a;
+  background-color: var(--container-bg-color);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border: 1px solid #AAAAAA;
 }
@@ -199,7 +219,47 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
+}
+
+/* Entry button group styles */
+.entry-button-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* Entry button base styles */
+.entry-button {
+  width: var(--entry-button-size);
+  height: var(--entry-button-size);
+  border-radius: var(--entry-button-border-radius);
+  background-color: var(--entry-button-background-color);
+  background-size: var(--entry-button-background-size);
+  background-position: var(--entry-button-background-position);
+  background-repeat: var(--entry-button-background-repeat);
+  cursor: var(--entry-button-cursor);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--entry-button-transition-duration) ease,
+              filter var(--entry-button-transition-duration) ease;
+}
+
+/* Entry button on press animation */
+.entry-button:active {
+  transform: scale(var(--entry-button-press-scale));
+  filter: brightness(var(--entry-button-press-brightness));
+}
+
+/* Play button styles */
+.entry-button-play {
+  background-image: var(--entry-button-play-image);
+}
+
+/* Delete button styles */
+.entry-button-delete {
+  background-image: var(--entry-button-delete-image);
 }
 
 .container-children {
