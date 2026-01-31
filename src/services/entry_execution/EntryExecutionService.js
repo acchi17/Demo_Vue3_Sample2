@@ -32,59 +32,6 @@ export default class EntryExecutionService {
   }
 
   /**
-   * Script execution result type definition
-   * @typedef {Object} ScriptExecutionResult
-   * @property {boolean} success Execution success flag (required)
-   * @property {string} errorMessage Error message when error occurs
-   * @property {number} executionTime Execution time (milliseconds)
-   *
-   * In addition to the standard properties above, this object may include
-   * arbitrary additional data returned by the executed script. The property names
-   * and structure of additional data vary depending on the script implementation.
-   */
-  /**
-   * Normalize execution result
-   * @param {Object} result Execution result object
-   * @param {Object} [options] Additional options to override result properties
-   * @param {boolean} [options.success] Override success flag
-   * @param {string} [options.errorMessage] Override error message
-   * @param {Array} [options.childResults] Array of child execution results
-   * @returns {ScriptExecutionResult} Normalized execution result object
-   */
-  _normalizeResult(result = {}, options = {}) {
-    const newResult = result;
-
-    try {
-      // Apply success flag from options or use default logic
-      if (options.success !== undefined) {
-        newResult.success = options.success;
-      } else if (newResult.success === undefined) {
-        // If childResults exists, determine success based on child results
-        if (options.childResults) {
-          // every() returns true for empty arrays, all child results must succeed otherwise
-          newResult.success = options.childResults.every(childResult => childResult.success === true);
-        } else {
-          newResult.success = false;
-        }
-      }
-      // Apply error message from options or use default logic
-      if (options.errorMessage !== undefined) {
-        newResult.errorMessage = options.errorMessage;
-      } else if (newResult.errorMessage === undefined) {
-        if (newResult.success === true) {
-          newResult.errorMessage = '';
-        } else {
-          newResult.errorMessage = 'Unknown error occurred.';
-        }
-      }
-    } catch (error) {
-      newResult.success = false;
-      newResult.errorMessage = error.message;
-    }
-    return newResult;
-  }
-
-  /**
    * Execute a block entry
    * @param {Block} block Block to execute
    * @return {Promise<ScriptExecutionResult>} 
@@ -93,15 +40,16 @@ export default class EntryExecutionService {
    */
   async _executeBlock(block) {
     let result = {};
-    const options = {};
-
     try {
       // Execute script based on block name
       result = await this.scriptExecutionService.executeScript(block.name);
     } catch (error) {
-      options.errorMessage = error.message;
+      result.errorMessage = error.message;
     }
-    return this._normalizeResult(result, options);
+    if (result.success === undefined) {
+      result.success = false;
+    }
+    return result;
   }
 
   /**
@@ -114,20 +62,21 @@ export default class EntryExecutionService {
    */
   async _executeContainer(container, traceId) {
     let result = {};
-    const options = {};
     const childResults = [];
-    
     try {
       // Execute child entries sequentially
       for (const childEntry of container.children) {
           const childResult = await this.executeEntry(childEntry, traceId);
           childResults.push(childResult);
       }
-      options.childResults = childResults;
+      result.success = childResults.every(childResult => childResult.success === true);
     } catch (error) {
-      options.errorMessage = error.message;
+      result.errorMessage = error.message;
     }
-    return this._normalizeResult(result, options);
+    if (result.success === undefined) {
+      result.success = false;
+    }
+    return result;
   }
 
   /**
@@ -146,7 +95,6 @@ export default class EntryExecutionService {
    */
   async executeEntry(entry, traceId = null) {
     let result = {};
-
     try {
       // Push entry ID onto the stack when execution starts
       this._executionStack.push(entry.id);
