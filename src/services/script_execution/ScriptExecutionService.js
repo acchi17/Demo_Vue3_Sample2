@@ -19,12 +19,20 @@ export default class ScriptExecutionService {
       this.scriptsDir
     );
   }
-  
+
+  /**
+   * Script execution result type definition
+   * @typedef {Object} ScriptExecutionResult
+   * @property {boolean} success Execution success flag (required)
+   * In addition to the standard properties above, this object may include
+   * arbitrary additional data returned by the executed script. The property names
+   * and structure of additional data vary depending on the script implementation.
+   */
   /**
    * Execute script
    * @param {string} scriptName Script file name
    * @param {Object} inputParams Input parameters (optional)
-   * @return {Promise<Object>} Execution result object
+   * @return {Promise<ScriptExecutionResult>} Execution result object
    */
   async executeScript(scriptName = '', inputParams = {}) {
     try {
