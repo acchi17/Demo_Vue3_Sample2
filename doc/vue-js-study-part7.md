@@ -9,7 +9,7 @@
 - 右側の実行ログビューには、エントリの実行履歴が階層構造（サンドイッチスタイル）で表示され、実行ステータス、エントリ名、実行結果、エラーメッセージ、実行時間などが記録されます。
 
 **ソースコード：**  
-[https://github.com/acchi17/Demo_Vue3_Sample2/tree/step2](https://github.com/acchi17/Demo_Vue3_Sample2/tree/step2)
+[https://github.com/acchi17/Demo_Vue3_Sample2/tree/step3](https://github.com/acchi17/Demo_Vue3_Sample2/tree/step3)
 
 ## Source code structure of the Vue application
 
