@@ -5,10 +5,9 @@
 export default class EntryManager {
   constructor() {
     // Dictionary of entry IDs and objects
-    this._entriesMap = new Map();
-    
+    this._entriesById = new Map();
     // Dictionary of child IDs and their parent IDs
-    this._parentChildMap = new Map();
+    this._parentIdById = new Map();
   }
 
   /**
@@ -21,7 +20,7 @@ export default class EntryManager {
     if (!entry || !entry.id) return false;
     
     // Overwrite if already registered
-    this._entriesMap.set(entry.id, entry);
+    this._entriesById.set(entry.id, entry);
     return true;
   }
 
@@ -38,10 +37,10 @@ export default class EntryManager {
     const entryId = entry.id;
     
     // Get parent entry
-    const parentId = this._parentChildMap.get(entryId);
+    const parentId = this._parentIdById.get(entryId);
     if (!parentId) return true;
     
-    const parentEntry = this._entriesMap.get(parentId);
+    const parentEntry = this._entriesById.get(parentId);
     if (!parentEntry || parentEntry.type !== 'container') return false;
     
     // Remove from parent's children array
@@ -51,7 +50,7 @@ export default class EntryManager {
     parentEntry.children.splice(index, 1);
     
     // Delete parent-child relationship
-    this._parentChildMap.delete(entryId);
+    this._parentIdById.delete(entryId);
     
     return true;
   }
@@ -65,7 +64,7 @@ export default class EntryManager {
     // Process all children of the container
     for (const child of entry.children) {
       // Remove parent-child relationship
-      this._parentChildMap.delete(child.id);
+      this._parentIdById.delete(child.id);
       
       // If the child is a container, recursively process its descendants
       if (child.type === 'container') {
@@ -73,7 +72,7 @@ export default class EntryManager {
       }
       
       // Remove from entries map
-      this._entriesMap.delete(child.id);
+      this._entriesById.delete(child.id);
     }
     
     // Clear the children array
@@ -86,7 +85,7 @@ export default class EntryManager {
    * @returns {Entry|null} Retrieved entry or null
    */
   getEntry(entryId) {
-    return this._entriesMap.get(entryId) || null;
+    return this._entriesById.get(entryId) || null;
   }
 
   /**
@@ -95,10 +94,10 @@ export default class EntryManager {
    * @returns {Entry|null} Parent entry or null
    */
   getParentEntry(entryId) {
-    const parentId = this._parentChildMap.get(entryId);
+    const parentId = this._parentIdById.get(entryId);
     if (!parentId) return null;
     
-    return this._entriesMap.get(parentId) || null;
+    return this._entriesById.get(parentId) || null;
   }
 
   /**
@@ -107,7 +106,7 @@ export default class EntryManager {
    * @returns {string|null} Parent entry ID or null
    */
   getParentId(entryId) {
-    return this._parentChildMap.get(entryId) || null;
+    return this._parentIdById.get(entryId) || null;
   }
 
   /**
@@ -118,7 +117,7 @@ export default class EntryManager {
   getAllDescendantIds(entryId) {
     const ids = new Set([entryId]);
     
-    const entry = this._entriesMap.get(entryId);
+    const entry = this._entriesById.get(entryId);
     if (!entry || entry.type !== 'container') return Array.from(ids);
     
     // Recursively get child entries
@@ -145,14 +144,14 @@ export default class EntryManager {
     }
     
     // Get parent entry
-    const parentEntry = this._entriesMap.get(parentId);
+    const parentEntry = this._entriesById.get(parentId);
     if (!parentEntry || parentEntry.type !== 'container') return false;
     
     // Register child entry
     this._registerEntry(entry);
     
     // Set parent-child relationship
-    this._parentChildMap.set(entry.id, parentId);
+    this._parentIdById.set(entry.id, parentId);
     
     // Add directly to parent's children array
     if (index >= 0 && index <= parentEntry.children.length) {
@@ -169,14 +168,14 @@ export default class EntryManager {
    */
   removeEntry(entryId) {
     // Get parent entry
-    const parentId = this._parentChildMap.get(entryId);
+    const parentId = this._parentIdById.get(entryId);
     if (!parentId) return false;
     
-    const parentEntry = this._entriesMap.get(parentId);
+    const parentEntry = this._entriesById.get(parentId);
     if (!parentEntry || parentEntry.type !== 'container') return false;
     
     // Get child entry
-    const childEntry = this._entriesMap.get(entryId);
+    const childEntry = this._entriesById.get(entryId);
     if (!childEntry) return false;
     
     // Remove from parent's children array
@@ -186,7 +185,7 @@ export default class EntryManager {
     parentEntry.children.splice(index, 1);
     
     // Delete parent-child relationship
-    this._parentChildMap.delete(entryId);
+    this._parentIdById.delete(entryId);
     
     // If the entry is a container, recursively remove all its descendants
     if (childEntry.type === 'container') {
@@ -206,7 +205,7 @@ export default class EntryManager {
    */
   reorderEntry(parentId, entryId, index) {
     // Get parent entry
-    const parentEntry = this._entriesMap.get(parentId);
+    const parentEntry = this._entriesById.get(parentId);
     if (!parentEntry || parentEntry.type !== 'container') return false;
     
     // Reorder within parent's children array
@@ -232,7 +231,7 @@ export default class EntryManager {
    */
   moveEntry(entryId, newParentId, index) {
     // Check if the entry exists
-    const entry = this._entriesMap.get(entryId);
+    const entry = this._entriesById.get(entryId);
     if (!entry) return false;
     
     // Detach from the current parent
@@ -249,7 +248,7 @@ export default class EntryManager {
    * @unused This method is currently not used but kept for future extensibility
    */
   findContainerById(containerId) {
-    const entry = this._entriesMap.get(containerId);
+    const entry = this._entriesById.get(containerId);
     if (entry && entry.type === 'container') {
       return entry;
     }
@@ -263,7 +262,7 @@ export default class EntryManager {
    * @unused This method is currently not used but kept for future extensibility
    */
   hasParent(entryId) {
-    return this._parentChildMap.has(entryId);
+    return this._parentIdById.has(entryId);
   }
 
   /**
@@ -274,7 +273,7 @@ export default class EntryManager {
    * @unused This method is currently not used but kept for future extensibility
    */
   isChildOf(entryId, parentId) {
-    return this._parentChildMap.get(entryId) === parentId;
+    return this._parentIdById.get(entryId) === parentId;
   }
   
   /**
@@ -289,20 +288,20 @@ export default class EntryManager {
     
     if (parentId === null) {
       // Set as parentless
-      this._parentChildMap.delete(childId);
+      this._parentIdById.delete(childId);
       return true;
     }
     
     // Check if parent entry exists
-    const parentEntry = this._entriesMap.get(parentId);
+    const parentEntry = this._entriesById.get(parentId);
     if (!parentEntry || parentEntry.type !== 'container') return false;
     
     // Check if child entry exists
-    const childEntry = this._entriesMap.get(childId);
+    const childEntry = this._entriesById.get(childId);
     if (!childEntry) return false;
     
     // Set parent-child relationship
-    this._parentChildMap.set(childId, parentId);
+    this._parentIdById.set(childId, parentId);
     return true;
   }
   
@@ -315,8 +314,8 @@ export default class EntryManager {
   removeParentChildRelation(childId) {
     if (!childId) return false;
     
-    if (this._parentChildMap.has(childId)) {
-      this._parentChildMap.delete(childId);
+    if (this._parentIdById.has(childId)) {
+      this._parentIdById.delete(childId);
       return true;
     }
     

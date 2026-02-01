@@ -1,0 +1,34 @@
+:root {
+  /* Block-related colors */
+  --block-bg-color: #f0f0f0;
+  --block-hover-bg-color: #e8e8e8;
+  
+  /* Container-related colors */
+  --container-bg-color: #8eec9a;
+  --container-hover-bg-color: #7ee089;
+  
+  /* Entry button base styles */
+  --entry-button-size: 24px;
+  --entry-button-border-radius: 50%;
+  --entry-button-background-color: rgba(255, 255, 255, 0.3);
+  --entry-button-background-size: contain;
+  --entry-button-background-position: center;
+  --entry-button-background-repeat: no-repeat;
+  --entry-button-cursor: pointer;
+  
+  /* Entry button animation */
+  --entry-button-press-scale: 0.9;
+  --entry-button-transition-duration: 0.1s;
+  --entry-button-press-brightness: 0.8;
+  
+  /* Entry button images */
+  --entry-button-play-image: url('@/assets/images/play-button-navy-96.png');
+  --entry-button-delete-image: url('@/assets/images/close-button-navy-96.png');
+  
+  /* Entry text styles */
+  --entry-text-font-size: 12px;
+  --entry-text-color: #333;
+  --entry-text-white-space: nowrap;
+  --entry-text-overflow: hidden;
+  --entry-text-text-overflow: ellipsis;
+}
