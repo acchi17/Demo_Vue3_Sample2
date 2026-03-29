@@ -1,50 +1,62 @@
 <template>
   <div class="side-area">
-    <div class="rect-item">
-      <div 
-        class="rect-icon whitegray"
-        draggable="true"
-        @dragstart="onDragStartBlock"
-        @dragend="onDragEndBlock"
-      >Hello</div>
+    <div class="drag-items">
+      <div class="rect-item">
+        <div
+          class="rect-icon lime"
+          draggable="true"
+          @dragstart="onDragStartContainer"
+          @dragend="onDragEndContainer"
+        ></div>
+      </div>
+      <div
+        v-for="blockName in blockNames"
+        :key="blockName"
+        class="rect-item"
+      >
+        <div
+          class="rect-icon whitegray"
+          draggable="true"
+          @dragstart="onDragStartBlock"
+          @dragend="onDragEndBlock"
+        >{{ blockName }}</div>
+      </div>
     </div>
-    <div class="rect-item">
-      <div 
-        class="rect-icon whitegray"
-        draggable="true"
-        @dragstart="onDragStartBlock"
-        @dragend="onDragEndBlock"
-      >World</div>
-    </div>
-    <div class="rect-item">
-      <div 
-        class="rect-icon lime"
-        draggable="true"
-        @dragstart="onDragStartContainer"
-        @dragend="onDragEndContainer"
-      ></div>
+    <div class="bottom-item">
+      <EntryView />
     </div>
   </div>
 </template>
 
 <script>
+import { inject, ref, onMounted } from 'vue';
 import { useDraggable } from '../composables/useDraggable';
+import EntryView from './EntryView.vue';
 
 export default {
   name: 'SideArea',
-  
+  components: {
+    EntryView
+  },
+
   setup() {
+    // Inject EntryDefinitionService
+    const entryDefinitionService = inject('entryDefinitionService');
+
+    // Reactive state for block names
+    const blockNames = ref([]);
+
     // Get composable
-    const { 
-      onDragStart: onDragStartBlock, 
+    const {
+      onDragStart: onDragStartBlock,
       onDragEnd: onDragEndBlock,
-      setOnDragStartCallBack: setBlockDragStartCallback 
+      setOnDragStartCallBack: setBlockDragStartCallback
     } = useDraggable();
 
-    const { 
+    const {
       onDragStart: onDragStartContainer,
-      onDragEnd: onDragEndContainer, 
-      setOnDragStartCallBack: setContainerDragStartCallback 
+      onDragEnd: onDragEndContainer,
+      setOnDragStartCallBack: setContainerDragStartCallback
     } = useDraggable();
 
     // Set custom callbacks for drag start events
@@ -53,15 +65,23 @@ export default {
       event.dataTransfer.setData('entryName', event.target.textContent);
       event.dataTransfer.setData('sourceId', undefined);
     });
-    
+
     setContainerDragStartCallback((event) => {
       event.dataTransfer.setData('entryType', 'container');
       event.dataTransfer.setData('entryName', 'Container');
       event.dataTransfer.setData('sourceId', undefined);
     });
-    
+
+    // Load block definitions on mounted
+    onMounted(async () => {
+      await entryDefinitionService.loadBlockDefinitions();
+      blockNames.value = Object.keys(entryDefinitionService.blockDefinitions);
+      console.log('blockNames:', blockNames.value);
+    });
+
     // Return values and methods to use in <template>
     return {
+      blockNames,
       onDragStartBlock,
       onDragEndBlock,
       onDragStartContainer,
@@ -78,7 +98,13 @@ export default {
   background: #f0f0f0;
   display: flex;
   flex-direction: column;
+}
+.drag-items {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  overflow-y: auto;
 }
 .rect-item {
   margin-top: 32px;
@@ -109,4 +135,9 @@ export default {
   background-color: #8eec9a;
   border: 1px solid #7bc97b;
 }
+
+.bottom-item {
+  border-top: 1px solid #ccc;
+}
+
 </style>

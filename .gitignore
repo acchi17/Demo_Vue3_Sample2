@@ -2,7 +2,6 @@
 node_modules
 /dist
 
-
 # local env files
 .env.local
 .env.*.local
@@ -24,3 +23,8 @@ pnpm-debug.log*
 
 # Some text files
 *.txt
+
+# Some Markdown files in root except README.md
+/*.md
+!README.md
+!CLAUDE.md

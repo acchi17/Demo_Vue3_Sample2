@@ -28,12 +28,11 @@
 </template>
 
 <script>
-import { inject, computed } from 'vue'
+import { computed } from 'vue'
 import { useDroppable } from '../composables/useDroppable'
+import { useEntryOperation } from '../composables/useEntryOperation'
 import BlockItem from './BlockItem.vue'
 import ContainerItem from './ContainerItem.vue'
-import Block from '../classes/Block'
-import Container from '../classes/Container'
 
 export default {
   name: 'MainArea',
@@ -42,28 +41,31 @@ export default {
     ContainerItem
   },
   
-  setup() {  
-    // Get EntryManager instance from the application
-    const entryManager = inject('entryManager')
-    
+  setup() {
     // Get composable
-    const { 
+    const {
       isDroppable,
-      onDragOver, 
-      onDrop, 
+      onDragOver,
+      onDrop,
       setOnDropCallBack
     } = useDroppable()
+    const { 
+      addBlock,
+      addContainer,
+      removeEntry,
+      reorderEntry,
+      moveEntry
+    } = useEntryOperation()
 
     // Create a top-level container & register it in EntryManager
-    const mainContainer = new Container('main-area')
-    entryManager.addEntry(null, mainContainer, 0)
+    const mainContainer = addContainer(null, 'main-area', 0)
     
     /**
      * Remove a child entry
      * @param {string} id - ID of the child to remove
      */
     const removeChild = (id) => {
-      entryManager.removeEntry(id)
+      removeEntry(id)
     }
     
     // Set custom callbacks for drop event
@@ -78,22 +80,18 @@ export default {
         // Create and insert a new element
         if (index !== null) {
           if (entryType === 'block') {
-            const newBlock = new Block(entryName)
-            // Use EntryManager to add to main container
-            entryManager.addEntry(mainContainer.id, newBlock, index)
+            addBlock(mainContainer.id, entryName, index)
           } else if (entryType === 'container') {
-            const newContainer = new Container(entryName)
-            // Use EntryManager to add to main container
-            entryManager.addEntry(mainContainer.id, newContainer, index)
+            addContainer(mainContainer.id, entryName, index)
           }
         }
       } else {
         if (!sourceId || sourceId === mainContainer.id) {
           // Reorder within MainArea
-          entryManager.reorderEntry(mainContainer.id, entryId, index)
+          reorderEntry(mainContainer.id, entryId, index)
         } else {
           // Drag & drop from a container
-          entryManager.moveEntry(entryId, mainContainer.id, index)
+          moveEntry(entryId, mainContainer.id, index)
         }
       }
     })

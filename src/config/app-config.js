@@ -2,6 +2,10 @@
  * Application Configuration
  */
 export default {
+  // Block definition settigs
+  block: {
+    definitionsFile: '/settings/BlockDefinitions.json'
+  },
   // Script execution settings
   script: {
     // Default language used throughout the application

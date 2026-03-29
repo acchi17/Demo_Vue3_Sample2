@@ -1,16 +1,17 @@
 <template>
-  <div 
+  <div
     class="block-item"
-    :class="{ 'dragging': isDragging }"
+    :class="{ 'dragging': isDragging, 'selected': isSelected }"
     draggable="true"
-    @dragstart="onDragStart"  
+    @dragstart="onDragStart"
     @dragend="onDragEnd"
+    @click.stop="onSelect"
   >
     <div class="block-content">
     <div class="block-header">
         <div class="entry-text">{{ entry.name }}</div>
         <div class="entry-button-group">
-          <div class="entry-button entry-button-play" @click="onPlay"></div>
+          <div v-if="isSelected" class="entry-button entry-button-play" @click="onPlay"></div>
           <div class="entry-button entry-button-delete" @click="onRemove"></div>
         </div>
       </div>
@@ -22,6 +23,7 @@
 import { inject } from 'vue'
 import { useDraggable } from '../composables/useDraggable'
 import { useEntryExecution } from '../composables/useEntryExecution'
+import { selectionState } from '../composables/useSelection'
 
 export default {
   name: 'BlockItem',
@@ -32,11 +34,11 @@ export default {
     }
   },
   emits: ['remove'],
-  
+
   setup(props, { emit }) {
     // Get EntryManager instance from the application
     const entryManager = inject('entryManager')
-    
+
     // Get composables
     const {
       isDragging,
@@ -45,6 +47,13 @@ export default {
       setOnDragStartCallBack
     } = useDraggable()
     const { executeEntry, isExecuting } = useEntryExecution()
+
+    // Selection handling
+    const isSelected = selectionState.isSelected(props.entry.id)
+
+    const onSelect = () => {
+      selectionState.setSelectedEntry(props.entry)
+    }
     
     // Set callback for drag start
     setOnDragStartCallBack((event) => {
@@ -88,8 +97,10 @@ export default {
     // Return values and methods to use in <template>
     return {
       isDragging,
+      isSelected,
       onDragStart,
       onDragEnd,
+      onSelect,
       onPlay,
       onRemove
     }
@@ -103,12 +114,17 @@ export default {
   width: fit-content;
   border-radius: 4px;
   background-color: var(--block-bg-color);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  border: 1px solid #AAAAAA;
+  box-shadow: var(--block-box-shadow);
+  border: var(--block-border);
 }
 
 .block-item.dragging {
   opacity: 0.5;
+}
+
+.block-item.selected {
+  border: var(--entry-select-border);
+  box-shadow: var(--entry-select-box-shadow);
 }
 
 .block-content {

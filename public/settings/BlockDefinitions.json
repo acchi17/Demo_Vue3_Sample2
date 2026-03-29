@@ -1,0 +1,46 @@
+{
+  "categories": [
+    {
+      "name": "math",
+      "blocks": [
+        {
+          "name": "Add",
+          "command": "Add",
+          "parameters": [
+            { "prmType": "input", "name": "a", "dataType": "integer", "ctrlType": "integer_spinner", "default": "0", "min": "-999", "max": "999", "step": "1" },
+            { "prmType": "input", "name": "b", "dataType": "integer", "ctrlType": "integer_spinner", "default": "0", "min": "-999", "max": "999", "step": "1" },
+            { "prmType": "output", "name": "result", "dataType": "integer" }
+          ]
+        },
+        {
+          "name": "Sub",
+          "command": "Sub",
+          "parameters": [
+            { "prmType": "input", "name": "a", "dataType": "integer", "ctrlType": "integer_spinner", "default": "0", "min": "-999", "max": "999", "step": "1" },
+            { "prmType": "input", "name": "b", "dataType": "integer", "ctrlType": "integer_spinner", "default": "0", "min": "-999", "max": "999", "step": "1" },
+            { "prmType": "output", "name": "result", "dataType": "integer" }
+          ]
+        },
+        {
+          "name": "Mul",
+          "command": "Mul",
+          "parameters": [
+            { "prmType": "input", "name": "a", "dataType": "integer", "ctrlType": "integer_spinner", "default": "0", "min": "-999", "max": "999", "step": "1" },
+            { "prmType": "input", "name": "b", "dataType": "integer", "ctrlType": "integer_spinner", "default": "0", "min": "-999", "max": "999", "step": "1" },
+            { "prmType": "output", "name": "result", "dataType": "integer" }
+          ]
+        },
+        {
+          "name": "DivMod",
+          "command": "DivMod",
+          "parameters": [
+            { "prmType": "input", "name": "a", "dataType": "integer", "ctrlType": "integer_spinner", "default": "0", "min": "-999", "max": "999", "step": "1" },
+            { "prmType": "input", "name": "b", "dataType": "integer", "ctrlType": "integer_spinner", "default": "1", "min": "-999", "max": "999", "step": "1" },
+            { "prmType": "output", "name": "result", "dataType": "integer" },
+            { "prmType": "output", "name": "mod", "dataType": "integer" }
+          ]
+        }
+      ]
+    }
+  ]
+}

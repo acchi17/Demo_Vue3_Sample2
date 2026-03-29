@@ -1,16 +1,17 @@
 <template>
-  <div 
+  <div
     class="container-item"
-    :class="{ 'dragging': isDragging }"
+    :class="{ 'dragging': isDragging, 'selected': isSelected }"
     draggable="true"
     @dragstart="onDragStart"
     @dragend="onDragEnd"
+    @click.stop="onSelect"
   >
     <div class="container-content">
       <div class="container-header">
         <div class="entry-text">{{ entry.name }}</div>
         <div class="entry-button-group">
-          <div class="entry-button entry-button-play" @click="onPlay"></div>
+          <div v-if="isSelected" class="entry-button entry-button-play" @click="onPlay"></div>
           <div class="entry-button entry-button-delete" @click="onRemove"></div>
         </div>
       </div>
@@ -41,13 +42,13 @@
 </template>
 
 <script>
-import { computed, inject } from 'vue'
+import { computed } from 'vue'
 import { useDraggable } from '../composables/useDraggable'
 import { useDroppable } from '../composables/useDroppable'
+import { useEntryOperation } from '../composables/useEntryOperation'
 import { useEntryExecution } from '../composables/useEntryExecution'
+import { selectionState } from '../composables/useSelection'
 import BlockItem from './BlockItem.vue'
-import Block from '../classes/Block'
-import Container from '../classes/Container'
 
 export default {
   name: 'ContainerItem',
@@ -61,11 +62,8 @@ export default {
     }
   },
   emits: ['remove'],
-  
+
   setup(props, { emit }) {
-    // Get EntryManager instance from the application
-    const entryManager = inject('entryManager')
-    
     // Get composable
     const {
       isDragging,
@@ -73,22 +71,38 @@ export default {
       onDragEnd,
       setOnDragStartCallBack
     } = useDraggable()
-    const { 
+    const {
       isDroppable,
-      onDragOver, 
-      onDrop, 
+      onDragOver,
+      onDrop,
       setOnDropCallBack,
     } = useDroppable()
+    const {
+      addBlock,
+      addContainer,
+      removeEntry,
+      reorderEntry,
+      moveEntry,
+      getAllDescendantIds,
+      getParentId,
+    } = useEntryOperation()
     const { executeEntry, isExecuting } = useEntryExecution()
+
+    // Selection handling
+    const isSelected = selectionState.isSelected(props.entry.id)
+
+    const onSelect = () => {
+      selectionState.setSelectedEntry(props.entry)
+    }
     
     // Set callback for drag start
     setOnDragStartCallBack((event, dragDropState) => {
       // Get the list of IDs for this entry and all its descendants
-      const allIds = entryManager.getAllDescendantIds(props.entry.id)
+      const allIds = getAllDescendantIds(props.entry.id)
       dragDropState.setDraggedIds(allIds)
 
       // Get parent ID
-      const parentId = entryManager.getParentId(props.entry.id)
+      const parentId = getParentId(props.entry.id)
       
       // Set data for transfer
       event.dataTransfer.setData('entryType', 'container')
@@ -110,22 +124,18 @@ export default {
         // Create and insert a new element
         if (index !== null) {
           if (entryType === 'block') {
-            const newBlock = new Block(entryName)
-            // Use EntryManager to add child entry
-            entryManager.addEntry(props.entry.id, newBlock, index)
+            addBlock(props.entry.id, entryName, index)
           } else if (entryType === 'container') {
-            const newContainer = new Container(entryName)
-            // Use EntryManager to add child entry
-            entryManager.addEntry(props.entry.id, newContainer, index)
+            addContainer(props.entry.id, entryName, index)
           }
         }
       } else {
         if (sourceId === props.entry.id) {
           // Reorder within the same container
-          entryManager.reorderEntry(props.entry.id, entryId, index)
+          reorderEntry(props.entry.id, entryId, index)
         } else {
           // Drag & drop from another container
-          entryManager.moveEntry(entryId, props.entry.id, index)
+          moveEntry(entryId, props.entry.id, index)
         }
       }
     })
@@ -149,7 +159,6 @@ export default {
       }
     }
 
-    
     /**
      * Process when the remove button is clicked
      */
@@ -162,7 +171,7 @@ export default {
      * @param {string} id - ID of the child to remove
      */
     const removeChild = (id) => {
-      entryManager.removeEntry(id)
+      removeEntry(id)
     }
 
     // Array of children
@@ -174,8 +183,10 @@ export default {
     // Return values and methods to use in <template>
     return {
       isDragging,
+      isSelected,
       onDragStart,
       onDragEnd,
+      onSelect,
       onDragOver,
       onDrop,
       onPlay,
@@ -193,12 +204,17 @@ export default {
   width: fit-content;
   border-radius: 4px;
   background-color: var(--container-bg-color);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  border: 1px solid #AAAAAA;
+  box-shadow: var(--container-box-shadow);
+  border: var(--container-border);
 }
 
 .container-item.dragging {
   opacity: 0.5;
+}
+
+.container-item.selected {
+  border: var(--entry-select-border);
+  box-shadow: var(--entry-select-box-shadow);
 }
 
 .container-content {
