@@ -8,6 +8,7 @@ jobs:
     if: github.event.label.name == '@claude'
     runs-on: ubuntu-latest
     permissions:
+      id-token: write
       contents: write
       pull-requests: write
       issues: write
