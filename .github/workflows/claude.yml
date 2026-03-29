@@ -1,11 +1,11 @@
 name: Claude Agent
 on:
   issues:
-    types: [labeled]
+    types: [opened, edited]
 
 jobs:
   claude:
-    if: github.event.label.name == '@claude'
+    if: contains(github.event.issue.body, '@claude')
     runs-on: ubuntu-latest
     permissions:
       id-token: write
