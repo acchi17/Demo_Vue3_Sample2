@@ -1,0 +1,25 @@
+name: Claude Agent
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  claude:
+    if: github.event.label.name == '@claude'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: step4
+      
+      - name: Run Claude Code
+        id: claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: --max-turns 10
