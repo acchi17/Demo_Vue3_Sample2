@@ -5,9 +5,10 @@
       <div v-if="inputParamDefs.length > 0" class="entry-param">
         <div class="entry-param-title">Input</div>
         <div v-for="paramDef in inputParamDefs" :key="paramDef.name" class="param-row">
-          <SpinEdit
-            v-if="paramDef.ctrlType === 'integer_spinner'"
+          <component
+            :is="paramComponents[paramDef.ctrlType]"
             :name="paramDef.name"
+            :numberType="paramDef.ctrlType === 'real_spinner' ? 'real' : 'integer'"
             :min="paramDef.min"
             :max="paramDef.max"
             :step="paramDef.step"
@@ -27,12 +28,18 @@
 import { inject, computed, ref, watch } from 'vue'
 import { selectionState } from '../composables/useSelection'
 import SpinEdit from './SpinEdit.vue'
+import CheckEdit from './CheckEdit.vue'
 
 export default {
   name: 'EntryView',
-  components: { SpinEdit },
+  components: { SpinEdit, CheckEdit },
 
   setup() {
+    const paramComponents = {
+      integer_spinner: SpinEdit,
+      real_spinner:    SpinEdit,
+      checkbox:        CheckEdit,
+    }
     const entryManager = inject('entryManager')
     const entryParamManager = inject('entryParamManager')
     const entryDefinitionService = inject('entryDefinitionService')
@@ -70,7 +77,8 @@ export default {
       selectedEntry,
       inputParamDefs,
       localParams,
-      onParamChange
+      onParamChange,
+      paramComponents
     }
   }
 }
