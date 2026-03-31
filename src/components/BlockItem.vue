@@ -11,8 +11,8 @@
     <div class="block-header">
         <div class="entry-text">{{ entry.name }}</div>
         <div class="entry-button-group">
-          <div v-if="isSelected" class="entry-button entry-button-play" @click="onPlay"></div>
-          <div class="entry-button entry-button-delete" @click="onRemove"></div>
+          <div v-if="isSelected" class="entry-button entry-button-play" @click.stop="onPlay"></div>
+          <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
         </div>
       </div>
     </div>

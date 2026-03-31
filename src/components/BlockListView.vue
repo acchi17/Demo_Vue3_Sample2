@@ -1,5 +1,5 @@
 <template>
-  <div class="drag-items">
+  <div class="block-list-view" @click="selectionState.clearSelection()">
     <div class="rect-item">
       <div
         class="rect-icon lime"
@@ -26,6 +26,7 @@
 <script>
 import { inject, ref, onMounted } from 'vue';
 import { useDraggable } from '../composables/useDraggable';
+import { selectionState } from '../composables/useSelection';
 
 export default {
   name: 'BlockListView',
@@ -76,14 +77,15 @@ export default {
       onDragStartBlock,
       onDragEndBlock,
       onDragStartContainer,
-      onDragEndContainer
+      onDragEndContainer,
+      selectionState
     };
   }
 }
 </script>
 
 <style scoped>
-.drag-items {
+.block-list-view {
   flex: 1;
   display: flex;
   flex-direction: column;

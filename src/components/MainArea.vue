@@ -1,6 +1,7 @@
 <template>
-  <div 
+  <div
     class="main-area"
+    @click="selectionState.clearSelection()"
   >
     <div class="main-container">
       <!-- First drop area (always displayed) -->
@@ -31,6 +32,7 @@
 import { computed } from 'vue'
 import { useDroppable } from '../composables/useDroppable'
 import { useEntryOperation } from '../composables/useEntryOperation'
+import { selectionState } from '../composables/useSelection'
 import BlockItem from './BlockItem.vue'
 import ContainerItem from './ContainerItem.vue'
 
@@ -108,7 +110,8 @@ export default {
       onDrop,
       removeChild,
       children,
-      dropAllowed
+      dropAllowed,
+      selectionState
     }
   }
 }
