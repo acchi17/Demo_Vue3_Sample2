@@ -18,7 +18,7 @@ const entryParamManager = new EntryParamManager()
 // Create Services
 const fileService = new FileService()
 const executionLogService = new ExecutionLogService()
-const entryExecutionService = new EntryExecutionService(appConfig, executionLogService)
+const entryExecutionService = new EntryExecutionService(appConfig, entryParamManager, executionLogService)
 const entryDefinitionService = new EntryDefinitionService(appConfig, fileService)
 
 // Provide

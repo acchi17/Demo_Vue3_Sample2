@@ -16,6 +16,27 @@ export default class EntryDefinitionService {
   }
 
   /**
+   * Cast a parameter value to its proper JS type based on dataType
+   * @param {any} value - Raw value (may be a string from JSON)
+   * @param {string} dataType - Data type ('integer', 'real', 'boolean', etc.)
+   * @returns {any} Value cast to the appropriate type
+   */
+  _castParamValue(value, dataType) {
+    if (value === null || value === undefined) return value;
+    switch (dataType) {
+      case 'integer':
+        return parseInt(value, 10);
+      case 'real':
+        return parseFloat(value);
+      case 'boolean':
+        if (typeof value === 'boolean') return value;
+        return value === 'true' || value === true;
+      default:
+        return value;
+    }
+  }
+
+  /**
    * Load block definitions from JSON file
    * @return {Promise<Object>} Promise resolving to block definitions and category information
    */
@@ -113,11 +134,11 @@ export default class EntryDefinitionService {
     const output = {};
     
     blockDef.parameters.input.forEach(param => {
-      input[param.name] = param.default !== undefined ? param.default : null;
+      input[param.name] = param.default !== undefined ? this._castParamValue(param.default, param.dataType) : null;
     });
-    
+
     blockDef.parameters.output.forEach(param => {
-      output[param.name] = param.default !== undefined ? param.default : null;
+      output[param.name] = param.default !== undefined ? this._castParamValue(param.default, param.dataType) : null;
     });
     
     return { input, output };
