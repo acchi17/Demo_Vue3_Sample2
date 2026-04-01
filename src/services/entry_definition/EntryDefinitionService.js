@@ -16,6 +16,27 @@ export default class EntryDefinitionService {
   }
 
   /**
+   * Cast a parameter value to its proper JS type based on dataType
+   * @param {any} value - Raw value (may be a string from JSON)
+   * @param {string} dataType - Data type ('integer', 'real', 'boolean', etc.)
+   * @returns {any} Value cast to the appropriate type
+   */
+  _castParamValue(value, dataType) {
+    if (value === null || value === undefined) return value;
+    switch (dataType) {
+      case 'integer':
+        return parseInt(value, 10);
+      case 'real':
+        return parseFloat(value);
+      case 'boolean':
+        if (typeof value === 'boolean') return value;
+        return value === 'true' || value === true;
+      default:
+        return value;
+    }
+  }
+
+  /**
    * Load block definitions from JSON file
    * @return {Promise<Object>} Promise resolving to block definitions and category information
    */
@@ -79,27 +100,6 @@ export default class EntryDefinitionService {
       };
     } catch (error) {
       console.error(`[${this.constructor.name}] loadBlockDefinitions() failed: ${error.message}`);
-    }
-  }
-
-  /**
-   * Cast a parameter value to its proper JS type based on dataType
-   * @param {any} value - Raw value (may be a string from JSON)
-   * @param {string} dataType - Data type ('integer', 'real', 'boolean', etc.)
-   * @returns {any} Value cast to the appropriate type
-   */
-  _castParamValue(value, dataType) {
-    if (value === null || value === undefined) return value;
-    switch (dataType) {
-      case 'integer':
-        return parseInt(value, 10);
-      case 'real':
-        return parseFloat(value);
-      case 'boolean':
-        if (typeof value === 'boolean') return value;
-        return value === 'true' || value === true;
-      default:
-        return value;
     }
   }
 
