@@ -1,6 +1,6 @@
 <template>
   <div class="side-area">
-    <div class="block-list-wrapper">
+    <div class="top-item">
       <BlockListView />
     </div>
     <div class="bottom-item">
@@ -31,16 +31,16 @@ export default {
   flex-direction: column;
 }
 
-.block-list-wrapper {
+.top-item {
   flex: 6;
   display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .bottom-item {
   flex: 4;
-  border-top: 1px solid #ccc;
+  display: flex;
   overflow-y: auto;
+  border-top: 1px solid #ccc;
 }
 </style>

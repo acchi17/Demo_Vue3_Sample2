@@ -86,14 +86,16 @@ export default {
 
 <style scoped>
 .entry-view {
-  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   padding: 14px;
-  background: #fafafa;
 }
 
 .empty-content {
-  color: #999;
-  font-size: 13px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #c0c0c0;
 }
 
 .entry-header {

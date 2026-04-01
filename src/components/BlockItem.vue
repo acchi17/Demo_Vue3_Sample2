@@ -8,7 +8,7 @@
     @click.stop="onSelect"
   >
     <div class="block-content">
-    <div class="block-header">
+      <div class="block-header">
         <div class="entry-text">{{ entry.name }}</div>
         <div class="entry-button-group">
           <div v-if="isSelected" class="entry-button entry-button-play" @click.stop="onPlay"></div>
