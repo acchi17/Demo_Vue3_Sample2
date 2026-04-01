@@ -90,7 +90,6 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow-y: auto;
 }
 .rect-item {
   margin-top: 32px;
