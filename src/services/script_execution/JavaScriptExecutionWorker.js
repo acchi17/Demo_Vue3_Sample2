@@ -82,7 +82,7 @@ async function handleExecuteMessage(data) {
     console.log(errmsg);
     // Send error message back to main thread
     self.postMessage({
-      type,
+      type: 'error',
       id,
       errmsg
     });
