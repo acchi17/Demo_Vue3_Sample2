@@ -17,6 +17,21 @@
           />
         </div>
       </div>
+      <div v-if="outputParamDefs.length > 0" class="entry-param">
+        <div class="entry-param-title">Output</div>
+        <div v-for="paramDef in outputParamDefs" :key="paramDef.name" class="param-row">
+          <component
+            :is="paramComponents[paramDef.ctrlType]"
+            :name="paramDef.name"
+            :numberType="paramDef.ctrlType === 'real_spinner' ? 'real' : 'integer'"
+            :min="paramDef.min"
+            :max="paramDef.max"
+            :step="paramDef.step"
+            :value="localOutputParams[paramDef.name]"
+            :disabled="true"
+          />
+        </div>
+      </div>
     </div>
     <div v-else>
       <p class="empty-content">No entry selected</p>
@@ -51,6 +66,12 @@ export default {
       return entryManager.getEntry(selectedEntryId.value)
     })
 
+    const dataTypeToCtrlType = {
+      integer: 'integer_spinner',
+      real: 'real_spinner',
+      boolean: 'checkbox'
+    }
+
     // Input parameter definitions from block definition (empty for containers)
     const inputParamDefs = computed(() => {
       if (!selectedEntry.value || selectedEntry.value.type !== 'block') return []
@@ -58,12 +79,25 @@ export default {
       return blockDef ? blockDef.parameters.input : []
     })
 
+    // Output parameter definitions from block definition (empty for containers)
+    const outputParamDefs = computed(() => {
+      if (!selectedEntry.value || selectedEntry.value.type !== 'block') return []
+      const blockDef = entryDefinitionService.blockDefinitions[selectedEntry.value.name]
+      if (!blockDef) return []
+      return blockDef.parameters.output.map(param => ({
+        ...param,
+        ctrlType: param.ctrlType || dataTypeToCtrlType[param.dataType] || 'integer_spinner'
+      }))
+    })
+
     // Local copy of param values for reactive display
     const localParams = ref({})
+    const localOutputParams = ref({})
 
     // Reload local params when selected entry changes
     watch(selectedEntryId, (id) => {
       localParams.value = id ? { ...entryParamManager.getInputParams(id) } : {}
+      localOutputParams.value = id ? { ...entryParamManager.getOutputParams(id) } : {}
     }, { immediate: true })
 
     const onParamChange = (paramName, value) => {
@@ -76,7 +110,9 @@ export default {
     return {
       selectedEntry,
       inputParamDefs,
+      outputParamDefs,
       localParams,
+      localOutputParams,
       onParamChange,
       paramComponents
     }

@@ -8,6 +8,7 @@
       :max="max"
       :step="effectiveStep"
       :value="value"
+      :disabled="disabled"
       @change="$emit('update:value', numberType === 'integer' ? parseInt($event.target.value, 10) : parseFloat($event.target.value))"
     />
   </div>
@@ -23,7 +24,8 @@ export default {
     min:        { type: [Number, String], default: null },
     max:        { type: [Number, String], default: null },
     step:       { type: [Number, String], default: null },
-    value:      { type: Number, default: 0 }
+    value:      { type: Number, default: 0 },
+    disabled:   { type: Boolean, default: false }
   },
 
   computed: {
