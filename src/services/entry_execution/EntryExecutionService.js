@@ -8,10 +8,12 @@ export default class EntryExecutionService {
   /**
    * Constructor
    * @param {Object} config Configuration object
+   * @param {EntryParamManager} entryParamManager Entry parameter manager instance (optional)
    * @param {ExecutionLogService} executionLogService Execution log service instance (optional)
    */
-  constructor(config, executionLogService = null) {
+  constructor(config, entryParamManager = null, executionLogService = null) {
     this.scriptExecutionService = new ScriptExecutionService(config.script);
+    this.entryParamManager = entryParamManager;
     this.executionLogService = executionLogService;
     this._executionStack = []; // Stack to track currently executing entries
     
@@ -42,7 +44,9 @@ export default class EntryExecutionService {
     let result = {};
     try {
       // Execute script based on block name
-      result = await this.scriptExecutionService.executeScript(block.name);
+      const inputParams = this.entryParamManager ? this.entryParamManager.getInputParams(block.id) : {};
+      console.log(`[${this.constructor.name}] Executing block: ${block.name} with input params:`, inputParams);
+      result = await this.scriptExecutionService.executeScript(block.name, inputParams);
     } catch (error) {
       result.errorMessage = error.message;
     }
