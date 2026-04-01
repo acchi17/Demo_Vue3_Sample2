@@ -45,7 +45,6 @@ export default class EntryExecutionService {
     try {
       // Execute script based on block name
       const inputParams = this.entryParamManager ? this.entryParamManager.getInputParams(block.id) : {};
-      console.log(`[${this.constructor.name}] Executing block: ${block.name} with input params:`, inputParams);
       result = await this.scriptExecutionService.executeScript(block.name, inputParams);
     } catch (error) {
       result.errorMessage = error.message;

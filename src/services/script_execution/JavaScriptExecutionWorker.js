@@ -52,7 +52,8 @@ function sendErrorToMain(errorMessage) {
 async function handleExecuteMessage(data) {
   const { id, scriptName, inputParams } = data;
   const type = 'result';
-  
+  console.log(`Worker executing script: ${scriptName} with`, inputParams);
+
   try {
     // Dynamically import the script module as an ES module
     // IMPORTANT: Must use template literals (`/path/${var}`) for dynamic imports with Webpack.
@@ -78,7 +79,7 @@ async function handleExecuteMessage(data) {
       result
     });
   } catch (error) {
-    const errmsg = `Worker Execution failed: ${error.message}`;
+    const errmsg = `Worker execution failed: ${error.message}`;
     console.log(errmsg);
     // Send error message back to main thread
     self.postMessage({
