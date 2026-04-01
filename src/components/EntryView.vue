@@ -66,12 +66,6 @@ export default {
       return entryManager.getEntry(selectedEntryId.value)
     })
 
-    const dataTypeToCtrlType = {
-      integer: 'integer_spinner',
-      real: 'real_spinner',
-      boolean: 'checkbox'
-    }
-
     // Input parameter definitions from block definition (empty for containers)
     const inputParamDefs = computed(() => {
       if (!selectedEntry.value || selectedEntry.value.type !== 'block') return []
@@ -83,11 +77,7 @@ export default {
     const outputParamDefs = computed(() => {
       if (!selectedEntry.value || selectedEntry.value.type !== 'block') return []
       const blockDef = entryDefinitionService.blockDefinitions[selectedEntry.value.name]
-      if (!blockDef) return []
-      return blockDef.parameters.output.map(param => ({
-        ...param,
-        ctrlType: param.ctrlType || dataTypeToCtrlType[param.dataType] || 'integer_spinner'
-      }))
+      return blockDef ? blockDef.parameters.output : []
     })
 
     // Local copy of param values for reactive display
