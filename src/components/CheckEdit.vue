@@ -5,6 +5,7 @@
       type="checkbox"
       class="check-edit-input"
       :checked="value"
+      :disabled="disabled"
       @change="$emit('update:value', $event.target.checked)"
     />
   </div>
@@ -16,7 +17,8 @@ export default {
 
   props: {
     name:  { type: String, required: true },
-    value: { type: Boolean, default: false }
+    value:    { type: Boolean, default: false },
+    disabled: { type: Boolean, default: false }
   },
 
   emits: ['update:value']

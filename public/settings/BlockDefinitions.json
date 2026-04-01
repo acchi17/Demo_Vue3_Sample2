@@ -9,7 +9,7 @@
           "parameters": [
             { "prmType": "input", "name": "a", "dataType": "integer", "ctrlType": "integer_spinner", "default": 0, "min": -999, "max": 999, "step": 1 },
             { "prmType": "input", "name": "b", "dataType": "integer", "ctrlType": "integer_spinner", "default": 0, "min": -999, "max": 999, "step": 1 },
-            { "prmType": "output", "name": "result", "dataType": "integer" }
+            { "prmType": "output", "name": "result", "dataType": "integer", "ctrlType": "integer_spinner" }
           ]
         },
         {
@@ -18,7 +18,7 @@
           "parameters": [
             { "prmType": "input", "name": "a", "dataType": "integer", "ctrlType": "integer_spinner", "default": 0, "min": -999, "max": 999, "step": 1 },
             { "prmType": "input", "name": "b", "dataType": "integer", "ctrlType": "integer_spinner", "default": 0, "min": -999, "max": 999, "step": 1 },
-            { "prmType": "output", "name": "result", "dataType": "integer" }
+            { "prmType": "output", "name": "result", "dataType": "integer", "ctrlType": "integer_spinner" }
           ]
         },
         {
@@ -27,7 +27,7 @@
           "parameters": [
             { "prmType": "input", "name": "a", "dataType": "integer", "ctrlType": "integer_spinner", "default": 0, "min": -999, "max": 999, "step": 1 },
             { "prmType": "input", "name": "b", "dataType": "integer", "ctrlType": "integer_spinner", "default": 0, "min": -999, "max": 999, "step": 1 },
-            { "prmType": "output", "name": "result", "dataType": "integer" }
+            { "prmType": "output", "name": "result", "dataType": "integer", "ctrlType": "integer_spinner" }
           ]
         },
         {
@@ -36,8 +36,8 @@
           "parameters": [
             { "prmType": "input", "name": "a", "dataType": "integer", "ctrlType": "integer_spinner", "default": 0, "min": -999, "max": 999, "step": 1 },
             { "prmType": "input", "name": "b", "dataType": "integer", "ctrlType": "integer_spinner", "default": 1, "min": -999, "max": 999, "step": 1 },
-            { "prmType": "output", "name": "result", "dataType": "integer" },
-            { "prmType": "output", "name": "mod", "dataType": "integer" }
+            { "prmType": "output", "name": "result", "dataType": "integer", "ctrlType": "integer_spinner" },
+            { "prmType": "output", "name": "mod", "dataType": "integer", "ctrlType": "integer_spinner" }
           ]
         }
       ]

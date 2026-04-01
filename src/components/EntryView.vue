@@ -12,8 +12,23 @@
             :min="paramDef.min"
             :max="paramDef.max"
             :step="paramDef.step"
-            :value="localParams[paramDef.name]"
+            :value="localInputParams[paramDef.name]"
             @update:value="onParamChange(paramDef.name, $event)"
+          />
+        </div>
+      </div>
+      <div v-if="outputParamDefs.length > 0" class="entry-param">
+        <div class="entry-param-title">Output</div>
+        <div v-for="paramDef in outputParamDefs" :key="paramDef.name" class="param-row">
+          <component
+            :is="paramComponents[paramDef.ctrlType]"
+            :name="paramDef.name"
+            :numberType="paramDef.ctrlType === 'real_spinner' ? 'real' : 'integer'"
+            :min="paramDef.min"
+            :max="paramDef.max"
+            :step="paramDef.step"
+            :value="localOutputParams[paramDef.name]"
+            :disabled="true"
           />
         </div>
       </div>
@@ -58,25 +73,36 @@ export default {
       return blockDef ? blockDef.parameters.input : []
     })
 
+    // Output parameter definitions from block definition (empty for containers)
+    const outputParamDefs = computed(() => {
+      if (!selectedEntry.value || selectedEntry.value.type !== 'block') return []
+      const blockDef = entryDefinitionService.blockDefinitions[selectedEntry.value.name]
+      return blockDef ? blockDef.parameters.output : []
+    })
+
     // Local copy of param values for reactive display
-    const localParams = ref({})
+    const localInputParams = ref({})
+    const localOutputParams = ref({})
 
     // Reload local params when selected entry changes
     watch(selectedEntryId, (id) => {
-      localParams.value = id ? { ...entryParamManager.getInputParams(id) } : {}
+      localInputParams.value = id ? { ...entryParamManager.getInputParams(id) } : {}
+      localOutputParams.value = id ? { ...entryParamManager.getOutputParams(id) } : {}
     }, { immediate: true })
 
     const onParamChange = (paramName, value) => {
       const id = selectedEntryId.value
       if (!id) return
-      localParams.value[paramName] = value
+      localInputParams.value[paramName] = value
       entryParamManager.setInputParam(id, paramName, value)
     }
 
     return {
       selectedEntry,
       inputParamDefs,
-      localParams,
+      outputParamDefs,
+      localInputParams,
+      localOutputParams,
       onParamChange,
       paramComponents
     }
