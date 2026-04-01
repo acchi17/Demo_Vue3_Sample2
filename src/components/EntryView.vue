@@ -12,7 +12,7 @@
             :min="paramDef.min"
             :max="paramDef.max"
             :step="paramDef.step"
-            :value="localParams[paramDef.name]"
+            :value="localInputParams[paramDef.name]"
             @update:value="onParamChange(paramDef.name, $event)"
           />
         </div>
@@ -81,19 +81,19 @@ export default {
     })
 
     // Local copy of param values for reactive display
-    const localParams = ref({})
+    const localInputParams = ref({})
     const localOutputParams = ref({})
 
     // Reload local params when selected entry changes
     watch(selectedEntryId, (id) => {
-      localParams.value = id ? { ...entryParamManager.getInputParams(id) } : {}
+      localInputParams.value = id ? { ...entryParamManager.getInputParams(id) } : {}
       localOutputParams.value = id ? { ...entryParamManager.getOutputParams(id) } : {}
     }, { immediate: true })
 
     const onParamChange = (paramName, value) => {
       const id = selectedEntryId.value
       if (!id) return
-      localParams.value[paramName] = value
+      localInputParams.value[paramName] = value
       entryParamManager.setInputParam(id, paramName, value)
     }
 
@@ -101,7 +101,7 @@ export default {
       selectedEntry,
       inputParamDefs,
       outputParamDefs,
-      localParams,
+      localInputParams,
       localOutputParams,
       onParamChange,
       paramComponents
