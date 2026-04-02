@@ -12,24 +12,6 @@ export default class EntryParamManager {
   }
 
   /**
-   * Get input parameters for an entry
-   * @param {string} entryId - ID of the entry
-   * @returns {Object} Input parameters object
-   */
-  getInputParams(entryId) {
-    return this._inputParamsMap.get(entryId) || {};
-  }
-  
-  /**
-   * Get output parameters for an entry
-   * @param {string} entryId - ID of the entry
-   * @returns {Object} Output parameters object
-   */
-  getOutputParams(entryId) {
-    return this._outputParamsMap.get(entryId) || {};
-  }
-  
-  /**
    * Get a specific input parameter value
    * @param {string} entryId - ID of the entry
    * @param {string} paramName - Name of the parameter
@@ -51,7 +33,43 @@ export default class EntryParamManager {
     return params ? params[paramName] : undefined;
   }
 
-    /**
+  /**
+   * Get input parameters for an entry
+   * @param {string} entryId - ID of the entry
+   * @returns {Object} Input parameters object
+   */
+  getInputParams(entryId) {
+    return this._inputParamsMap.get(entryId) || {};
+  }
+  
+  /**
+   * Get output parameters for an entry
+   * @param {string} entryId - ID of the entry
+   * @returns {Object} Output parameters object
+   */
+  getOutputParams(entryId) {
+    return this._outputParamsMap.get(entryId) || {};
+  }
+  
+  /**
+   * Get input parameter names for an entry
+   * @param {string} entryId - ID of the entry
+   * @returns {string[]} Array of input parameter names
+   */
+  getInputParamNames(entryId) {
+    return Object.keys(this._inputParamsMap.get(entryId) || {});
+  }
+
+  /**
+   * Get output parameter names for an entry
+   * @param {string} entryId - ID of the entry
+   * @returns {string[]} Array of output parameter names
+   */
+  getOutputParamNames(entryId) {
+    return Object.keys(this._outputParamsMap.get(entryId) || {});
+  }
+
+  /**
    * Set entry input parameters by entry ID
    * Associates the entry ID with input parameters
    * @param {string} entryId - ID of the entry

@@ -46,7 +46,17 @@ export default class EntryExecutionService {
       // Execute script based on block name
       const inputParams = this.entryParamManager ? this.entryParamManager.getInputParams(block.id) : {};
       result = await this.scriptExecutionService.executeScript(block.name, inputParams);
+      // Store result values into output params
+      if (this.entryParamManager) {
+        const outputParamNames = this.entryParamManager.getOutputParamNames(block.id);
+        for (const key of outputParamNames) {
+          if (key in result) {
+            this.entryParamManager.setOutputParam(block.id, key, result[key]);
+          }
+        }
+      }
     } catch (error) {
+      result.success = false;
       result.errorMessage = error.message;
     }
     if (result.success === undefined) {
