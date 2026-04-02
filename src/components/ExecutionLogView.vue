@@ -19,6 +19,7 @@
             <th class="col-start-time">Start Time</th>
             <th class="col-status">Status</th>
             <th class="col-name">Entry Name</th>
+            <th class="col-input-params">Input Parameters</th>
             <th class="col-result">Result</th>
             <th class="col-error-msg">Error Message</th>
             <th class="col-exec-time">Exec. Time</th>
@@ -37,6 +38,7 @@
                 </span>
               </td>             
               <td class="col-name">{{ item.data.entryName}}</td>
+              <td class="col-input-params">{{ formatInputParams(item.data.inputParams) }}</td>
               <td class="col-result">{{ formatResult(item.data.result) }}</td>
               <td class="col-error-msg">{{ item.data.result?.errorMessage }}</td>
               <td class="col-exec-time">{{ formatExecutionTime(item.data.execTime) }}ms</td>
@@ -45,7 +47,7 @@
 
             <!-- Container group footer row -->
             <tr v-else-if="item.type === 'container-end'" class="container-group-footer">
-              <td colspan="7"></td>
+              <td colspan="8"></td>
             </tr>
           </template>
         </tbody>
@@ -104,6 +106,16 @@ function formatTimestamp(timestamp) {
 function formatExecutionTime(time) {
   if (time === undefined || time === null) return '';
   return time.toFixed(3);
+}
+
+/**
+ * Format input parameters for display
+ * @param {Object} inputParams Input parameters object
+ * @returns {string} Formatted input parameters as key-value pairs
+ */
+function formatInputParams(inputParams) {
+  if (!inputParams || Object.keys(inputParams).length === 0) return '';
+  return Object.entries(inputParams).map(([key, value]) => `${key}: ${value}`).join(', ');
 }
 
 /**
@@ -297,6 +309,10 @@ const transformedLogs = computed(() => {
 }
 
 .col-name {
+  min-width: 160px;
+}
+
+.col-input-params {
   min-width: 160px;
 }
 

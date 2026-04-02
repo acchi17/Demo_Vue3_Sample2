@@ -123,11 +123,12 @@ export default class ExecutionLogService {
    * @param {Entry} entry Entry instance (Block or Container)
    * @param {string} executionId Execution ID (received from EntryExecutionService)
    * @param {string} parentExecutionId Parent entry's execution ID (optional)
+   * @param {Object} inputParams Input parameters of the entry at execution time (optional)
    * @returns {string} Execution ID that can be used later to update the log
    */
-  addLog(entry, executionId, parentExecutionId = null) {
+  addLog(entry, executionId, parentExecutionId = null, inputParams = {}) {
     try {
-      // Create execution log 
+      // Create execution log
       const execution = {
         executionId: executionId,
         parentExecutionId: parentExecutionId,
@@ -135,7 +136,8 @@ export default class ExecutionLogService {
         entryId: entry.id,
         entryName: entry.name,
         entryType: entry.type,
-        result: null, 
+        inputParams: inputParams,
+        result: null,
         execTime: null,
         startTime: performance.now()
       };
