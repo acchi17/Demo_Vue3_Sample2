@@ -1,3 +1,5 @@
+import { reactive } from 'vue'
+
 /**
  * EntryParamManager class
  * Class that manages parameter values of entries
@@ -7,8 +9,8 @@ export default class EntryParamManager {
   constructor() {
     // Dictionary of entry IDs and their input parameters
     this._inputParamsMap = new Map(); // entryId -> inputs
-    // Dictionary of entry IDs and their output parameters
-    this._outputParamsMap = new Map(); // entryId -> outputs
+    // Dictionary of entry IDs and their output parameters (reactive for UI updates)
+    this._outputParamsMap = reactive(new Map()); // entryId -> outputs
   }
 
   /**
@@ -50,7 +52,7 @@ export default class EntryParamManager {
   getOutputParams(entryId) {
     return this._outputParamsMap.get(entryId) || {};
   }
-  
+
   /**
    * Get input parameter names for an entry
    * @param {string} entryId - ID of the entry
@@ -94,10 +96,10 @@ export default class EntryParamManager {
    */
   setOutputParams(entryId, outputParams = {}) {
     if (!entryId) return false;
-    
-    // Set output parameters to the map
+
+    // Set output parameters to the reactive map
     this._outputParamsMap.set(entryId, outputParams);
-    
+
     return true;
   }
 
@@ -131,14 +133,13 @@ export default class EntryParamManager {
    */
   setOutputParam(entryId, paramName, value) {
     if (!entryId || !paramName) return false;
-    
-    // Create entry in map if it doesn't exist
+
+    // Create entry in reactive map if it doesn't exist
     if (!this._outputParamsMap.has(entryId)) {
       this._outputParamsMap.set(entryId, {});
     }
-    
-    const params = this._outputParamsMap.get(entryId);
-    params[paramName] = value;
+
+    this._outputParamsMap.get(entryId)[paramName] = value;
 
     return true;
   }
@@ -150,11 +151,11 @@ export default class EntryParamManager {
    */
   removeParams(entryId) {
     if (!entryId) return false;
-    
+
     // Remove parameter values from both maps
     this._inputParamsMap.delete(entryId);
     this._outputParamsMap.delete(entryId);
-    
+
     return true;
   }  
 }

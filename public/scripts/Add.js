@@ -9,7 +9,7 @@ export function execute(inputParams) {
 
   result.success = false;
   try {
-    result.output = inputParams.a + inputParams.b;
+    result.Result = inputParams.NumberA + inputParams.NumberB;
     result.success = true;
   } catch (error) {
     result.errorMessage = error.message;
