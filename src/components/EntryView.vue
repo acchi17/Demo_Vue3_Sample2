@@ -80,14 +80,19 @@ export default {
       return blockDef ? blockDef.parameters.output : []
     })
 
-    // Local copy of param values for reactive display
+    // Local copy of input param values for reactive display
     const localInputParams = ref({})
-    const localOutputParams = ref({})
 
-    // Reload local params when selected entry changes
+    // Computed output params reads directly from the reactive EntryParamManager map,
+    // so it updates automatically when values change during execution
+    const localOutputParams = computed(() => {
+      const id = selectedEntryId.value
+      return id ? entryParamManager.getOutputParams(id) : {}
+    })
+
+    // Reload local input params when selected entry changes
     watch(selectedEntryId, (id) => {
       localInputParams.value = id ? { ...entryParamManager.getInputParams(id) } : {}
-      localOutputParams.value = id ? { ...entryParamManager.getOutputParams(id) } : {}
     }, { immediate: true })
 
     const onParamChange = (paramName, value) => {

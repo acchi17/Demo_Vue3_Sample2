@@ -1,3 +1,5 @@
+import { reactive } from 'vue'
+
 /**
  * EntryParamManager class
  * Class that manages parameter values of entries
@@ -7,8 +9,8 @@ export default class EntryParamManager {
   constructor() {
     // Dictionary of entry IDs and their input parameters
     this._inputParamsMap = new Map(); // entryId -> inputs
-    // Dictionary of entry IDs and their output parameters
-    this._outputParamsMap = new Map(); // entryId -> outputs
+    // Dictionary of entry IDs and their output parameters (reactive for UI updates)
+    this._outputParamsMap = reactive({}); // entryId -> outputs
   }
 
   /**
@@ -29,7 +31,7 @@ export default class EntryParamManager {
    * @returns {any} Parameter value or undefined
    */
   getOutputParam(entryId, paramName) {
-    const params = this._outputParamsMap.get(entryId);
+    const params = this._outputParamsMap[entryId];
     return params ? params[paramName] : undefined;
   }
 
@@ -48,9 +50,9 @@ export default class EntryParamManager {
    * @returns {Object} Output parameters object
    */
   getOutputParams(entryId) {
-    return this._outputParamsMap.get(entryId) || {};
+    return this._outputParamsMap[entryId] || {};
   }
-  
+
   /**
    * Get input parameter names for an entry
    * @param {string} entryId - ID of the entry
@@ -66,7 +68,7 @@ export default class EntryParamManager {
    * @returns {string[]} Array of output parameter names
    */
   getOutputParamNames(entryId) {
-    return Object.keys(this._outputParamsMap.get(entryId) || {});
+    return Object.keys(this._outputParamsMap[entryId] || {});
   }
 
   /**
@@ -94,10 +96,10 @@ export default class EntryParamManager {
    */
   setOutputParams(entryId, outputParams = {}) {
     if (!entryId) return false;
-    
-    // Set output parameters to the map
-    this._outputParamsMap.set(entryId, outputParams);
-    
+
+    // Set output parameters to the reactive map
+    this._outputParamsMap[entryId] = outputParams;
+
     return true;
   }
 
@@ -131,14 +133,13 @@ export default class EntryParamManager {
    */
   setOutputParam(entryId, paramName, value) {
     if (!entryId || !paramName) return false;
-    
-    // Create entry in map if it doesn't exist
-    if (!this._outputParamsMap.has(entryId)) {
-      this._outputParamsMap.set(entryId, {});
+
+    // Create entry in reactive map if it doesn't exist
+    if (!this._outputParamsMap[entryId]) {
+      this._outputParamsMap[entryId] = {};
     }
-    
-    const params = this._outputParamsMap.get(entryId);
-    params[paramName] = value;
+
+    this._outputParamsMap[entryId][paramName] = value;
 
     return true;
   }
@@ -150,11 +151,11 @@ export default class EntryParamManager {
    */
   removeParams(entryId) {
     if (!entryId) return false;
-    
+
     // Remove parameter values from both maps
     this._inputParamsMap.delete(entryId);
-    this._outputParamsMap.delete(entryId);
-    
+    delete this._outputParamsMap[entryId];
+
     return true;
   }  
 }
