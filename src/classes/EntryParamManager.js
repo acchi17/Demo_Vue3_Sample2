@@ -10,7 +10,7 @@ export default class EntryParamManager {
     // Dictionary of entry IDs and their input parameters
     this._inputParamsMap = new Map(); // entryId -> inputs
     // Dictionary of entry IDs and their output parameters (reactive for UI updates)
-    this._outputParamsMap = reactive({}); // entryId -> outputs
+    this._outputParamsMap = reactive(new Map()); // entryId -> outputs
   }
 
   /**
@@ -31,7 +31,7 @@ export default class EntryParamManager {
    * @returns {any} Parameter value or undefined
    */
   getOutputParam(entryId, paramName) {
-    const params = this._outputParamsMap[entryId];
+    const params = this._outputParamsMap.get(entryId);
     return params ? params[paramName] : undefined;
   }
 
@@ -50,7 +50,7 @@ export default class EntryParamManager {
    * @returns {Object} Output parameters object
    */
   getOutputParams(entryId) {
-    return this._outputParamsMap[entryId] || {};
+    return this._outputParamsMap.get(entryId) || {};
   }
 
   /**
@@ -68,7 +68,7 @@ export default class EntryParamManager {
    * @returns {string[]} Array of output parameter names
    */
   getOutputParamNames(entryId) {
-    return Object.keys(this._outputParamsMap[entryId] || {});
+    return Object.keys(this._outputParamsMap.get(entryId) || {});
   }
 
   /**
@@ -98,7 +98,7 @@ export default class EntryParamManager {
     if (!entryId) return false;
 
     // Set output parameters to the reactive map
-    this._outputParamsMap[entryId] = outputParams;
+    this._outputParamsMap.set(entryId, outputParams);
 
     return true;
   }
@@ -135,11 +135,11 @@ export default class EntryParamManager {
     if (!entryId || !paramName) return false;
 
     // Create entry in reactive map if it doesn't exist
-    if (!this._outputParamsMap[entryId]) {
-      this._outputParamsMap[entryId] = {};
+    if (!this._outputParamsMap.has(entryId)) {
+      this._outputParamsMap.set(entryId, {});
     }
 
-    this._outputParamsMap[entryId][paramName] = value;
+    this._outputParamsMap.get(entryId)[paramName] = value;
 
     return true;
   }
@@ -154,7 +154,7 @@ export default class EntryParamManager {
 
     // Remove parameter values from both maps
     this._inputParamsMap.delete(entryId);
-    delete this._outputParamsMap[entryId];
+    this._outputParamsMap.delete(entryId);
 
     return true;
   }  
