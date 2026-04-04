@@ -19,8 +19,8 @@
             <th class="col-start-time">Start Time</th>
             <th class="col-status">Status</th>
             <th class="col-name">Entry Name</th>
-            <th class="col-input-params">Input Parameters</th>
-            <th class="col-result">Result</th>
+            <th class="col-input-params">Input</th>
+            <th class="col-output-params">Output</th>
             <th class="col-error-msg">Error Message</th>
             <th class="col-exec-time">Exec. Time</th>
             <th class="col-id">ID</th>
@@ -39,7 +39,7 @@
               </td>             
               <td class="col-name">{{ item.data.entryName}}</td>
               <td class="col-input-params">{{ formatInputParams(item.data.inputParams) }}</td>
-              <td class="col-result">{{ formatResult(item.data.result) }}</td>
+              <td class="col-output-params">{{ formatOutputParams(item.data.outputParams) }}</td>
               <td class="col-error-msg">{{ item.data.result?.errorMessage }}</td>
               <td class="col-exec-time">{{ formatExecutionTime(item.data.execTime) }}ms</td>
               <td class="col-id">{{ item.data.entryId }}</td>
@@ -119,12 +119,12 @@ function formatInputParams(inputParams) {
 }
 
 /**
- * Format result properties
+ * Format result into output parameters for display
  * Displays properties other than success, errorMessage
  * @param {Object} result Execution result object
- * @returns {string} Formatted result data as key-value pairs
+ * @returns {string} Formatted output parameters as key-value pairs
  */
-function formatResult(result) {
+function formatOutputParams(result) {
   if (!result) return '';
   
   const excludedKeys = ['success', 'errorMessage'];
@@ -316,7 +316,7 @@ const transformedLogs = computed(() => {
   min-width: 160px;
 }
 
-.col-result {
+.col-output-params {
   min-width: 160px;
 }
 

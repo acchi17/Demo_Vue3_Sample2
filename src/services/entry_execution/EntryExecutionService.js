@@ -36,15 +36,15 @@ export default class EntryExecutionService {
   /**
    * Execute a block entry
    * @param {Block} block Block to execute
-   * @return {Promise<ScriptExecutionResult>} 
+   * @param {Object} inputParams Input parameters for the block (optional)
+   * @return {Promise<ScriptExecutionResult>}
    *         Execution result object conforming to ScriptExecutionResult type
    * @private
    */
-  async _executeBlock(block) {
+  async _executeBlock(block, inputParams = {}) {
     let result = {};
     try {
       // Execute script based on block name
-      const inputParams = this.entryParamManager ? this.entryParamManager.getInputParams(block.id) : {};
       result = await this.scriptExecutionService.executeScript(block.name, inputParams);
     } catch (error) {
       result.errorMessage = error.message;
@@ -104,13 +104,13 @@ export default class EntryExecutionService {
       // Generate execution ID
       const executionId = this._generateExecutionId(entry.id);
       // Log execution start if execution log service is available
+      const inputParams = this.entryParamManager ? this.entryParamManager.getInputParams(entry.id) : {};
       if (this.executionLogService) {
-        const inputParams = this.entryParamManager ? this.entryParamManager.getInputParams(entry.id) : {};
-        this.executionLogService.addLog(entry, executionId, traceId, inputParams);
+        this.executionLogService.addLog(entry, inputParams, executionId, traceId);
       }
       // Execute an entry
       if (entry.type === 'block') {
-        result = await this._executeBlock(entry);
+        result = await this._executeBlock(entry, inputParams);
       } else if (entry.type === 'container') {
         result = await this._executeContainer(entry, executionId);
       }

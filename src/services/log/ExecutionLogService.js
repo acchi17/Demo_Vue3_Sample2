@@ -126,7 +126,7 @@ export default class ExecutionLogService {
    * @param {Object} inputParams Input parameters of the entry at execution time (optional)
    * @returns {string} Execution ID that can be used later to update the log
    */
-  addLog(entry, executionId, parentExecutionId = null, inputParams = {}) {
+  addLog(entry, inputParams, executionId, parentExecutionId = null) {
     try {
       // Create execution log
       const execution = {
