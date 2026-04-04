@@ -32,6 +32,9 @@
   /* Entry button images */
   --entry-button-play-image: url('@/assets/images/play-button-gray-96.png');
   --entry-button-delete-image: url('@/assets/images/close-button-gray-96.png');
+
+  /* Scalar param type icons */
+  --scalar-int-param-icon: url('@/assets/images/cyan-gray-integer-type-256.png');
   
   /* Entry text styles */
   --entry-text-font-size: 12px;
