@@ -16,28 +16,26 @@
 
 <script>
 export default {
-  name: 'SpinEdit',
+  name: 'IntSpinEdit',
 
   props: {
-    name:       { type: String, required: true },
-    numberType: { type: String, default: 'integer' }, // 'integer' or 'real'
-    min:        { type: [Number, String], default: null },
-    max:        { type: [Number, String], default: null },
-    step:       { type: [Number, String], default: null },
-    value:      { type: Number, default: 0 },
-    disabled:   { type: Boolean, default: false }
+    name:     { type: String, required: true },
+    min:      { type: Number, default: null },
+    max:      { type: Number, default: null },
+    step:     { type: Number, default: null },
+    value:    { type: Number, default: 0 },
+    disabled: { type: Boolean, default: false }
   },
 
   computed: {
     effectiveStep() {
-      if (this.step !== null) return this.step;
-      return this.numberType === 'real' ? 0.1 : 1;
+      return this.step !== null ? this.step : 1;
     }
   },
 
   methods: {
     onChange(target) {
-      let val = this.numberType === 'integer' ? parseInt(target.value, 10) : parseFloat(target.value);
+      let val = parseInt(target.value, 10);
       if (this.min !== null) val = Math.max(Number(this.min), val);
       if (this.max !== null) val = Math.min(Number(this.max), val);
       target.value = val;

@@ -8,7 +8,6 @@
           <component
             :is="paramComponents[paramDef.ctrlType]"
             :name="paramDef.name"
-            :numberType="paramDef.ctrlType === 'real_spinner' ? 'real' : 'integer'"
             :min="paramDef.min"
             :max="paramDef.max"
             :step="paramDef.step"
@@ -23,7 +22,6 @@
           <component
             :is="paramComponents[paramDef.ctrlType]"
             :name="paramDef.name"
-            :numberType="paramDef.ctrlType === 'real_spinner' ? 'real' : 'integer'"
             :min="paramDef.min"
             :max="paramDef.max"
             :step="paramDef.step"
@@ -42,17 +40,18 @@
 <script>
 import { inject, computed, ref, watch } from 'vue'
 import { selectionState } from '../composables/useSelection'
-import SpinEdit from './SpinEdit.vue'
+import IntSpinEdit from './IntSpinEdit.vue'
+import RealSpinEdit from './RealSpinEdit.vue'
 import CheckEdit from './CheckEdit.vue'
 
 export default {
   name: 'EntryView',
-  components: { SpinEdit, CheckEdit },
+  components: { IntSpinEdit, RealSpinEdit, CheckEdit },
 
   setup() {
     const paramComponents = {
-      integer_spinner: SpinEdit,
-      real_spinner:    SpinEdit,
+      integer_spinner: IntSpinEdit,
+      real_spinner:    RealSpinEdit,
       checkbox:        CheckEdit,
     }
     const entryManager = inject('entryManager')
@@ -109,7 +108,7 @@ export default {
       localInputParams,
       localOutputParams,
       onParamChange,
-      paramComponents
+      paramComponents,
     }
   }
 }
