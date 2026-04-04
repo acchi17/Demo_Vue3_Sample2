@@ -41,6 +41,5 @@ export default {
   flex: 4;
   display: flex;
   overflow-y: auto;
-  border-top: 1px solid #ccc;
 }
 </style>

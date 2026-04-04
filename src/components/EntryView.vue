@@ -2,37 +2,40 @@
   <div class="entry-view">
     <div v-if="selectedEntry">
       <div class="entry-header">{{ selectedEntry?.name }}</div>
-      <div class="entry-param-kind">Input</div>
-      <div v-if="inputParamDefs.length > 0" class="entry-param-content">
-        <div v-for="paramDef in inputParamDefs" :key="paramDef.name" class="entry-param-row">
-          <component
-            :is="paramComponents[paramDef.ctrlType]"
-            :name="paramDef.name"
-            :min="paramDef.min"
-            :max="paramDef.max"
-            :step="paramDef.step"
-            :value="localInputParams[paramDef.name]"
-            @update:value="onParamChange(paramDef.name, $event)"
-          />
+      <div class="section-divider" />
+      <div v-if="inputParamDefs.length > 0">
+        <div class="entry-param-header">Input</div>
+        <div class="entry-param-content">
+          <div v-for="paramDef in inputParamDefs" :key="paramDef.name" class="entry-param-row">
+            <component
+              :is="paramComponents[paramDef.ctrlType]"
+              :name="paramDef.name"
+              :min="paramDef.min"
+              :max="paramDef.max"
+              :step="paramDef.step"
+              :value="localInputParams[paramDef.name]"
+              @update:value="onParamChange(paramDef.name, $event)"
+            />
+          </div>
         </div>
       </div>
-      <div class="entry-param-kind">Output</div>
-      <div v-if="outputParamDefs.length > 0" class="entry-param-content">
-        <div v-for="paramDef in outputParamDefs" :key="paramDef.name" class="entry-param-row">
-          <component
-            :is="paramComponents[paramDef.ctrlType]"
-            :name="paramDef.name"
-            :min="paramDef.min"
-            :max="paramDef.max"
-            :step="paramDef.step"
-            :value="localOutputParams[paramDef.name]"
-            :disabled="true"
-          />
+      <div v-if="outputParamDefs.length > 0">
+        <div class="section-divider" />
+        <div class="entry-param-header">Output</div>
+        <div class="entry-param-content">
+          <div v-for="paramDef in outputParamDefs" :key="paramDef.name" class="entry-param-row">
+            <component
+              :is="paramComponents[paramDef.ctrlType]"
+              :name="paramDef.name"
+              :min="paramDef.min"
+              :max="paramDef.max"
+              :step="paramDef.step"
+              :value="localOutputParams[paramDef.name]"
+              :disabled="true"
+            />
+          </div>
         </div>
       </div>
-    </div>
-    <div v-else>
-      <p class="empty-content">No entry selected</p>
     </div>
   </div>
 </template>
@@ -122,23 +125,21 @@ export default {
   padding: 14px;
 }
 
-.empty-content {
-  font-size: 22px;
-  font-weight: bold;
-  color: #c0c0c0;
-}
-
 .entry-header {
   font-size: 22px;
   font-weight: bold;
-  color: #555;
-  margin-bottom: 10px;
+  color: #333;
+  padding-bottom: 10px;
 }
 
-.entry-param-kind {
+.section-divider {
+  height: 1px;
+  background-color: #ddd;
+}
+
+.entry-param-header {
   font-size: 18px;
-  color: #555;
-  border-top: 1px solid #ddd;
+  color: #333;
   padding: 5px 0px;
 }
 
@@ -149,6 +150,6 @@ export default {
 }
 
 .entry-param-row {
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 </style>

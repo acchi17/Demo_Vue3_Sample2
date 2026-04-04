@@ -57,13 +57,14 @@ export default {
 .spin-edit-label {
   min-width: 60px;
   font-size: 14px;
-  color: #333;
+  color: #555;
 }
 
 .spin-edit-input {
   width: 90px;
   padding: 4px 4px;
   font-size: 16px;
+  color: #555;
   border: 1px solid #bbb;
   border-radius: 3px;
 }

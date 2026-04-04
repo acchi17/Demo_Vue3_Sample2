@@ -1,5 +1,6 @@
 <template>
   <div class="spin-edit">
+    <span class="spin-edit-icon"></span>
     <label class="spin-edit-label">{{ name }}</label>
     <input
       type="number"
@@ -54,16 +55,26 @@ export default {
   gap: 20px;
 }
 
+.spin-edit-icon {
+  width: 28px;
+  height: 28px;
+  background-image: var(--scalar-int-param-icon);
+  background-size: contain;
+  background-repeat: no-repeat;
+  flex-shrink: 0;
+}
+
 .spin-edit-label {
   min-width: 60px;
   font-size: 14px;
-  color: #333;
+  color: #555;
 }
 
 .spin-edit-input {
   width: 90px;
   padding: 4px 4px;
-  font-size: 16px;
+  font-size: 14px;
+  color: #555;
   border: 1px solid #bbb;
   border-radius: 3px;
 }
