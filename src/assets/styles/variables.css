@@ -1,4 +1,7 @@
 :root {
+  /* App-wide styles */
+  --app-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
   /* Block-related styles */
   --block-bg-color: #f0f0f0;
   --block-hover-bg-color: #e8e8e8;

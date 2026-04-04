@@ -66,7 +66,7 @@ export default {
 
 /* Root application container with 3-column layout */
 #app {
-  font-family: Arial, sans-serif;
+  font-family: var(--app-font-family);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   width: 100%;

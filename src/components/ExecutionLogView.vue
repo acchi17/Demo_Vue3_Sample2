@@ -5,12 +5,8 @@
       <h4>Execution Log</h4>
       <button @click="clearLogs" class="clear-button">Clear</button>
     </div>
-
     <!-- Empty state message -->
-    <div v-if="transformedLogs.length === 0" class="empty-panel">
-      No execution logs
-    </div>
-
+    <div v-if="transformedLogs.length === 0" class="empty-panel" />
     <!-- Log table with sandwich-style hierarchy display -->
     <div v-else class="log-panel">
       <table class="log-table">
@@ -39,7 +35,7 @@
               </td>             
               <td class="col-name">{{ item.data.entryName}}</td>
               <td class="col-input-params">{{ formatInputParams(item.data.inputParams) }}</td>
-              <td class="col-output-params">{{ formatOutputParams(item.data.outputParams) }}</td>
+              <td class="col-output-params">{{ formatOutputParams(item.data.result) }}</td>
               <td class="col-error-msg">{{ item.data.result?.errorMessage }}</td>
               <td class="col-exec-time">{{ formatExecutionTime(item.data.execTime) }}ms</td>
               <td class="col-id">{{ item.data.entryId }}</td>
@@ -225,12 +221,6 @@ const transformedLogs = computed(() => {
   padding: 12px 12px;
   background-color: #f5f5f5;
   border-bottom: 1px solid #ddd;
-}
-
-.log-header h3 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
   color: #333;
 }
 
@@ -241,7 +231,7 @@ const transformedLogs = computed(() => {
   border-radius: 3px;
   cursor: pointer;
   font-size: 13px;
-  color: #555;
+  color: #666;
   transition: all 0.2s ease;
 }
 
@@ -257,11 +247,6 @@ const transformedLogs = computed(() => {
 /* Panel for the empty message */
 .empty-panel {
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #999;
-  font-size: 16px;
 }
 
 /* Panel for the log table */
@@ -274,13 +259,13 @@ const transformedLogs = computed(() => {
 .log-table {
   border-collapse: collapse;
   font-size: 12px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
 /* Table header styling */
 .table-header {
   background-color: #f5f5f5;
   border-bottom: 2px solid #ddd;
+  color: #333;
   position: sticky;
   /* Required to activate the position: sticky effect.
      Sticky positioning only works when one of top, right, bottom, or left is specified */
@@ -325,11 +310,11 @@ const transformedLogs = computed(() => {
 }
 
 .col-exec-time {
-  min-width: 160px;
+  min-width: 100px;
 }
 
 .col-id {
-  min-width: 240px;
+  min-width: 300px;
 }
 
 /* Entry row styling */
