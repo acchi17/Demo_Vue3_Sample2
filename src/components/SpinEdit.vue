@@ -9,7 +9,7 @@
       :step="effectiveStep"
       :value="value"
       :disabled="disabled"
-      @change="$emit('update:value', numberType === 'integer' ? parseInt($event.target.value, 10) : parseFloat($event.target.value))"
+      @change="onChange($event.target)"
     />
   </div>
 </template>
@@ -35,6 +35,16 @@ export default {
     }
   },
 
+  methods: {
+    onChange(target) {
+      let val = this.numberType === 'integer' ? parseInt(target.value, 10) : parseFloat(target.value);
+      if (this.min !== null) val = Math.max(Number(this.min), val);
+      if (this.max !== null) val = Math.min(Number(this.max), val);
+      target.value = val;
+      this.$emit('update:value', val);
+    }
+  },
+
   emits: ['update:value']
 }
 </script>
@@ -43,19 +53,19 @@ export default {
 .spin-edit {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 20px;
 }
 
 .spin-edit-label {
   min-width: 60px;
-  font-size: 13px;
+  font-size: 14px;
   color: #333;
 }
 
 .spin-edit-input {
   width: 90px;
-  padding: 2px 4px;
-  font-size: 13px;
+  padding: 4px 4px;
+  font-size: 16px;
   border: 1px solid #bbb;
   border-radius: 3px;
 }
