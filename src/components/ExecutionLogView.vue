@@ -19,7 +19,8 @@
             <th class="col-start-time">Start Time</th>
             <th class="col-status">Status</th>
             <th class="col-name">Entry Name</th>
-            <th class="col-result">Result</th>
+            <th class="col-input-params">Input</th>
+            <th class="col-output-params">Output</th>
             <th class="col-error-msg">Error Message</th>
             <th class="col-exec-time">Exec. Time</th>
             <th class="col-id">ID</th>
@@ -37,7 +38,8 @@
                 </span>
               </td>             
               <td class="col-name">{{ item.data.entryName}}</td>
-              <td class="col-result">{{ formatResult(item.data.result) }}</td>
+              <td class="col-input-params">{{ formatInputParams(item.data.inputParams) }}</td>
+              <td class="col-output-params">{{ formatOutputParams(item.data.outputParams) }}</td>
               <td class="col-error-msg">{{ item.data.result?.errorMessage }}</td>
               <td class="col-exec-time">{{ formatExecutionTime(item.data.execTime) }}ms</td>
               <td class="col-id">{{ item.data.entryId }}</td>
@@ -45,7 +47,7 @@
 
             <!-- Container group footer row -->
             <tr v-else-if="item.type === 'container-end'" class="container-group-footer">
-              <td colspan="7"></td>
+              <td colspan="8"></td>
             </tr>
           </template>
         </tbody>
@@ -107,12 +109,22 @@ function formatExecutionTime(time) {
 }
 
 /**
- * Format result properties
+ * Format input parameters for display
+ * @param {Object} inputParams Input parameters object
+ * @returns {string} Formatted input parameters as key-value pairs
+ */
+function formatInputParams(inputParams) {
+  if (!inputParams || Object.keys(inputParams).length === 0) return '';
+  return Object.entries(inputParams).map(([key, value]) => `${key}: ${value}`).join(', ');
+}
+
+/**
+ * Format result into output parameters for display
  * Displays properties other than success, errorMessage
  * @param {Object} result Execution result object
- * @returns {string} Formatted result data as key-value pairs
+ * @returns {string} Formatted output parameters as key-value pairs
  */
-function formatResult(result) {
+function formatOutputParams(result) {
   if (!result) return '';
   
   const excludedKeys = ['success', 'errorMessage'];
@@ -300,7 +312,11 @@ const transformedLogs = computed(() => {
   min-width: 160px;
 }
 
-.col-result {
+.col-input-params {
+  min-width: 160px;
+}
+
+.col-output-params {
   min-width: 160px;
 }
 
