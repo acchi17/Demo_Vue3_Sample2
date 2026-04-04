@@ -2,9 +2,9 @@
   <div class="entry-view">
     <div v-if="selectedEntry">
       <div class="entry-header">{{ selectedEntry?.name }}</div>
-      <div v-if="inputParamDefs.length > 0" class="entry-param">
-        <div class="entry-param-title">Input</div>
-        <div v-for="paramDef in inputParamDefs" :key="paramDef.name" class="param-row">
+      <div class="entry-param-kind">Input</div>
+      <div v-if="inputParamDefs.length > 0" class="entry-param-content">
+        <div v-for="paramDef in inputParamDefs" :key="paramDef.name" class="entry-param-row">
           <component
             :is="paramComponents[paramDef.ctrlType]"
             :name="paramDef.name"
@@ -17,9 +17,9 @@
           />
         </div>
       </div>
-      <div v-if="outputParamDefs.length > 0" class="entry-param">
-        <div class="entry-param-title">Output</div>
-        <div v-for="paramDef in outputParamDefs" :key="paramDef.name" class="param-row">
+      <div class="entry-param-kind">Output</div>
+      <div v-if="outputParamDefs.length > 0" class="entry-param-content">
+        <div v-for="paramDef in outputParamDefs" :key="paramDef.name" class="entry-param-row">
           <component
             :is="paramComponents[paramDef.ctrlType]"
             :name="paramDef.name"
@@ -133,23 +133,23 @@ export default {
   font-size: 22px;
   font-weight: bold;
   color: #555;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
-.entry-param {
-  padding-top: 5px;
-  margin-bottom: 5px;
-  border-top: 1px solid #ddd;
-}
-
-.entry-param-title {
-  font-size: 16px;
-  font-weight: bold;
+.entry-param-kind {
+  font-size: 18px;
   color: #555;
-  margin-bottom: 8px;
+  border-top: 1px solid #ddd;
+  padding: 5px 0px;
 }
 
-.param-row {
+.entry-param-content {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 10px;
+}
+
+.entry-param-row {
   margin-bottom: 6px;
 }
 </style>
