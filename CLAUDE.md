@@ -91,6 +91,7 @@ Centralized configuration for:
 - **BlockItem.vue**: Renders individual blocks
 - **ExecutionLogView.vue**: Displays execution logs from ExecutionLogService
 - **EntryView.vue**: Detail panel for the selected entry; shows its name and editable input parameters via `EntryParamManager`
+- **EntryParamsItem.vue**: Displays an In/Out toggle and parameter name badges inside a selected entry rectangle; used by both BlockItem and ContainerItem
 
 ### Data Flow & Execution
 

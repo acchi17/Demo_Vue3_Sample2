@@ -14,6 +14,7 @@
           <div v-if="isSelected" class="entry-button entry-button-play" @click.stop="onPlay"></div>
           <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
         </div>
+        <EntryParamsItem v-if="isSelected" :entry-id="entry.id" />
       </div>
     </div>
   </div>
@@ -24,9 +25,13 @@ import { inject } from 'vue'
 import { useDraggable } from '../composables/useDraggable'
 import { useEntryExecution } from '../composables/useEntryExecution'
 import { selectionState } from '../composables/useSelection'
+import EntryParamsItem from './EntryParamsItem.vue'
 
 export default {
   name: 'BlockItem',
+  components: {
+    EntryParamsItem
+  },
   props: {
     entry: {
       type: Object,
