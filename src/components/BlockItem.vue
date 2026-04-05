@@ -24,7 +24,7 @@
 import { inject } from 'vue'
 import { useDraggable } from '../composables/useDraggable'
 import { useEntryExecution } from '../composables/useEntryExecution'
-import { selectionState } from '../composables/useSelection'
+import { entryState } from '../composables/useEntryState'
 import EntryParamsItem from './EntryParamsItem.vue'
 
 export default {
@@ -54,10 +54,10 @@ export default {
     const { executeEntry, isExecuting } = useEntryExecution()
 
     // Selection handling
-    const isSelected = selectionState.isSelected(props.entry.id)
+    const isSelected = entryState.isSelected(props.entry.id)
 
     const onSelect = () => {
-      selectionState.setSelectedEntry(props.entry)
+      entryState.setSelectedEntry(props.entry)
     }
     
     // Set callback for drag start

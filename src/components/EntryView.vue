@@ -42,7 +42,7 @@
 
 <script>
 import { inject, computed, ref, watch } from 'vue'
-import { selectionState } from '../composables/useSelection'
+import { entryState } from '../composables/useEntryState'
 import IntSpinEdit from './IntSpinEdit.vue'
 import RealSpinEdit from './RealSpinEdit.vue'
 import CheckEdit from './CheckEdit.vue'
@@ -61,7 +61,7 @@ export default {
     const entryParamManager = inject('entryParamManager')
     const entryDefinitionService = inject('entryDefinitionService')
 
-    const selectedEntryId = selectionState.getSelectedEntryId()
+    const selectedEntryId = entryState.getSelectedEntryId()
 
     const selectedEntry = computed(() => {
       if (!selectedEntryId.value) return null
