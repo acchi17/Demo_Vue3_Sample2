@@ -21,9 +21,9 @@
 </template>
 
 <script>
-import { inject } from 'vue'
 import { useDraggable } from '../composables/useDraggable'
 import { useEntryExecution } from '../composables/useEntryExecution'
+import { useEntryOperation } from '../composables/useEntryOperation'
 import { entryState } from '../composables/useEntryState'
 import EntryParamsItem from './EntryParamsItem.vue'
 
@@ -41,9 +41,6 @@ export default {
   emits: ['remove'],
 
   setup(props, { emit }) {
-    // Get EntryManager instance from the application
-    const entryManager = inject('entryManager')
-
     // Get composables
     const {
       isDragging,
@@ -52,6 +49,7 @@ export default {
       setOnDragStartCallBack
     } = useDraggable()
     const { executeEntry, isExecuting } = useEntryExecution()
+    const { getParentId } = useEntryOperation()
 
     // Selection handling
     const isSelected = entryState.isSelected(props.entry.id)
@@ -63,7 +61,7 @@ export default {
     // Set callback for drag start
     setOnDragStartCallBack((event) => {
       // Get parent ID
-      const parentId = entryManager.getParentId(props.entry.id)
+      const parentId = getParentId(props.entry.id)
 
       // Set data for transfer
       event.dataTransfer.setData('entryType', 'block')
