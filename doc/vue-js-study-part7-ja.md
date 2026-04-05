@@ -2,18 +2,18 @@
 
 ## An application covered in this article
 
-- When you drag named blocks labeled "Hello" and "World" (white-gray icons) from the left sidebar and drop them into the main area or into containers, named blocks that can execute corresponding scripts are placed.
-- When you drag containers (lime-green icons) and drop them into the main area or into containers, containers that can hold child elements are placed.
-- Each entry (block or container) placed in the main area or inside containers displays an execution button (play button) and a delete button.
-- When you click the execution button, if it's a block, the script corresponding to that block's name (such as public/scripts/Hello.js or World.js) is executed, and if it's a container, its child elements are executed sequentially.
-- On the right side, the execution log view displays the execution history of entries in a hierarchical structure (sandwich-style), recording the execution status, entry name, execution result, error message, execution time, and other information.
+- 左サイドバーの"Hello"と"World"の名前付きブロック（ホワイトグレーアイコン）をドラッグしてメインエリアにドロップすると、対応するスクリプトを実行できるブロックが配置されます。
+- コンテナ（ライムグリーンアイコン）をドラッグしてメインエリアやコンテナ内にドロップすると、子要素を含められるコンテナが配置されます。
+- メインエリアやコンテナ内に配置された各エントリ（ブロック、コンテナ）には実行ボタン（playボタン）と削除ボタンが表示されます。
+- 実行ボタンをクリックすると、ブロックの場合はそのブロックの名前に対応するスクリプト（public/scripts/Hello.js、World.jsなど）が実行され、コンテナの場合は子要素が順次実行されます。
+- 右側の実行ログビューには、エントリの実行履歴が階層構造（サンドイッチスタイル）で表示され、実行ステータス、エントリ名、実行結果、エラーメッセージ、実行時間などが記録されます。
 
-**Source code:**  
+**ソースコード：**  
 [https://github.com/acchi17/Demo_Vue3_Sample2/tree/step3](https://github.com/acchi17/Demo_Vue3_Sample2/tree/step3)
 
 ## Source code structure of the Vue application
 
-The source structure of the above application is as follows.
+上記アプリケーションのソース構成は以下の通りです。
 
 ```
 public/
@@ -66,68 +66,68 @@ src/
 
 ### 1. Entry execution service
 
-#### 1.1 Class composition and relationships
+#### 1.1 クラス構成と関係性
 
-The entry execution functionality consists of 6 classes with the following hierarchical dependency relationships:
+エントリ実行機能は6つのクラスで構成され、以下の階層的な依存関係を持ちます。
 
 ```
 EntryExecutionService (EntryExecutionService.js)
   └── ScriptExecutionService (ScriptExecutionService.js)
       └── ScriptExecutionFactory (ScriptExecutionFactory.js)
           └── JavaScriptExecutionEngine (JavaScriptExecutionEngine.js)
-              └── Worker script (JavaScriptExecutionWorker.js)
+              └── Workerスクリプト (JavaScriptExecutionWorker.js)
 ```
 
-**Note**: Basically, the filename is the same as the class name. JavaScriptExecutionWorker.js is not a class but a script file executed in the Web Worker environment.
+**注記**：基本的にファイル名はクラス名と同一です。JavaScriptExecutionWorker.jsはクラスではなく、Web Worker環境で実行されるスクリプトファイルです。
 
-#### 1.2 Flow from entry execution to script execution
+#### 1.2 エントリ実行からスクリプト実行までの流れ
 
-1. **Entry execution begins**
-   - `EntryExecutionService.executeEntry()` is called and determines the type of Entry (Block or Container)
+1. **エントリ実行の開始**
+   - `EntryExecutionService.executeEntry()` が呼び出され、Entryの種類（BlockまたはContainer）を判定します
 
-2. **Case of Block execution**
-   - The `_executeBlock()` method retrieves the block's script name
-   - Script execution is delegated to `ScriptExecutionService.executeScript()`
+2. **Block実行の場合**
+   - `_executeBlock()` メソッドでBlockのスクリプト名を取得
+   - `ScriptExecutionService.executeScript()` にスクリプト実行を委譲
 
-3. **Case of Container execution**
-   - The `_executeContainer()` method processes child elements sequentially
-   - `executeEntry()` is recursively called for each child element
+3. **Container実行の場合**
+   - `_executeContainer()` メソッドで子要素を順次処理
+   - 各子要素に対して `executeEntry()` を再帰的に呼び出し
 
-4. **Script execution processing**
-   - `ScriptExecutionService` initializes the engine using `ScriptExecutionFactory`
-   - The generated `JavaScriptExecutionEngine` receives the script execution request
+4. **スクリプト実行の処理**
+   - `ScriptExecutionService` が `ScriptExecutionFactory` を使用してエンジンを初期化
+   - 生成された `JavaScriptExecutionEngine` がスクリプト実行リクエストを受け取る
 
-5. **Actual script execution**
-   - When Worker is available: Send request via postMessage to `JavaScriptExecutionWorker.js`
-   - When Worker is unavailable: Execute directly on the main thread with `_executeDirectly()`
-   - Dynamically import script files from `public/scripts/` (such as Hello.js or World.js) and execute the execute function within them
+5. **実際のスクリプト実行**
+   - Worker利用可能時：`JavaScriptExecutionWorker.js` にpostMessageでリクエスト送信
+   - Worker利用不可時：`_executeDirectly()` でメインスレッドで直接実行
+   - `public/scripts/`内のスクリプトファイル（Hello.js、World.jsなど）を動的にインポートし、その中のexecute関数を実行
 
-6. **Return of execution result**
-   - The execution result is passed back through each layer in reverse order and ultimately returned to the caller
+6. **実行結果の返却**
+   - 実行結果が各層を逆順に遡り、最終的に呼び出し元に返却されます
 
-#### 1.3 Functionality of each class
+#### 1.3 各クラスの機能
 
 **EntryExecutionService (EntryExecutionService.js)**
-A service class that oversees the execution of entries (Block or Container). It executes scripts through ScriptExecutionService for Blocks and executes child elements sequentially for Containers. It is responsible for managing execution state, generating execution IDs, and coordinating with the logging service.
+Entry（BlockまたはContainer）の実行を統括するサービスクラス。BlockはScriptExecutionServiceを介してスクリプトを実行し、Containerは子要素を順次実行します。実行状態の管理、実行IDの生成、ログサービスとの連携を担当します。
 
 **ScriptExecutionService (ScriptExecutionService.js)**
-A class that provides a unified interface for script execution. Based on configuration, it uses ScriptExecutionFactory to generate engine instances and delegates script execution requests to the engine.
+スクリプト実行の統一インターフェースを提供するクラス。設定に基づきScriptExecutionFactoryを使用してエンジンインスタンスを生成し、スクリプト実行リクエストをエンジンに委譲します。
 
 **ScriptExecutionFactory (ScriptExecutionFactory.js)**
-A factory class that generates script execution engine instances based on the specified language. Currently supports the JavaScript engine, and is designed to allow adding other language engines (such as Python) in the future.
+指定された言語に応じた実行エンジンインスタンスを生成するファクトリークラス。現在はJavaScriptエンジンをサポートし、将来的に他の言語エンジン（Python等）を追加可能な設計となっています。
 
 **IScriptExecutionEngine (IScriptExecutionEngine.js)**
-An interface class for script execution engines. All engine implementation classes must implement the initialize, executeScript, and terminate methods.
+スクリプト実行エンジンのインターフェースクラス。すべてのエンジン実装クラスは、initialize、executeScript、terminateメソッドを実装する必要があります。
 
 **JavaScriptExecutionEngine (JavaScriptExecutionEngine.js)**
-An implementation class of the JavaScript script execution engine. It supports both parallel execution using Web Workers and fallback direct execution, allowing scripts to be executed without blocking the main thread.
+JavaScriptスクリプトの実行エンジン実装クラス。Web Workerを使用した並列実行と、フォールバック用の直接実行の両方をサポートし、メインスレッドをブロックせずにスクリプトを実行します。
 
-**Worker script (JavaScriptExecutionWorker.js)**
-A worker script that executes JavaScript scripts within a Worker. It dynamically imports script files and executes the exported execute function, returning the results to the main thread.
+**Workerスクリプト (JavaScriptExecutionWorker.js)**
+Worker内でJavaScriptスクリプトを実行するWorkerスクリプト。スクリプトファイルを動的にインポートし、エクスポートされたexecute関数を実行して結果をメインスレッドに返します。
 
 ### 2. Named block
 
-Named block icons ("Hello" and "World") are placed on the left sidebar. These can be placed in the main area or inside containers through drag & drop. When dragging begins, the block's name is set in the DataTransfer object as entryName. When dropping, the name is retrieved and a new Block instance is created with that name. Since the block's name is set when the block is created, the created blocks are identified by their names and function as the script names to be executed.
+左サイドバーに名前付きブロック（"Hello"、"World"）のアイコンを配置し、ドラッグ＆ドロップでメインエリアやコンテナ内に配置できる機能を実装します。ドラッグ開始時にDataTransferオブジェクトにentryNameとしてブロックの名前を設定し、ドロップ時にその名前を取得して新しいBlockインスタンスを作成します。ブロック作成時に名前が設定されるため、作成されたブロックはそれぞれの名前で識別され、実行対象となるスクリプト名として機能します。
 
 #### SideArea.vue
 
@@ -182,18 +182,18 @@ export default {
       event.dataTransfer.setData('sourceId', undefined);
     });
     
-    // ... Other composable initialization and return statements are omitted ...
+    // ... 他のcomposableの初期化やreturnなどは省略 ...
   }
 }
 </script>
 
-<!-- Style section is omitted -->
+<!-- スタイル部分は省略 -->
 ```
 
-- In SideArea.vue, multiple block icons are placed in the template, each with the draggable attribute set.
-  - Two named blocks "Hello" and "World" (whitegray icons) and a container (lime icon) are defined.
-  - setBlockDragStartCallback retrieves `event.target.textContent` and sets it as entryName in the DataTransfer.
-- By setting entryType, entryName, and sourceId in the DataTransfer object at the start of dragging, the drop destination can identify the block type and name.
+- SideArea.vueではテンプレート内に複数のブロックアイコンを配置し、それぞれにdraggable属性を設定しています。
+  - "Hello"と"World"の2つの名前付きブロック（whitegrayアイコン）と、コンテナ（limeアイコン）が定義されています。
+  - setBlockDragStartCallbackで`event.target.textContent`を取得し、entryNameとしてDataTransferに設定します。
+- ドラッグ開始時に、entryType、entryName、sourceIdをDataTransferオブジェクトに設定することで、ドロップ先でブロックの種類と名前を識別できるようにしています。
 
 #### MainArea.vue
 
@@ -231,18 +231,18 @@ setOnDropCallBack((event, index) => {
 })
 ```
 
-- In MainArea.vue's setOnDropCallBack, entryName is retrieved from DataTransfer and used to create a named block with `new Block(entryName)`.
-  - entryName is the name set by SideArea.vue, such as "Hello" or "World".
-  - The created Block retains the name as a property and uses it as the script name during later execution.
-- The presence or absence of entryId determines whether it's a new creation or an existing entry move, and the appropriate EntryManager method is called.
+- MainArea.vueのsetOnDropCallBackではentryNameをDataTransferから取得し、`new Block(entryName)`で名前付きブロックを作成します。
+  - entryNameはSideArea.vueから設定される"Hello"または"World"といった名前です。
+  - 作成されたBlockは名前をプロパティとして保持し、後の実行時にそのスクリプト名として使用されます。
+- entryIdの有無で、新規作成か既存エントリの移動かを判定し、適切なEntryManagerメソッドを呼び出します。
 
 #### ContainerItem.vue
 
-ContainerItem.vue similarly retrieves entryName in setOnDropCallBack and creates a named block with `new Block(entryName)`. This allows named blocks to be added to containers through drag & drop as well.
+ContainerItem.vueもMainArea.vueと同様に、setOnDropCallBackでentryNameを取得して、`new Block(entryName)`で名前付きブロックを作成します。これにより、コンテナ内にもドラッグ＆ドロップで名前付きブロックを追加できるようになっています。
 
 ### 3. UI for entry execution
 
-Execution buttons (play buttons) are placed on the UI components of Blocks and Containers. When users click these buttons, the EntryExecutionService is called through the useEntryExecution composable. During execution, an isExecuting flag is used to prevent duplicate executions. The button styles are centrally managed using CSS variables, ensuring unified appearance and animation effects.
+BlockとContainerのUIコンポーネントに実行ボタン（playボタン）を配置し、ユーザーがボタンをクリックするとuseEntryExecution composableを通じてEntryExecutionServiceが呼び出される仕組みを実装します。実行中は重複実行を防ぐためisExecutingフラグで制御します。ボタンのスタイルはCSS変数で一元管理されており、ボタンの外観や動作アニメーションが統一されています。
 
 #### useEntryExecution.js
 
@@ -299,11 +299,11 @@ export function useEntryExecution() {
 }
 ```
 
-- The useEntryExecution composable is implemented using Vue 3's Composition API and provides the functionality required for entry execution.
-  - It uses inject to retrieve services provided at the application level.
-  - The executeEntry function is asynchronous; it sets the isExecuting flag to true during execution and returns it to false after completion.
-- isExecuting is readonly to prevent direct modification from outside while maintaining reactivity and managing the execution state.
-- The getLogs and clearLogs methods are wrappers for the ExecutionLogService and are used in the entry execution log UI functionality explained in the following sections.
+- useEntryExecution composableはVue 3のComposition APIで実装されており、エントリ実行に必要な機能を提供します。
+  - injectを使用してアプリケーションレベルで提供されるサービスを取得します。
+  - executeEntry関数は非同期処理で、実行中はisExecutingフラグをtrueに設定し、実行完了後にfalseに戻します。
+- isExecutingはreadonlyで外部からの直接修正を防ぎ、反応性を保ちながら実行状態を管理します。
+- getLogs、clearLogsメソッドはExecutionLogServiceのラッパーであり、以降の節で解説するエントリ実行ログのUI機能で使用されます。
 
 #### BlockItem.vue
 
@@ -365,19 +365,19 @@ export default {
       }
     }
     
-    // ... Other composable initialization and callback settings are omitted ...
+    // ... 他のcomposableの初期化やコールバック設定などは省略 ...
     
     // Return values and methods to use in <template>
     return {
       onPlay,
-      // Return other required values as well
+      // 他の必要な値も返却
     }
   }
 }
 </script>
 
 <style scoped>
-/* ... Styles for block-item, block-content, block-header, etc. are omitted ... */
+/* ... block-item、block-content、block-headerなどのスタイルは省略 ... */
 
 /* Entry button base styles */
 .entry-button {
@@ -414,15 +414,15 @@ export default {
 </style>
 ```
 
-- In BlockItem.vue, the play button click is handled by the onPlay method, which checks the execution state with isExecuting.value.
-  - If another entry is currently executing, it returns to prevent duplicate execution.
-  - The executeEntry function is called to delegate the Block's execution.
-- The entry-button class leverages CSS variables to centrally manage size, background image, animation effects, and more.
-  - The :active selector implements scaling and brightness changes on button press to provide visual feedback to users.
+- BlockItem.vueではplayボタンのクリックをonPlayメソッドでハンドルし、isExecuting.valueで実行状態をチェックしています。
+  - 別のエントリが実行中の場合はリターンして重複実行を防ぎます。
+  - executeEntry関数を呼び出してBlockの実行を委譲します。
+- entry-buttonクラスはCSS変数を活用し、サイズ、背景画像、アニメーション効果などを統一管理しています。
+  - :activeセレクタでボタン押下時のスケーリングと明度変化を実装し、ユーザーフィードバックを提供します。
 
 #### ContainerItem.vue
 
-ContainerItem.vue similarly implements the play button using the useEntryExecution composable. The implementation of the onPlay method and button style definition are nearly identical to BlockItem.vue, and the entry-button related styles are also shared.
+ContainerItem.vueもBlockItem.vueと同様に、useEntryExecution composableを利用してplayボタンの実装を行っています。onPlayメソッドの実装とボタンのスタイル定義はBlockItem.vueとほぼ同一であり、entry-button関連のスタイルも共通で使用されています。
 
 #### variables.css
 
@@ -456,14 +456,14 @@ ContainerItem.vue similarly implements the play button using the useEntryExecuti
 }
 ```
 
-- In variables.css, all style attributes related to entry buttons are defined as CSS variables and referenced from BlockItem.vue and ContainerItem.vue.
-  - Button size, background color, background image, cursor, and animation effects are centrally managed.
-- --entry-button-press-scale and --entry-button-press-brightness control the animation effects on button press, providing visual feedback for user interactions.
-- Color definitions (--block-bg-color, --container-bg-color, etc.) are also managed in the same file, providing theme unity flexibility.
+- variables.cssではエントリボタンに関するすべてのスタイル属性をCSS変数として定義し、ButtonItem.vueとContainerItem.vueから参照されます。
+  - ボタンのサイズ、背景色、背景画像、カーソル、アニメーション効果などが一元管理されています。
+- --entry-button-press-scaleと--entry-button-press-brightnessはボタン押下時のアニメーション効果を制御し、ユーザーインタラクションの視覚的フィードバックを実現します。
+- 色定義（--block-bg-color、--container-bg-colorなど）も同一ファイルで管理され、テーマ統一の柔軟性を提供します。
 
 ### 4. Entry execution log service
 
-An ExecutionLogService is implemented that manages the execution history of entries in a hierarchical structure and provides functionality for adding, updating, retrieving, and clearing execution logs. When executing blocks or child elements within containers, execution logs with parent-child relationships are stored in a tree structure, allowing complex execution flows to be tracked.
+エントリの実行履歴を階層構造で管理し、実行ログの追加・更新・取得・クリア機能を提供するExecutionLogServiceを実装します。Block実行時やContainer内の子要素実行時に、親子関係を持つ実行ログがツリー構造で保存されるため、複雑な実行流を追跡できます。
 
 #### ExecutionLogService.js
 
@@ -582,18 +582,18 @@ export default class ExecutionLogService {
 }
 ```
 
-- ExecutionLogService manages logs using a hierarchical structure called `_executionsTree`.
-  - The `rootExecutions` array stores top-level entry execution logs.
-  - The `executionsByParent` dictionary stores, with the parent's execution ID as the key, an array of child execution logs for that parent.
-  - This structure allows nested executions (such as child executions in Containers) to be managed while preserving parent-child relationships.
-- The `addLog()` method is called from EntryExecutionService and creates a log entry to add to the hierarchy structure when entry execution begins.
-  - The `parentExecutionId` parameter determines whether the log is top-level or a child execution, placing it in the appropriate location.
-- The `updateLog()` method is called from EntryExecutionService when entry execution completes and records the execution result and execution time in the log.
-  - The execution time is calculated from the difference between the `performance.now()` value at execution start and completion, stored in the `execTime` field.
+- ExecutionLogServiceは`_executionsTree`という階層構造を使用してログを管理しています。
+  - `rootExecutions`配列には、最上位レベルのエントリ実行ログが保存されます。
+  - `executionsByParent`辞書には、親の実行ID をキーとして、その親の子実行ログの配列が保存されます。
+  - この構造により、ネストされた実行（Containerの子実行など）を親子関係を保持したまま管理できます。
+- `addLog()`メソッドはEntryExecutionServiceから呼び出され、エントリの実行が開始されたときにログエントリを作成して階層構造に追加します。
+  - `parentExecutionId`パラメータによって、ログが最上位か子実行かを判定し、適切な場所に配置されます。
+- `updateLog()`メソッドはエントリの実行完了時にEntryExecutionServiceから呼び出され、実行結果と実行時間をログに記録します。
+  - 実行開始時の`performance.now()`と完了時の値の差分から実行時間を計算し、`execTime`フィールドに格納します。
 
 ### 5. UI for entry execution log
 
-An ExecutionLogView.vue component is implemented that displays execution logs managed in a hierarchical structure by ExecutionLogService in table format. It provides log retrieval and clearing functionality through the useEntryExecution composable, and transforms the hierarchical structure into a flat array in a transformedLogs computed property, displaying it in sandwich-style to visually represent the parent-child relationships of complex container executions.
+ExecutionLogServiceで階層構造で管理された実行ログを、テーブル形式でUIに表示するExecutionLogView.vueコンポーネントを実装します。useEntryExecution composableを通じてログの取得とクリア機能を提供し、transformedLogs computedで階層構造を平坦配列に変換してサンドイッチスタイルで表示することで、複雑なコンテナ実行の親子関係を視覚的に表現します。
 
 #### ExecutionLogView.vue
 
@@ -737,10 +737,10 @@ const transformedLogs = computed(() => {
 });
 </script>
 
-<!-- Style section is omitted -->
+<!-- スタイル部分は省略 -->
 ```
 
-- The useEntryExecution composable is used to retrieve the getLogs and clearLogs methods for integration with ExecutionLogService.
-- The transformedLogs computed property converts the hierarchical structure of ExecutionLogService into a flat array and displays it in sandwich-style.
-  - Processing executions from newest to oldest, and for Containers, recursively adding child elements with the addChildExecutions function and finally inserting a container-end marker to visually represent the execution range of the Container.
-  - The addChildExecutions function retrieves child executions from ExecutionLogService's `executionsByParent` dictionary for the specified parent's execution ID and handles nested containers recursively.
+- useEntryExecution composableを通じてgetLogs、clearLogsメソッドを取得し、ExecutionLogServiceと連携しています。
+- transformedLogs computedで、ExecutionLogServiceの階層構造をフラット配列に変換してサンドイッチスタイルで表示します。
+  - 最新の実行から順に処理し、Containerの場合は子要素をaddChildExecutions関数で再帰的に追加し、最後にcontainer-endマーカーを挿入することで、Containerの実行範囲を視覚的に表現します。
+  - addChildExecutions関数は、指定された親の実行IDに対してExecutionLogServiceの`executionsByParent`辞書から子実行を取得し、ネストされたコンテナに対応するため再帰的に処理します。

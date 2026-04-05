@@ -2,17 +2,17 @@
 
 ## An application covered in this article
 
-- 左サイドバーのアイコン（ホワイトグレー、ライムグリーン）をドラッグしてメインエリアにドロップすると、それぞれブロックとコンテナが配置されます。
-- コンテナ内には他のブロックやコンテナをドラッグ＆ドロップで配置できます。
-- 各要素はドラッグ＆ドロップにより、配置順や親子関係を変更できます。
-- 各要素の削除ボタンをクリックすると、その要素と子要素が削除されます。
+- When you drag icons (white-gray, lime-green) from the left sidebar and drop them into the main area, blocks and containers are placed respectively.
+- Other blocks and containers can be placed inside containers using drag & drop.
+- Each element's position and parent-child relationship can be changed via drag & drop.
+- Clicking the delete button on each element removes that element and its child elements.
 
-**ソースコード：**  
+**Source code:**  
 [https://github.com/acchi17/Demo_Vue3_Sample2/tree/step2](https://github.com/acchi17/Demo_Vue3_Sample2/tree/step2)
 
 ## Source code structure of the Vue application
 
-上記アプリケーションのソース構成は以下の通りです。 
+The source structure of the above application is as follows.
 
 ```
 public/
@@ -42,7 +42,7 @@ src/
 
 ### 1. Managing parent-child relationships between objects (blocks and containers)
 
-このアプリケーションでは、ブロックとコンテナの間の親子関係を管理するために、専用のクラス「EntryManager」を実装しています。このクラスは、コンテナ内に他のブロックやコンテナを配置したり、それらの位置関係を変更したりするための機能を提供します。EntryManagerは、すべてのエントリー（ブロックとコンテナ）を登録し親子関係をマップで管理することで、効率的なアクセスと操作を可能にしています。
+In this application, a dedicated class called "EntryManager" is implemented to manage the parent-child relationships between blocks and containers. This class provides functionality for placing other blocks or containers inside a container and changing their positional relationships. The EntryManager enables efficient access and manipulation by registering all entries (blocks and containers) and managing their parent-child relationships with maps.
 
 **EntryManager.js**
 
@@ -293,19 +293,19 @@ export default class EntryManager {
 }
 ```
 
-- EntryManagerクラスは、2つの主要なマップを使用して親子関係を管理しています。
-  - `_entriesMap`：エントリーIDとエントリーオブジェクトの辞書（Map）
-  - `_parentChildMap`：子エントリーIDと親エントリーIDの辞書（Map）
-- このクラスは主に以下の機能を提供します。
-  - エントリーの追加（`addEntry`）- 特定の親コンテナに特定の位置にエントリーを追加
-  - エントリーの削除（`removeEntry`）- 親コンテナからエントリーを削除し、親子関係も解除（コンテナの場合は子孫も再帰的に削除）
-  - エントリーの同一コンテナ内での並び替え（`reorderEntry`）- 同じ親コンテナ内でのエントリーの位置変更
-  - エントリーの移動（`moveEntry`）- 異なる親コンテナへエントリーを移動
-- 再帰的な処理を用いて子孫エントリーIDを取得する`getAllDescendantIds`メソッドは、ドラッグ中のエントリを識別するために使用されます。
+- The EntryManager class manages parent-child relationships using two main maps:
+  - `_entriesMap`: A dictionary (Map) of entry IDs and entry objects
+  - `_parentChildMap`: A dictionary (Map) of child entry IDs and parent entry IDs
+- This class primarily provides the following functions:
+  - Adding entries (`addEntry`) - Adding an entry at a specific position to a specific parent container
+  - Removing entries (`removeEntry`) - Removing an entry from a parent container and disconnecting the parent-child relationship (recursively removing descendants for containers)
+  - Reordering entries within the same container (`reorderEntry`) - Changing the position of an entry within the same parent container
+  - Moving entries (`moveEntry`) - Moving an entry to a different parent container
+- The `getAllDescendantIds` method, which recursively retrieves descendant entry IDs, is used to identify entries being dragged.
 
 ### 2. Container component capable of holding child objects
 
-コンテナコンポーネントは、他のブロックやコンテナをドラッグ＆ドロップで配置できる入れ物として機能します。Vue.jsのProvide/Injectパターンを使用してEntryManagerインスタンスを共有し、コンポーネント間で親子関係を管理しています。
+The container component functions as a vessel that can hold other blocks or containers through drag & drop. It uses Vue.js's Provide/Inject pattern to share the EntryManager instance and manage parent-child relationships between components.
 
 **main.js**
 
@@ -323,8 +323,8 @@ app.provide('entryManager', entryManager)
 app.mount('#app')
 ```
 
-- `main.js`では、アプリケーション全体でEntryManagerを共有するために`app.provide('entryManager', entryManager)`を使用しています。
-- この方法により、親子関係の管理を担当するEntryManagerインスタンスが全てのコンポーネントから利用可能になります。
+- In `main.js`, `app.provide('entryManager', entryManager)` is used to share the EntryManager throughout the application.
+- This method makes the EntryManager instance, which is responsible for managing parent-child relationships, available to all components.
 
 **Container.js**
 
@@ -350,10 +350,10 @@ export default class Container extends Entry {
 }
 ```
 
-- Containerクラスは基本的なEntryクラスを継承して、子要素を持つことができる特別なエントリータイプを実装しています。
-- Vueの`reactive`関数を使用して`children`配列を定義することで、子要素の変更を検出してUIの自動更新を実現しています。
-- コンテナタイプを'container'に設定することで、UIコンポーネントがどのタイプのエントリーであるかを判別できます。
-- コンテナはブロックと異なり、自身の中に他のブロックやコンテナを入れ子状に配置できるため、UIの階層構造を表現できます。
+- The Container class extends the basic Entry class to implement a special entry type that can hold child elements.
+- It uses Vue's `reactive` function to define the `children` array, enabling automatic UI updates when child elements change.
+- Setting the container type to 'container' allows UI components to determine what type of entry they're dealing with.
+- Unlike blocks, containers can nest other blocks or containers inside them, allowing for the expression of a hierarchical UI structure.
 
 **ContainerItem.vue**
 
@@ -535,12 +535,12 @@ export default {
 </script>
 ```
 
-- コンテナ内部には先頭に常に表示されるドロップエリアとそれぞれの子要素の下にドロップエリアを配置し、コンテナ内の任意の位置に新しい要素を挿入できるようにしています。
-- `<component :is="child.type === 'block' ? 'BlockItem' : 'ContainerItem'">`により、子要素の型に応じて適切なコンポーネントを動的にレンダリングし、ネスト構造を実現しています。
-- ドロップ時には3つのケースに対応しています。
-  - 新しい要素（ブロックまたはコンテナ）の作成と挿入
-  - 同じコンテナ内での要素の並び替え
-  - 異なるコンテナからの要素の移動
+- Inside the container, a drop area is always displayed at the beginning, and drop areas are placed below each child element, allowing new elements to be inserted at any position within the container.
+- Using `<component :is="child.type === 'block' ? 'BlockItem' : 'ContainerItem'">`, the component dynamically renders the appropriate component based on the child element's type, enabling a nested structure.
+- When dropping, three cases are handled:
+  - Creating and inserting new elements (blocks or containers)
+  - Reordering elements within the same container
+  - Moving elements from different containers
 
 **MainArea.vue**
 
@@ -550,11 +550,11 @@ const mainContainer = new Container('main-area')
 entryManager.addEntry(null, mainContainer, 0)
 ```
 
-- MainArea.vueは内部でContainerクラスのインスタンスを保持し、他のすべてのエントリ（ブロックやコンテナ）の親または祖先となります。
+- MainArea.vue holds an instance of the Container class internally, serving as the parent or ancestor of all other entries (blocks and containers).
 
 ### 3. Global drag state management
 
-このアプリケーションでは、ドラッグ＆ドロップ操作中の状態を複数のコンポーネント間で共有するために、グローバルなドラッグ状態管理の仕組みを実装しています。Vue.js Composition APIを活用した専用のコンポーザブル関数を使用して、ドラッグ中の状態やドラッグされている要素の情報を管理し、コンポーネント間で一貫した挙動を実現しています。
+In this application, a mechanism for global drag state management is implemented to share the state during drag & drop operations across multiple components. Using dedicated composable functions that leverage Vue.js Composition API, it manages the state during dragging and information about the elements being dragged, ensuring consistent behavior between components.
 
 **useDragDropState.js**
 
@@ -619,10 +619,10 @@ function useDragDropState() {
 export const dragDropState = useDragDropState()
 ```
 
-- このファイルはアプリケーション全体でのドラッグ&ドロップ状態を管理するシングルトンインスタンスを提供しています
-- モジュールレベルでシングルトンとしてエクスポートすることで、コンポーネント間で状態を共有しています
-- ドラッグ中の要素IDをSetオブジェクトとして保持することで、高速な検索と存在チェックを実現しています
-- `readonly()`を使用して外部からの直接変更を防止し、専用メソッドを通じてのみ状態変更を可能にしています
+- This file provides a singleton instance to manage drag & drop state across the entire application
+- By exporting as a singleton at the module level, state is shared between components
+- Storing dragged element IDs as a Set object enables fast search and existence checks
+- Using `readonly()` prevents direct modification from outside and allows state changes only through dedicated methods
 
 **useDraggable.js**
 
@@ -637,7 +637,7 @@ const onDragStart = (event) => {
 }
 ```
 
-- OnDragStartCallBackの引数にdragDropStateを渡すことで、コールバック内でグローバルなドラッグ状態を参照・更新可能にしています。
+- By passing dragDropState as an argument to OnDragStartCallBack, the global drag state can be referenced and updated within the callback.
 
 **useDroppable.js**
 
@@ -656,7 +656,7 @@ const isDroppable = (entryId) => {
 }
 ```
 
-- `isDroppable`関数により、現在ドラッグ中の要素自身やその子孫要素へのドロップを防止する論理を提供しています
+- The `isDroppable` function provides logic to prevent dropping onto the element being dragged itself or its descendant elements.
 
 **ContainerItem.vue**
 
@@ -679,4 +679,4 @@ setOnDragStartCallBack((event, dragDropState) => {
 })
 ```
 
-- `getAllDescendantIds`を使用して、ドラッグ時にコンテナ自身とすべての子孫要素のIDを収集し、dragDropStateに設定しています。これにより、ドラッグ中のコンテナ自身やその子孫要素へのドロップを防止する仕組みを実現しています。
+- Using `getAllDescendantIds`, it collects the IDs of the container itself and all its descendant elements when dragging, and sets them in dragDropState. This creates a mechanism to prevent dropping onto the container being dragged or its descendant elements.
