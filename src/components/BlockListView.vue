@@ -1,5 +1,5 @@
 <template>
-  <div class="block-list-view" @click="selectionState.clearSelection()">
+  <div class="block-list-view" @click="entryState.clearState()">
     <div class="rect-item">
       <div
         class="rect-icon lime"
@@ -26,7 +26,7 @@
 <script>
 import { inject, ref, onMounted } from 'vue';
 import { useDraggable } from '../composables/useDraggable';
-import { selectionState } from '../composables/useSelection';
+import { entryState } from '../composables/useEntryState';
 
 export default {
   name: 'BlockListView',
@@ -78,7 +78,7 @@ export default {
       onDragEndBlock,
       onDragStartContainer,
       onDragEndContainer,
-      selectionState
+      entryState
     };
   }
 }

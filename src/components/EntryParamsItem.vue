@@ -3,23 +3,30 @@
     <div class="param-toggle">
       <button
         class="param-toggle-btn"
-        :class="{ active: paramView === 'input' }"
-        @click.stop="paramView = 'input'"
+        :class="{ active: paramKind === 'input' }"
+        @click.stop="paramKind = 'input'"
       >In</button>
       <button
         class="param-toggle-btn"
-        :class="{ active: paramView === 'output' }"
-        @click.stop="paramView = 'output'"
+        :class="{ active: paramKind === 'output' }"
+        @click.stop="paramKind = 'output'"
       >Out</button>
     </div>
     <div class="param-badges">
-      <span v-for="pName in visibleParamNames" :key="pName" class="param-badge">{{ pName }}</span>
+      <span
+        v-for="pName in paramNames"
+        :key="pName"
+        class="param-badge"
+        :class="{ 'pending': isBadgeConnecting(pName).value }"
+        @click.stop="onBadgeToggle(pName)"
+      >{{ pName }}</span>
     </div>
   </template>
 </template>
 
 <script>
 import { ref, computed, inject } from 'vue'
+import { entryState } from '../composables/useEntryState'
 
 export default {
   name: 'EntryParamsItem',
@@ -34,23 +41,36 @@ export default {
   setup(props) {
     const entryParamManager = inject('entryParamManager')
 
-    const paramView = ref('input')
-
     const hasParams = computed(() =>
       (entryParamManager.getInputParamNames(props.entryId) || []).length > 0 ||
       (entryParamManager.getOutputParamNames(props.entryId) || []).length > 0
     )
 
-    const visibleParamNames = computed(() =>
-      paramView.value === 'input'
+    const paramKind = ref('input')
+
+    const paramNames = computed(() =>
+      paramKind.value === 'input'
         ? (entryParamManager.getInputParamNames(props.entryId) || [])
         : (entryParamManager.getOutputParamNames(props.entryId) || [])
     )
 
+    const isBadgeConnecting = (paramName) =>
+      entryState.isConnectingParamFor(props.entryId, paramName, paramKind.value)
+
+    const onBadgeToggle = (paramName) => {
+      if (isBadgeConnecting(paramName).value) {
+        entryState.cancelConnection()
+      } else {
+        entryState.startConnection(props.entryId, paramName, paramKind.value)
+      }
+    }
+
     return {
-      paramView,
       hasParams,
-      visibleParamNames
+      paramKind,
+      paramNames,
+      isBadgeConnecting,
+      onBadgeToggle,
     }
   }
 }
@@ -99,5 +119,11 @@ export default {
   padding: 2px 6px;
   border-radius: 10px;
   white-space: nowrap;
+  cursor: pointer;
+}
+
+.param-badge.pending {
+  outline: 2px solid #fff;
+  opacity: 0.8;
 }
 </style>

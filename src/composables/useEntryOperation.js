@@ -1,7 +1,7 @@
 import { inject } from 'vue'
 import Block from '../classes/Block'
 import Container from '../classes/Container'
-import { selectionState } from './useSelection'
+import { entryState } from './useEntryState'
 
 export function useEntryOperation() {
   const entryManager = inject('entryManager')
@@ -24,9 +24,9 @@ export function useEntryOperation() {
   }
 
   const removeEntry = (id) => {
-    const selectedId = selectionState.getSelectedEntryId().value
+    const selectedId = entryState.getSelectedEntryId().value
     if (selectedId && (selectedId === id || entryManager.getAllDescendantIds(id).includes(selectedId))) {
-      selectionState.clearSelection()
+      entryState.clearSelection()
     }
     entryManager.removeEntry(id)
   }
