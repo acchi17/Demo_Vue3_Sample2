@@ -92,7 +92,7 @@ src/
 ```javascript
 import { ref, readonly, computed } from 'vue'
 
-// 共有状態（モジュールレベルのシングルトン）
+// Shared state (module-level singleton)
 const selectedEntryId = ref(null)
 
 function useSelection() {
@@ -120,7 +120,7 @@ function useSelection() {
   }
 }
 
-// シングルトンインスタンスをエクスポート
+// Export singleton instance
 export const selectionState = useSelection()
 ```
 
@@ -207,9 +207,9 @@ import { reactive } from 'vue'
 
 export default class EntryParamManager {
   constructor() {
-    // エントリIDと入力パラメータの辞書
+    // Dictionary of entry IDs and their input parameters
     this._inputParamsMap = new Map(); // entryId -> inputs
-    // エントリIDと出力パラメータの辞書（UI更新のためreactive化）
+    // Dictionary of entry IDs and their output parameters (reactive for UI updates)
     this._outputParamsMap = reactive(new Map()); // entryId -> outputs
   }
 
@@ -237,7 +237,7 @@ export default class EntryParamManager {
 
   setOutputParams(entryId, outputParams = {}) {
     if (!entryId) return false;
-    // reactiveマップに出力パラメータをセット
+    // Set output parameters to the reactive map
     this._outputParamsMap.set(entryId, outputParams);
     return true;
   }
@@ -254,7 +254,7 @@ export default class EntryParamManager {
   
   setOutputParam(entryId, paramName, value) {
     if (!entryId || !paramName) return false;
-    // reactiveマップにエントリが存在しない場合は作成
+    // Create entry in reactive map if it doesn't exist
     if (!this._outputParamsMap.has(entryId)) {
       this._outputParamsMap.set(entryId, {});
     }
@@ -277,7 +277,7 @@ async executeEntry(entry, traceId = null) {
   try {
     this._executionStack.push(entry.id);
     const executionId = this._generateExecutionId(entry.id);
-    // 実行前に入力パラメータを取得
+    // Fetch input parameters before execution
     const inputParams = this.entryParamManager ? this.entryParamManager.getInputParams(entry.id) : {};
     if (this.executionLogService) {
       this.executionLogService.addLog(entry, inputParams, executionId, traceId);
@@ -302,7 +302,7 @@ async _executeBlock(block, inputParams = {}) {
   let result = {};
   try {
     result = await this.scriptExecutionService.executeScript(block.name, inputParams);
-    // スクリプトの結果を出力パラメータに書き戻す
+    // Write script results back into output parameters
     if (this.entryParamManager) {
       const outputParamNames = this.entryParamManager.getOutputParamNames(block.id);
       for (const key of outputParamNames) {
