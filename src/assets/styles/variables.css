@@ -38,6 +38,9 @@
 
   /* Scalar param type icons */
   --scalar-int-param-icon: url('@/assets/images/cyan-gray-integer-type-256.png');
+
+  /* Parameter badge styles */
+  --param-badge-bg-color: #5a9fd4;
   
   /* Entry text styles */
   --entry-text-font-size: 12px;

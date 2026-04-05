@@ -14,6 +14,7 @@
           <div v-if="isSelected" class="entry-button entry-button-play" @click.stop="onPlay"></div>
           <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
         </div>
+        <EntryParamsItem v-if="isSelected" :entry-id="entry.id" />
       </div>
       <div class="container-children">
         <!-- First drop area (always displayed) -->
@@ -49,11 +50,13 @@ import { useEntryOperation } from '../composables/useEntryOperation'
 import { useEntryExecution } from '../composables/useEntryExecution'
 import { selectionState } from '../composables/useSelection'
 import BlockItem from './BlockItem.vue'
+import EntryParamsItem from './EntryParamsItem.vue'
 
 export default {
   name: 'ContainerItem',
   components: {
-    BlockItem
+    BlockItem,
+    EntryParamsItem
   },
   props: {
     entry: {
