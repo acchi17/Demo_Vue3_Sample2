@@ -8,6 +8,46 @@ export default class EntryManager {
     this._entriesById = new Map();
     // Dictionary of child IDs and their parent IDs
     this._parentIdById = new Map();
+    // Cache of entryId → 1-based sequence number (DFS visual order)
+    this._sequenceNumbers = new Map();
+    // ID of the root container for sequence number computation
+    this._rootId = null;
+  }
+
+  /**
+   * Set the root container for sequence number computation.
+   * Must be called once after the root container is registered.
+   * @param {string} rootId
+   */
+  _setRoot(rootId) {
+    if (this._rootId == null) {
+      console.log('Root entry set');
+      this._rootId = rootId;
+      this._rebuildSequenceNumbers();
+    }
+  }
+
+  /**
+   * Rebuild the sequence number map using DFS from the root.
+   * @private
+   */
+  _rebuildSequenceNumbers() {
+    this._sequenceNumbers.clear();
+    if (!this._rootId) return;
+
+    const root = this._entriesById.get(this._rootId);
+    if (!root || root.type !== 'container') return;
+
+    let counter = 0;
+    const traverse = (children) => {
+      for (const child of children) {
+        this._sequenceNumbers.set(child.id, ++counter);
+        if (child.type === 'container') {
+          traverse(child.children);
+        }
+      }
+    };
+    traverse(root.children);
   }
 
   /**
@@ -130,6 +170,15 @@ export default class EntryManager {
   }
 
   /**
+   * Get the sequence number (1-based visual position) of an entry.
+   * @param {string} entryId
+   * @returns {number|null} Sequence number or null if not found
+   */
+  getSequenceNumber(entryId) {
+    return this._sequenceNumbers.get(entryId) ?? null;
+  }  
+
+  /**
    * Add an entry to a parent entry
    * If parentId is null, the entry is just registered without a parent
    * @param {string|null} parentId - ID of the parent entry, or null to just register
@@ -140,6 +189,7 @@ export default class EntryManager {
   addEntry(parentId, entry, index) {
     // If parentId is null, just register the entry without a parent
     if (parentId === null) {
+      this._setRoot(entry.id);
       return this._registerEntry(entry);
     }
     
@@ -156,6 +206,7 @@ export default class EntryManager {
     // Add directly to parent's children array
     if (index >= 0 && index <= parentEntry.children.length) {
       parentEntry.children.splice(index, 0, entry);
+      this._rebuildSequenceNumbers();
       return true;
     }
     return false;
@@ -191,8 +242,8 @@ export default class EntryManager {
     if (childEntry.type === 'container') {
       this._removeDescendants(childEntry);
     }
-    
-    // Return true to indicate successful removal
+
+    this._rebuildSequenceNumbers();
     return true;
   }
 
@@ -217,6 +268,7 @@ export default class EntryManager {
       }
       const child = parentEntry.children.splice(currentIndex, 1)[0];
       parentEntry.children.splice(targetIndex, 0, child);
+      this._rebuildSequenceNumbers();
       return true;
     }
     return false;
