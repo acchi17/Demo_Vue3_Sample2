@@ -13,23 +13,25 @@
       >Out</button>
     </div>
     <div class="param-badges">
-      <span
+      <ParamBadgeItem
         v-for="pName in paramNames"
         :key="pName"
-        class="param-badge"
-        :class="{ 'pending': isBadgeConnecting(pName).value }"
-        @click.stop="onBadgeToggle(pName)"
-      >{{ pName }}</span>
+        :entry-id="entryId"
+        :name="pName"
+        :param-kind="paramKind"
+      />
     </div>
   </template>
 </template>
 
 <script>
 import { ref, computed, inject } from 'vue'
-import { entryState } from '../composables/useEntryState'
+import ParamBadgeItem from './ParamBadgeItem.vue'
 
 export default {
   name: 'EntryParamsItem',
+
+  components: { ParamBadgeItem },
 
   props: {
     entryId: {
@@ -54,23 +56,10 @@ export default {
         : (entryParamManager.getOutputParamNames(props.entryId) || [])
     )
 
-    const isBadgeConnecting = (paramName) =>
-      entryState.isConnectingParamFor(props.entryId, paramName, paramKind.value)
-
-    const onBadgeToggle = (paramName) => {
-      if (isBadgeConnecting(paramName).value) {
-        entryState.cancelConnection()
-      } else {
-        entryState.startConnection(props.entryId, paramName, paramKind.value)
-      }
-    }
-
     return {
       hasParams,
       paramKind,
       paramNames,
-      isBadgeConnecting,
-      onBadgeToggle,
     }
   }
 }
@@ -110,20 +99,5 @@ export default {
   display: flex;
   align-items: center;
   gap: 4px;
-}
-
-.param-badge {
-  font-size: 10px;
-  color: #fff;
-  background-color: var(--param-badge-bg-color);
-  padding: 2px 6px;
-  border-radius: 10px;
-  white-space: nowrap;
-  cursor: pointer;
-}
-
-.param-badge.pending {
-  outline: 2px solid #fff;
-  opacity: 0.8;
 }
 </style>
