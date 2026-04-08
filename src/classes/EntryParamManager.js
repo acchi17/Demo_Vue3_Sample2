@@ -2,15 +2,32 @@ import { reactive } from 'vue'
 
 /**
  * EntryParamManager class
- * Class that manages parameter values of entries
- * Manages input and output parameters separately using two different maps
+ * Class that manages parameter values and types of entries
+ * Internal storage: { paramName: { value, type } }
  */
 export default class EntryParamManager {
   constructor() {
-    // Dictionary of entry IDs and their input parameters
-    this._inputParamsMap = new Map(); // entryId -> inputs
+    // Dictionary of entry IDs and their input parameters: entryId -> { name: { value, type } }
+    this._inputParamsMap = new Map();
     // Dictionary of entry IDs and their output parameters (reactive for UI updates)
-    this._outputParamsMap = reactive(new Map()); // entryId -> outputs
+    this._outputParamsMap = reactive(new Map()); // entryId -> { name: { value, type } }
+  }
+
+  /**
+   * Validate that a value matches the declared type.
+   * Null/undefined are always allowed (output params start as null).
+   * @param {any} value
+   * @param {string} type
+   * @returns {boolean}
+   */
+  _validateType(value, type) {
+    if (value === null || value === undefined) return true;
+    switch (type) {
+      case 'integer': return Number.isInteger(value);
+      case 'real':    return typeof value === 'number';
+      case 'boolean': return typeof value === 'boolean';
+      default:        return true;
+    }
   }
 
   /**
@@ -21,9 +38,9 @@ export default class EntryParamManager {
    */
   getInputParam(entryId, paramName) {
     const params = this._inputParamsMap.get(entryId);
-    return params ? params[paramName] : undefined;
+    return params?.[paramName]?.value;
   }
-  
+
   /**
    * Get a specific output parameter value
    * @param {string} entryId - ID of the entry
@@ -32,29 +49,53 @@ export default class EntryParamManager {
    */
   getOutputParam(entryId, paramName) {
     const params = this._outputParamsMap.get(entryId);
-    return params ? params[paramName] : undefined;
+    return params?.[paramName]?.value;
   }
 
   /**
-   * Get input parameters for an entry
+   * Get the type of a specific input parameter
+   * @param {string} entryId
+   * @param {string} paramName
+   * @returns {string|undefined} Type string or undefined
+   */
+  getInputParamType(entryId, paramName) {
+    const params = this._inputParamsMap.get(entryId);
+    return params?.[paramName]?.type;
+  }
+
+  /**
+   * Get the type of a specific output parameter
+   * @param {string} entryId
+   * @param {string} paramName
+   * @returns {string|undefined} Type string or undefined
+   */
+  getOutputParamType(entryId, paramName) {
+    const params = this._outputParamsMap.get(entryId);
+    return params?.[paramName]?.type;
+  }
+
+  /**
+   * Get input parameters
    * @param {string} entryId - ID of the entry
-   * @returns {Object} Input parameters object
+   * @returns {Object} Input parameters object in the form { name: value }
    */
   getInputParams(entryId) {
-    return this._inputParamsMap.get(entryId) || {};
-  }
-  
-  /**
-   * Get output parameters for an entry
-   * @param {string} entryId - ID of the entry
-   * @returns {Object} Output parameters object
-   */
-  getOutputParams(entryId) {
-    return this._outputParamsMap.get(entryId) || {};
+    const params = this._inputParamsMap.get(entryId) || {};
+    return Object.fromEntries(Object.entries(params).map(([k, d]) => [k, d.value]));
   }
 
   /**
-   * Get input parameter names for an entry
+   * Get output parameters
+   * @param {string} entryId - ID of the entry
+   * @returns {Object} Output parameters object in the form { name: value }
+   */
+  getOutputParams(entryId) {
+    const params = this._outputParamsMap.get(entryId) || {};
+    return Object.fromEntries(Object.entries(params).map(([k, d]) => [k, d.value]));
+  }
+
+  /**
+   * Get input parameter names
    * @param {string} entryId - ID of the entry
    * @returns {string[]} Array of input parameter names
    */
@@ -63,7 +104,7 @@ export default class EntryParamManager {
   }
 
   /**
-   * Get output parameter names for an entry
+   * Get output parameter names
    * @param {string} entryId - ID of the entry
    * @returns {string[]} Array of output parameter names
    */
@@ -72,90 +113,74 @@ export default class EntryParamManager {
   }
 
   /**
-   * Set entry input parameters by entry ID
-   * Associates the entry ID with input parameters
-   * @param {string} entryId - ID of the entry
-   * @param {Object} inputParams - Input parameters to set
-   * @returns {boolean} Whether the operation was successful
-   */
-  setInputParams(entryId, inputParams = {}) {
-    if (!entryId) return false;
-    
-    // Set input parameters to the map
-    this._inputParamsMap.set(entryId, inputParams);
-    
-    return true;
-  }
-
-  /**
-   * Set entry output parameters by entry ID
-   * Associates the entry ID with output parameters
-   * @param {string} entryId - ID of the entry
-   * @param {Object} outputParams - Output parameters to set
-   * @returns {boolean} Whether the operation was successful
-   */
-  setOutputParams(entryId, outputParams = {}) {
-    if (!entryId) return false;
-
-    // Set output parameters to the reactive map
-    this._outputParamsMap.set(entryId, outputParams);
-
-    return true;
-  }
-
-  /**
    * Set a single input parameter
    * @param {string} entryId - ID of the entry
-   * @param {string} paramName - Name of the input parameter to set
+   * @param {string} paramName - Name of the input parameter
    * @param {any} value - New value
-   * @returns {boolean} Whether the operation was successful
    */
   setInputParam(entryId, paramName, value) {
-    if (!entryId || !paramName) return false;
-    
-    // Create entry in map if it doesn't exist
-    if (!this._inputParamsMap.has(entryId)) {
-      this._inputParamsMap.set(entryId, {});
-    }
-    
+    if (!entryId || !paramName) return;
+    if (!this._inputParamsMap.has(entryId)) return; 
+
     const params = this._inputParamsMap.get(entryId);
-    params[paramName] = value;
-    
-    return true;
+    const type = params[paramName]?.type;
+    if (type && !this._validateType(value, type)) {
+      console.error(`EntryParamManager: type mismatch for input "${paramName}" (expected ${type})`);
+      return;
+    }
+    if (params[paramName]) {
+      params[paramName].value = value;
+    } 
   }
-  
+
   /**
    * Set a single output parameter
    * @param {string} entryId - ID of the entry
-   * @param {string} paramName - Name of the output parameter to set
+   * @param {string} paramName - Name of the output parameter
    * @param {any} value - New value
-   * @returns {boolean} Whether the operation was successful
    */
   setOutputParam(entryId, paramName, value) {
-    if (!entryId || !paramName) return false;
+    if (!entryId || !paramName) return;
+    if (!this._outputParamsMap.has(entryId)) return;
 
-    // Create entry in reactive map if it doesn't exist
-    if (!this._outputParamsMap.has(entryId)) {
-      this._outputParamsMap.set(entryId, {});
+    const params = this._outputParamsMap.get(entryId);
+    const type = params[paramName]?.type;
+    if (type && !this._validateType(value, type)) {
+      console.error(`EntryParamManager: type mismatch for output "${paramName}" (expected ${type})`);
+      return;
     }
-
-    this._outputParamsMap.get(entryId)[paramName] = value;
-
-    return true;
+    if (params[paramName]) {
+      params[paramName].value = value;
+    }
   }
-  
+
+  /**
+   * Set entry input parameter definitions
+   * @param {string} entryId - ID of the entry
+   * @param {Object} inputParamDef - Input parameter definitions in the form { name: { value, type } }
+   */
+  setInputParamDef(entryId, inputParamDef = {}) {
+    if (!entryId) return;
+    this._inputParamsMap.set(entryId, inputParamDef);
+  }
+
+  /**
+   * Set entry output parameter definitions
+   * @param {string} entryId - ID of the entry
+   * @param {Object} outputParamDef - Output parameter definitions in the form { name: { value, type } }
+   */
+  setOutputParamDef(entryId, outputParamDef = {}) {
+    if (!entryId) return;
+    this._outputParamsMap.set(entryId, outputParamDef);
+  }
+
   /**
    * Remove all parameter data for an entry
    * @param {string} entryId - ID of the entry
-   * @returns {boolean} Whether the removal was successful
    */
   removeParams(entryId) {
-    if (!entryId) return false;
-
-    // Remove parameter values from both maps
+    if (!entryId) return;
     this._inputParamsMap.delete(entryId);
     this._outputParamsMap.delete(entryId);
-
-    return true;
-  }  
+  }
 }

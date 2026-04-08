@@ -11,9 +11,9 @@ export function useEntryOperation() {
   const addBlock = (parentId, name, index) => {
     const newBlock = new Block(name)
     entryManager.addEntry(parentId, newBlock, index)
-    const defaultParams = entryDefinitionService.getBlockDefaultParams(name)
-    entryParamManager.setInputParams(newBlock.id, defaultParams.input)
-    entryParamManager.setOutputParams(newBlock.id, defaultParams.output)
+    const defaultParams = entryDefinitionService.getBlockParamDef(name)
+    entryParamManager.setInputParamDef(newBlock.id, defaultParams.input)
+    entryParamManager.setOutputParamDef(newBlock.id, defaultParams.output)
     return newBlock
   }
 

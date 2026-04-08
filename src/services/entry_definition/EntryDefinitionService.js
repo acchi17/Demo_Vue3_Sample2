@@ -122,11 +122,12 @@ export default class EntryDefinitionService {
   }
 
   /**
-   * Get default parameters for a block
+   * Get parameter definitions for a block
    * @param {string} blockName - Block name
-   * @return {Object} Object containing default input and output parameter values
+   * @return {Object} Object containing input and output parameter definitions
+   *                  in the form { input: { paramName: { value, type } }, output: { ... } }
    */
-  getBlockDefaultParams(blockName) {
+  getBlockParamDef(blockName) {
     const blockDef = this.blockDefinitions[blockName];
     if (!blockDef) return { input: {}, output: {} };
     
@@ -134,11 +135,17 @@ export default class EntryDefinitionService {
     const output = {};
     
     blockDef.parameters.input.forEach(param => {
-      input[param.name] = param.default !== undefined ? this._castParamValue(param.default, param.dataType) : null;
+      input[param.name] = {
+        value: param.default !== undefined ? this._castParamValue(param.default, param.dataType) : null,
+        type: param.dataType
+      };
     });
 
     blockDef.parameters.output.forEach(param => {
-      output[param.name] = param.default !== undefined ? this._castParamValue(param.default, param.dataType) : null;
+      output[param.name] = {
+        value: param.default !== undefined ? this._castParamValue(param.default, param.dataType) : null,
+        type: param.dataType
+      };
     });
     
     return { input, output };
