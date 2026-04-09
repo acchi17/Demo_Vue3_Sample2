@@ -2,7 +2,7 @@ import { ref, readonly, computed } from 'vue'
 
 // Module-level singleton state
 const selectedEntryId = ref(null)
-const pendingConnection = ref(null) // null | { entryId, paramName, paramKind, paramType }
+const pendingConnection = ref(null) // null | { entryId, paramName, paramCategory, paramType }
 
 /**
  * Composable for entry selection and parameter connection waiting state.
@@ -26,8 +26,8 @@ function useEntryState() {
 
   // --- Connection waiting ---
 
-  const startConnection = (entryId, paramName, paramKind, paramType) => {
-    pendingConnection.value = { entryId, paramName, paramKind, paramType }
+  const startConnection = (entryId, paramName, paramCategory, paramType) => {
+    pendingConnection.value = { entryId, paramName, paramCategory, paramType }
   }
 
   const cancelConnection = () => {
@@ -36,12 +36,12 @@ function useEntryState() {
 
   const isConnectingParam = computed(() => pendingConnection.value !== null)
 
-  const isConnectingParamFor = (entryId, paramName, paramKind) =>
+  const isConnectingParamFor = (entryId, paramName, paramCategory) =>
     computed(() =>
       pendingConnection.value !== null &&
       pendingConnection.value.entryId === entryId &&
       pendingConnection.value.paramName === paramName &&
-      pendingConnection.value.paramKind === paramKind
+      pendingConnection.value.paramCategory === paramCategory
     )
 
   // When connecting: cancel connection only (keep selection)

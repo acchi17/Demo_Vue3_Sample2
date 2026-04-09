@@ -22,11 +22,11 @@ export default {
       type: String,
       required: true
     },
-    paramKind: {
+    paramCategory: {
       type: String,
       required: true
     },
-    dataType: {
+    paramType: {
       type: String,
       default: null
     }
@@ -34,14 +34,14 @@ export default {
 
   setup(props) {
     const isPending = computed(
-      () => entryState.isConnectingParamFor(props.entryId, props.name, props.paramKind).value
+      () => entryState.isConnectingParamFor(props.entryId, props.name, props.paramCategory).value
     )
 
     const onToggle = () => {
       if (isPending.value) {
         entryState.cancelConnection()
       } else {
-        entryState.startConnection(props.entryId, props.name, props.paramKind, props.dataType)
+        entryState.startConnection(props.entryId, props.name, props.paramCategory, props.paramType)
       }
     }
 

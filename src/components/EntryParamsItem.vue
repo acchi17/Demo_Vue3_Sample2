@@ -3,13 +3,13 @@
     <div class="param-toggle">
       <button
         class="param-toggle-btn"
-        :class="{ active: paramKind === 'input' }"
-        @click.stop="paramKind = 'input'"
+        :class="{ active: paramCategory === 'input' }"
+        @click.stop="paramCategory = 'input'"
       >In</button>
       <button
         class="param-toggle-btn"
-        :class="{ active: paramKind === 'output' }"
-        @click.stop="paramKind = 'output'"
+        :class="{ active: paramCategory === 'output' }"
+        @click.stop="paramCategory = 'output'"
       >Out</button>
     </div>
     <div class="param-badges">
@@ -18,8 +18,8 @@
         :key="param.name"
         :entry-id="entryId"
         :name="param.name"
-        :param-kind="paramKind"
-        :data-type="param.type"
+        :param-category="paramCategory"
+        :param-type="param.type"
       />
     </div>
   </template>
@@ -49,10 +49,10 @@ export default {
       Object.keys(entryParamManager.getOutputParamTypes(props.entryId)).length > 0
     )
 
-    const paramKind = ref('input')
+    const paramCategory = ref('input')
 
     const paramItems = computed(() => {
-      const types = paramKind.value === 'input'
+      const types = paramCategory.value === 'input'
         ? entryParamManager.getInputParamTypes(props.entryId)
         : entryParamManager.getOutputParamTypes(props.entryId)
       return Object.entries(types).map(([name, type]) => ({ name, type }))
@@ -60,7 +60,7 @@ export default {
 
     return {
       hasParams,
-      paramKind,
+      paramCategory,
       paramItems,
     }
   }

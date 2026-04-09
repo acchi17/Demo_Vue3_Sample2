@@ -48,7 +48,7 @@ export default class EntryExecutionService {
       result = await this.scriptExecutionService.executeScript(block.name, inputParams);
       // Store result values into output params
       if (this.entryParamManager) {
-        const outputParamNames = Object.keys(this.entryParamManager.getOutputParamTypes(block.id));
+        const outputParamNames = Object.keys(this.entryParamManager.getOutputParams(block.id));
         for (const key of outputParamNames) {
           if (key in result) {
             this.entryParamManager.setOutputParam(block.id, key, result[key]);
