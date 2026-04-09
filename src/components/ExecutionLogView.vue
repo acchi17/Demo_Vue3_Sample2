@@ -29,7 +29,8 @@
             <tr v-if="item.type === 'entry'" :class="entryRowClass(item.data)">
               <td class="col-start-time">{{ formatTimestamp(item.data.timestamp) }}</td>
               <td class="col-status">
-                <span :class="item.data.result?.success ? 'status-success' : 'status-error'">
+                <span v-if="item.data.result?.success !== undefined"
+                  :class="item.data.result?.success ? 'status-success' : 'status-error'">
                   {{ item.data.result?.success ? 'Success' : 'Failed' }}
                 </span>
               </td>             
