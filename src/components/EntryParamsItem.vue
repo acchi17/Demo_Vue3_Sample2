@@ -14,11 +14,12 @@
     </div>
     <div class="param-badges">
       <ParamBadgeItem
-        v-for="pName in paramNames"
-        :key="pName"
+        v-for="param in paramItems"
+        :key="param.name"
         :entry-id="entryId"
-        :name="pName"
+        :name="param.name"
         :param-kind="paramKind"
+        :data-type="param.type"
       />
     </div>
   </template>
@@ -50,16 +51,17 @@ export default {
 
     const paramKind = ref('input')
 
-    const paramNames = computed(() =>
-      paramKind.value === 'input'
-        ? Object.keys(entryParamManager.getInputParamTypes(props.entryId))
-        : Object.keys(entryParamManager.getOutputParamTypes(props.entryId))
-    )
+    const paramItems = computed(() => {
+      const types = paramKind.value === 'input'
+        ? entryParamManager.getInputParamTypes(props.entryId)
+        : entryParamManager.getOutputParamTypes(props.entryId)
+      return Object.entries(types).map(([name, type]) => ({ name, type }))
+    })
 
     return {
       hasParams,
       paramKind,
-      paramNames,
+      paramItems,
     }
   }
 }
