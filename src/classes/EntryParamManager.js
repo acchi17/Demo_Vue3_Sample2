@@ -95,21 +95,23 @@ export default class EntryParamManager {
   }
 
   /**
-   * Get input parameter names
+   * Get input parameter data types
    * @param {string} entryId - ID of the entry
-   * @returns {string[]} Array of input parameter names
+   * @returns {Object} Input parameter types in the form { name: type }
    */
-  getInputParamNames(entryId) {
-    return Object.keys(this._inputParamsMap.get(entryId) || {});
+  getInputParamTypes(entryId) {
+    const params = this._inputParamsMap.get(entryId) || {};
+    return Object.fromEntries(Object.entries(params).map(([k, d]) => [k, d.type]));
   }
 
   /**
-   * Get output parameter names
+   * Get output parameter data types
    * @param {string} entryId - ID of the entry
-   * @returns {string[]} Array of output parameter names
+   * @returns {Object} Output parameter types in the form { name: type }
    */
-  getOutputParamNames(entryId) {
-    return Object.keys(this._outputParamsMap.get(entryId) || {});
+  getOutputParamTypes(entryId) {
+    const params = this._outputParamsMap.get(entryId) || {};
+    return Object.fromEntries(Object.entries(params).map(([k, d]) => [k, d.type]));
   }
 
   /**

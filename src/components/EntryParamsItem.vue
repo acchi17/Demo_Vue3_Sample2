@@ -44,16 +44,16 @@ export default {
     const entryParamManager = inject('entryParamManager')
 
     const hasParams = computed(() =>
-      (entryParamManager.getInputParamNames(props.entryId) || []).length > 0 ||
-      (entryParamManager.getOutputParamNames(props.entryId) || []).length > 0
+      Object.keys(entryParamManager.getInputParamTypes(props.entryId)).length > 0 ||
+      Object.keys(entryParamManager.getOutputParamTypes(props.entryId)).length > 0
     )
 
     const paramKind = ref('input')
 
     const paramNames = computed(() =>
       paramKind.value === 'input'
-        ? (entryParamManager.getInputParamNames(props.entryId) || [])
-        : (entryParamManager.getOutputParamNames(props.entryId) || [])
+        ? Object.keys(entryParamManager.getInputParamTypes(props.entryId))
+        : Object.keys(entryParamManager.getOutputParamTypes(props.entryId))
     )
 
     return {
