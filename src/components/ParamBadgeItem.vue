@@ -41,7 +41,7 @@ export default {
       if (isPending.value) {
         entryState.cancelConnection()
       } else {
-        entryState.startConnection(props.entryId, props.name, props.paramKind)
+        entryState.startConnection(props.entryId, props.name, props.paramKind, props.dataType)
       }
     }
 
