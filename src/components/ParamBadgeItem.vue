@@ -25,6 +25,10 @@ export default {
     paramKind: {
       type: String,
       required: true
+    },
+    dataType: {
+      type: String,
+      default: null
     }
   },
 
