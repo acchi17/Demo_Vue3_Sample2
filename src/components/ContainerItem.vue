@@ -291,16 +291,15 @@ export default {
 }
 
 .drop-area {
-  height: 10px;
+  height: 20px;
   width: 100%;
-  margin: 5px 0px;
-  border: 2px dashed transparent;
+  border: 1px dashed transparent;
   border-radius: 4px;
   transition: all 0.3s ease;
 }
 
 .drop-area.is-active {
-  height: 30px;
+  height: 20px;
   border-color: #007bff;
   background-color: rgba(0, 123, 255, 0.1);
 }

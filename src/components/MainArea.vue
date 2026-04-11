@@ -3,6 +3,7 @@
     class="main-area"
     @click="entryState.clearState()"
   >
+    <div class="entry-panel">
     <div class="main-container">
       <!-- First drop area (always displayed) -->
       <div class="drop-area" 
@@ -25,6 +26,8 @@
         />
       </template>
     </div>
+    </div>
+    <div class="connection-panel" />
   </div>
 </template>
 
@@ -119,11 +122,23 @@ export default {
 
 <style scoped>
 .main-area {
+  display: flex;
+  flex-direction: row;
   min-width: 800px;
   height: 100vh;
-  padding: 0px 100px;
   box-sizing: border-box;
   background-color: #f5f5f5;
+}
+
+.entry-panel {
+  flex: 1;
+  padding: 0px 40px;
+  overflow: auto;
+  border-right: 1px solid #ddd;
+}
+
+.connection-panel {
+  flex: 1;
   overflow: auto;
 }
 
@@ -136,16 +151,15 @@ export default {
 }
 
 .drop-area {
-  height: 10px;
+  height: 20px;
   width: 100%;
-  margin: 5px 0;
-  border: 2px dashed transparent;
+  border: 1px dashed transparent;
   border-radius: 4px;
   transition: all 0.3s ease;
 }
 
 .drop-area.is-active {
-  height: 30px;
+  height: 20px;
   border-color: #007bff;
   background-color: rgba(0, 123, 255, 0.1);
 }
