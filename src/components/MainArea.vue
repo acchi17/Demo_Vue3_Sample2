@@ -1,7 +1,6 @@
 <template>
   <div
     class="main-area"
-    ref="mainAreaRef"
     @click="entryState.clearState()"
   >
     <div class="entry-panel" ref="entryPanelRef">
@@ -29,7 +28,7 @@
     </div>
     </div>
     <div class="connection-panel">
-      <div class="connection-lines-container" :style="{ minHeight: contentHeight + 'px' }">
+      <div class="connection-lines-container" :style="{ minHeight: entryPanelRef?.scrollHeight + 'px' }">
         <div
           v-for="[id, rect] in entryLayoutManager.layoutMap"
           :key="id"
@@ -118,11 +117,10 @@ export default {
     // For determining whether to allow the drop
     const dropAllowed = isDroppable(mainContainer.id)
 
-    // Template refs for shared scroll container and entry panel
-    const mainAreaRef = ref(null)
+    // Template ref for the entry panel
     const entryPanelRef = ref(null)
     const entryLayoutManager = inject('entryLayoutManager')
-    const { contentHeight } = useEntryRect(mainAreaRef, entryPanelRef, mainContainer)
+    useEntryRect(entryPanelRef, mainContainer)
 
     // Return values and methods to use in <template>
     return {
@@ -132,10 +130,8 @@ export default {
       children,
       dropAllowed,
       entryState,
-      mainAreaRef,
       entryPanelRef,
-      entryLayoutManager,
-      contentHeight
+      entryLayoutManager
     }
   }
 }

@@ -1,24 +1,20 @@
-import { ref, watchEffect, onMounted, onUnmounted, nextTick, inject } from 'vue'
+import { watchEffect, onMounted, onUnmounted, nextTick, inject } from 'vue'
 
 /**
  * Measures the Y position and height of each entry's header element in the entry panel
  * and writes them into EntryLayoutManager. Used to align horizontal lines in the
  * connection panel with entry headers.
  *
- * @param {Ref<HTMLElement>} mainAreaRef - Ref to the shared scroll container (.main-area)
  * @param {Ref<HTMLElement>} entryPanelRef - Ref to the entry panel (.entry-panel)
  * @param {Object} rootContainer - The root container whose children tree is reactive
- * @returns {{ contentHeight: Ref<number> }}
  */
-export function useEntryRect(mainAreaRef, entryPanelRef, rootContainer) {
+export function useEntryRect(entryPanelRef, rootContainer) {
   const entryLayoutManager = inject('entryLayoutManager')
-  const contentHeight = ref(0)
 
   function measureEntries() {
-    if (!mainAreaRef.value || !entryPanelRef.value) return
+    if (!entryPanelRef.value) return
 
     const panelRect = entryPanelRef.value.getBoundingClientRect()
-    const scrollTop = mainAreaRef.value.scrollTop
 
     const nodes = entryPanelRef.value.querySelectorAll('[data-entry-id]')
     entryLayoutManager.clearAll()
@@ -26,11 +22,10 @@ export function useEntryRect(mainAreaRef, entryPanelRef, rootContainer) {
       const rect = node.getBoundingClientRect()
       entryLayoutManager.setLayout(
         node.dataset.entryId,
-        rect.top - panelRect.top + scrollTop,
+        rect.top - panelRect.top,
         rect.height
       )
     }
-    contentHeight.value = entryPanelRef.value.scrollHeight
   }
 
   // Re-measure on structural changes (add/remove/reorder entries)
@@ -51,6 +46,4 @@ export function useEntryRect(mainAreaRef, entryPanelRef, rootContainer) {
     ro.observe(entryPanelRef.value)
   })
   onUnmounted(() => ro?.disconnect())
-
-  return { contentHeight }
 }
