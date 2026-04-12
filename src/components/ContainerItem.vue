@@ -8,7 +8,7 @@
     @click.stop="onSelect"
   >
     <div class="container-content">
-      <div class="container-header">
+      <div class="container-header" :data-entry-id="entry.id">
         <div class="entry-text">{{ entry.name }}</div>
         <div class="entry-button-group">
           <div v-if="isSelected" class="entry-button entry-button-play" @click.stop="onPlay"></div>

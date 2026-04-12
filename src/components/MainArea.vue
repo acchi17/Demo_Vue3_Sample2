@@ -1,9 +1,10 @@
 <template>
   <div
     class="main-area"
+    ref="mainAreaRef"
     @click="entryState.clearState()"
   >
-    <div class="entry-panel">
+    <div class="entry-panel" ref="entryPanelRef">
     <div class="main-container">
       <!-- First drop area (always displayed) -->
       <div class="drop-area" 
@@ -27,15 +28,25 @@
       </template>
     </div>
     </div>
-    <div class="connection-panel" />
+    <div class="connection-panel">
+      <div class="connection-lines-container" :style="{ minHeight: contentHeight + 'px' }">
+        <div
+          v-for="[id, rect] in entryLayoutManager.layoutMap"
+          :key="id"
+          class="connection-line"
+          :style="{ top: rect.y + rect.height / 2 + 'px' }"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { computed } from 'vue'
+import { ref, computed, inject } from 'vue'
 import { useDroppable } from '../composables/useDroppable'
 import { useEntryOperation } from '../composables/useEntryOperation'
 import { entryState } from '../composables/useEntryState'
+import { useEntryRect } from '../composables/useEntryRect'
 import BlockItem from './BlockItem.vue'
 import ContainerItem from './ContainerItem.vue'
 
@@ -106,7 +117,13 @@ export default {
 
     // For determining whether to allow the drop
     const dropAllowed = isDroppable(mainContainer.id)
-    
+
+    // Template refs for shared scroll container and entry panel
+    const mainAreaRef = ref(null)
+    const entryPanelRef = ref(null)
+    const entryLayoutManager = inject('entryLayoutManager')
+    const { contentHeight } = useEntryRect(mainAreaRef, entryPanelRef, mainContainer)
+
     // Return values and methods to use in <template>
     return {
       onDragOver,
@@ -114,7 +131,11 @@ export default {
       removeChild,
       children,
       dropAllowed,
-      entryState
+      entryState,
+      mainAreaRef,
+      entryPanelRef,
+      entryLayoutManager,
+      contentHeight
     }
   }
 }
@@ -124,8 +145,10 @@ export default {
 .main-area {
   display: flex;
   flex-direction: row;
+  align-items: flex-start;
   min-width: 800px;
   height: 100vh;
+  overflow-y: auto;
   box-sizing: border-box;
   background-color: #f5f5f5;
 }
@@ -133,13 +156,26 @@ export default {
 .entry-panel {
   flex: 1;
   padding: 0px 40px;
-  overflow: auto;
   border-right: 1px solid #ddd;
 }
 
 .connection-panel {
   flex: 1;
-  overflow: auto;
+}
+
+.connection-lines-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.connection-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #ccc;
+  pointer-events: none;
 }
 
 .main-container {

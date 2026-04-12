@@ -3,6 +3,7 @@ import App from './App.vue'
 import appConfig from './config/app-config'
 import EntryManager from './classes/EntryManager'
 import EntryParamManager from './classes/EntryParamManager'
+import EntryLayoutManager from './classes/EntryLayoutManager'
 import FileService from './services/file/FileService'
 import EntryExecutionService from './services/entry_execution/EntryExecutionService'
 import ExecutionLogService from './services/log/ExecutionLogService'
@@ -14,6 +15,7 @@ const app = createApp(App)
 // Create Managers
 const entryManager = new EntryManager()
 const entryParamManager = new EntryParamManager()
+const entryLayoutManager = new EntryLayoutManager()
 
 // Create Services
 const fileService = new FileService()
@@ -24,6 +26,7 @@ const entryDefinitionService = new EntryDefinitionService(appConfig, fileService
 // Provide
 app.provide('entryManager', entryManager)
 app.provide('entryParamManager', entryParamManager)
+app.provide('entryLayoutManager', entryLayoutManager)
 app.provide('fileService', fileService)
 app.provide('executionLogService', executionLogService)
 app.provide('entryExecutionService', entryExecutionService)
