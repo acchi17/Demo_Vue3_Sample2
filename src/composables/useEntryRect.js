@@ -1,4 +1,4 @@
-import { watchEffect, onMounted, onUnmounted, nextTick, inject } from 'vue'
+import { watch, nextTick, inject } from 'vue'
 
 /**
  * Measures the Y position and height of each entry's header element in the entry panel
@@ -6,10 +6,10 @@ import { watchEffect, onMounted, onUnmounted, nextTick, inject } from 'vue'
  * connection panel with entry headers.
  *
  * @param {Ref<HTMLElement>} entryPanelRef - Ref to the entry panel (.entry-panel)
- * @param {Object} rootContainer - The root container whose children tree is reactive
  */
-export function useEntryRect(entryPanelRef, rootContainer) {
+export function useEntryRect(entryPanelRef) {
   const entryLayoutManager = inject('entryLayoutManager')
+  const entryManager = inject('entryManager')
 
   function measureEntries() {
     if (!entryPanelRef.value) return
@@ -29,21 +29,7 @@ export function useEntryRect(entryPanelRef, rootContainer) {
   }
 
   // Re-measure on structural changes (add/remove/reorder entries)
-  watchEffect(() => {
-    function traverse(children) {
-      for (const child of children) {
-        if (child.children) traverse(child.children)
-      }
-    }
-    traverse(rootContainer.children)
-    nextTick(() => measureEntries())
-  })
+  watch(() => entryManager.updateTick.value, () => nextTick(() => measureEntries()))
 
-  // Re-measure on size changes (container expands/collapses)
-  let ro
-  onMounted(() => {
-    ro = new ResizeObserver(() => nextTick(() => measureEntries()))
-    ro.observe(entryPanelRef.value)
-  })
-  onUnmounted(() => ro?.disconnect())
+  return entryLayoutManager.layoutMap
 }

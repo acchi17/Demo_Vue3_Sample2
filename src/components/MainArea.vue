@@ -30,7 +30,7 @@
     <div class="connection-panel">
       <div class="connection-lines-container" :style="{ minHeight: entryPanelRef?.scrollHeight + 'px' }">
         <div
-          v-for="[id, rect] in entryLayoutManager.layoutMap"
+          v-for="[id, rect] in entryLayoutMap"
           :key="id"
           class="connection-line"
           :style="{ top: rect.y + rect.height / 2 + 'px' }"
@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { ref, computed, inject } from 'vue'
+import { ref, computed } from 'vue'
 import { useDroppable } from '../composables/useDroppable'
 import { useEntryOperation } from '../composables/useEntryOperation'
 import { entryState } from '../composables/useEntryState'
@@ -119,8 +119,7 @@ export default {
 
     // Template ref for the entry panel
     const entryPanelRef = ref(null)
-    const entryLayoutManager = inject('entryLayoutManager')
-    useEntryRect(entryPanelRef, mainContainer)
+    const entryLayoutMap = useEntryRect(entryPanelRef)
 
     // Return values and methods to use in <template>
     return {
@@ -131,7 +130,7 @@ export default {
       dropAllowed,
       entryState,
       entryPanelRef,
-      entryLayoutManager
+      entryLayoutMap
     }
   }
 }
