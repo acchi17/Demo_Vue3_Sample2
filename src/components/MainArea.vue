@@ -3,10 +3,18 @@
     class="main-area"
     @click="entryState.clearState()"
   >
+    <!-- Connection lines background panel: absolutely positioned behind entry-panel and connection-panel -->
+    <div class="background-panel">
+      <div
+        v-for="[id, rect] in entryLayoutMap"
+        :key="id"
+        class="background-line"
+        :style="{ top: rect.y + rect.height / 2 + 'px' }"
+      />
+    </div>
     <div class="entry-panel" ref="entryPanelRef">
-    <div class="main-container">
       <!-- First drop area (always displayed) -->
-      <div class="drop-area" 
+      <div class="drop-area"
           :class="{'is-active': dropAllowed}"
           @drop="(event) => onDrop(event, 0)"
           @dragover="onDragOver"
@@ -14,28 +22,19 @@
       <!-- Each entry (block or container) and its drop area below -->
       <template v-for="(entry, index) in children" :key="entry.id">
         <!-- Switch component based on entry type -->
-        <component 
+        <component
           :is="entry.type === 'block' ? 'BlockItem' : 'ContainerItem'"
           :entry="entry"
           @remove="removeChild"
         />
-        <div class="drop-area" 
+        <div class="drop-area"
             :class="{'is-active': dropAllowed}"
             @drop="(event) => onDrop(event, index + 1)"
             @dragover="onDragOver"
         />
       </template>
     </div>
-    </div>
     <div class="connection-panel">
-      <div class="connection-lines-container" :style="{ minHeight: entryPanelRef?.scrollHeight + 'px' }">
-        <div
-          v-for="[id, rect] in entryLayoutMap"
-          :key="id"
-          class="connection-line"
-          :style="{ top: rect.y + rect.height / 2 + 'px' }"
-        />
-      </div>
     </div>
   </div>
 </template>
@@ -138,9 +137,10 @@ export default {
 
 <style scoped>
 .main-area {
+  position: relative;
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  /* align-items: flex-start; */
   min-width: 800px;
   height: 100vh;
   overflow-y: auto;
@@ -148,37 +148,37 @@ export default {
   background-color: #f5f5f5;
 }
 
-.entry-panel {
-  flex: 1;
-  padding: 0px 40px;
-  border-right: 1px solid #ddd;
-}
-
-.connection-panel {
-  flex: 1;
-}
-
-.connection-lines-container {
-  position: relative;
-  width: 100%;
-  min-height: 100vh;
-}
-
-.connection-line {
+.background-panel {
   position: absolute;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background-color: #ccc;
+  inset: 0;
+  z-index: 0;
   pointer-events: none;
 }
 
-.main-container {
-  width: 100%;
+.entry-panel {
   position: relative;
+  z-index: 1;
+  flex: 1;
+  padding: 0px 40px;
   display: flex;
   flex-direction: column;
   align-items: left;
+}
+
+.connection-panel {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  padding: 0px 40px;
+}
+
+.background-line {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  height: 1px;
+  background-color: #ccc;
+  pointer-events: none;
 }
 
 .drop-area {

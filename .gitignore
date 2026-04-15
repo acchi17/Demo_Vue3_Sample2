@@ -28,3 +28,6 @@ pnpm-debug.log*
 /*.md
 !README.md
 !CLAUDE.md
+
+# Agents
+.claude
