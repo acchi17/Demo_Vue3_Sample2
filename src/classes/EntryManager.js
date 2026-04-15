@@ -1,3 +1,5 @@
+import { ref } from 'vue'
+
 /**
  * EntryManager class
  * Class that manages parent-child relationships between entries
@@ -12,6 +14,8 @@ export default class EntryManager {
     this._sequenceNumbers = new Map();
     // ID of the root container for sequence number computation
     this._rootId = null;
+    // Reactive counter incremented on every structural change (add/remove/reorder/move)
+    this._updateTick = ref(0);
   }
 
   /**
@@ -48,6 +52,7 @@ export default class EntryManager {
       }
     };
     traverse(root.children);
+    this._updateTick.value++;
   }
 
   /**
@@ -176,7 +181,17 @@ export default class EntryManager {
    */
   getSequenceNumber(entryId) {
     return this._sequenceNumbers.get(entryId) ?? null;
-  }  
+  }
+
+  /**
+   * Reactive counter that increments on every structural change (add/remove/reorder/move).
+   * Watch this to react to tree mutations without traversing the tree.
+   * @returns {import('vue').Ref<number>}
+   */
+  get updateTick() {
+    return this._updateTick;
+  }
+
 
   /**
    * Add an entry to a parent entry

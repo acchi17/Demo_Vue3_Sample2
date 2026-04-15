@@ -8,7 +8,7 @@
     @click.stop="onSelect"
   >
     <div class="container-content">
-      <div class="container-header">
+      <div class="container-header" :data-entry-id="entry.id">
         <div class="entry-text">{{ entry.name }}</div>
         <div class="entry-button-group">
           <div v-if="isSelected" class="entry-button entry-button-play" @click.stop="onPlay"></div>
@@ -291,16 +291,15 @@ export default {
 }
 
 .drop-area {
-  height: 10px;
+  height: 20px;
   width: 100%;
-  margin: 5px 0px;
-  border: 2px dashed transparent;
+  border: 1px dashed transparent;
   border-radius: 4px;
   transition: all 0.3s ease;
 }
 
 .drop-area.is-active {
-  height: 30px;
+  height: 20px;
   border-color: #007bff;
   background-color: rgba(0, 123, 255, 0.1);
 }

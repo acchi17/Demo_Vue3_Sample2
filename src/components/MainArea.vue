@@ -3,9 +3,18 @@
     class="main-area"
     @click="entryState.clearState()"
   >
-    <div class="main-container">
+    <!-- Connection lines background panel: absolutely positioned behind entry-panel and connection-panel -->
+    <div class="background-panel">
+      <div
+        v-for="[id, rect] in entryLayoutMap"
+        :key="id"
+        class="background-line"
+        :style="{ top: rect.y + rect.height / 2 + 'px' }"
+      />
+    </div>
+    <div class="entry-panel" ref="entryPanelRef">
       <!-- First drop area (always displayed) -->
-      <div class="drop-area" 
+      <div class="drop-area"
           :class="{'is-active': dropAllowed}"
           @drop="(event) => onDrop(event, 0)"
           @dragover="onDragOver"
@@ -13,26 +22,29 @@
       <!-- Each entry (block or container) and its drop area below -->
       <template v-for="(entry, index) in children" :key="entry.id">
         <!-- Switch component based on entry type -->
-        <component 
+        <component
           :is="entry.type === 'block' ? 'BlockItem' : 'ContainerItem'"
           :entry="entry"
           @remove="removeChild"
         />
-        <div class="drop-area" 
+        <div class="drop-area"
             :class="{'is-active': dropAllowed}"
             @drop="(event) => onDrop(event, index + 1)"
             @dragover="onDragOver"
         />
       </template>
     </div>
+    <div class="connection-panel">
+    </div>
   </div>
 </template>
 
 <script>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useDroppable } from '../composables/useDroppable'
 import { useEntryOperation } from '../composables/useEntryOperation'
 import { entryState } from '../composables/useEntryState'
+import { useEntryRect } from '../composables/useEntryRect'
 import BlockItem from './BlockItem.vue'
 import ContainerItem from './ContainerItem.vue'
 
@@ -103,7 +115,11 @@ export default {
 
     // For determining whether to allow the drop
     const dropAllowed = isDroppable(mainContainer.id)
-    
+
+    // Template ref for the entry panel
+    const entryPanelRef = ref(null)
+    const entryLayoutMap = useEntryRect(entryPanelRef)
+
     // Return values and methods to use in <template>
     return {
       onDragOver,
@@ -111,7 +127,9 @@ export default {
       removeChild,
       children,
       dropAllowed,
-      entryState
+      entryState,
+      entryPanelRef,
+      entryLayoutMap
     }
   }
 }
@@ -119,33 +137,60 @@ export default {
 
 <style scoped>
 .main-area {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  /* align-items: flex-start; */
   min-width: 800px;
   height: 100vh;
-  padding: 0px 100px;
+  overflow-y: auto;
   box-sizing: border-box;
   background-color: #f5f5f5;
-  overflow: auto;
 }
 
-.main-container {
-  width: 100%;
+.background-panel {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.entry-panel {
   position: relative;
+  z-index: 1;
+  flex: 1;
+  padding: 0px 40px;
   display: flex;
   flex-direction: column;
   align-items: left;
 }
 
+.connection-panel {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  padding: 0px 40px;
+}
+
+.background-line {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  height: 1px;
+  background-color: #ccc;
+  pointer-events: none;
+}
+
 .drop-area {
-  height: 10px;
+  height: 20px;
   width: 100%;
-  margin: 5px 0;
-  border: 2px dashed transparent;
+  border: 1px dashed transparent;
   border-radius: 4px;
   transition: all 0.3s ease;
 }
 
 .drop-area.is-active {
-  height: 30px;
+  height: 20px;
   border-color: #007bff;
   background-color: rgba(0, 123, 255, 0.1);
 }
