@@ -1,0 +1,19 @@
+{
+  "connections": [
+    {
+      "id": "example-connection-1",
+      "source": {
+        "entryId": "<source-entry-id>",
+        "category": "output",
+        "dataType": "integer",
+        "paramName": "Result"
+      },
+      "destination": {
+        "entryId": "<destination-entry-id>",
+        "category": "input",
+        "dataType": "integer",
+        "paramName": "NumberA"
+      }
+    }
+  ]
+}
