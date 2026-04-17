@@ -18,11 +18,7 @@
       </div>
       <div class="container-children">
         <ContainerChildItem
-          :children="children"
-          :drop-allowed="dropAllowed"
-          @drop="onDrop"
-          @dragover="onDragOver"
-          @remove="removeChild"
+          :entry="entry"
         />
       </div>
     </div>
@@ -30,10 +26,8 @@
 </template>
 
 <script>
-import { computed } from 'vue'
-import { useDraggable } from '../composables/useDraggable'
-import { useDroppable } from '../composables/useDroppable'
 import { useEntryOperation } from '../composables/useEntryOperation'
+import { useDraggable } from '../composables/useDraggable'
 import { useEntryExecution } from '../composables/useEntryExecution'
 import { entryState } from '../composables/useEntryState'
 import EntryParamsItem from './EntryParamsItem.vue'
@@ -62,17 +56,6 @@ export default {
       setOnDragStartCallBack
     } = useDraggable()
     const {
-      isDroppable,
-      onDragOver,
-      onDrop,
-      setOnDropCallBack,
-    } = useDroppable()
-    const {
-      addBlock,
-      addContainer,
-      removeEntry,
-      reorderEntry,
-      moveEntry,
       getAllDescendantIds,
       getParentId,
     } = useEntryOperation()
@@ -102,34 +85,6 @@ export default {
       event.stopPropagation()
     })
 
-    // Set custom callbacks for drop event
-    setOnDropCallBack((event, index) => {
-      // Get data directly from event.dataTransfer
-      const entryType = event.dataTransfer.getData('entryType')
-      const entryName = event.dataTransfer.getData('entryName')
-      const entryId = event.dataTransfer.getData('entryId')
-      const sourceId = event.dataTransfer.getData('sourceId')
-
-      if (!entryId) {
-        // Create and insert a new element
-        if (index !== null) {
-          if (entryType === 'block') {
-            addBlock(props.entry.id, entryName, index)
-          } else if (entryType === 'container') {
-            addContainer(props.entry.id, entryName, index)
-          }
-        }
-      } else {
-        if (sourceId === props.entry.id) {
-          // Reorder within the same container
-          reorderEntry(props.entry.id, entryId, index)
-        } else {
-          // Drag & drop from another container
-          moveEntry(entryId, props.entry.id, index)
-        }
-      }
-    })
-
     /**
      * Process when the play button is clicked
      */
@@ -156,20 +111,6 @@ export default {
       emit('remove', props.entry.id)
     }
 
-    /**
-     * Remove a child entry
-     * @param {string} id - ID of the child to remove
-     */
-    const removeChild = (id) => {
-      removeEntry(id)
-    }
-
-    // Array of children
-    const children = computed(() => props.entry.children)
-
-    // For determining whether to allow the drop
-    const dropAllowed = isDroppable(props.entry.id)
-    
     // Return values and methods to use in <template>
     return {
       isDragging,
@@ -177,13 +118,8 @@ export default {
       onDragStart,
       onDragEnd,
       onSelect,
-      onDragOver,
-      onDrop,
       onPlay,
       onRemove,
-      removeChild,
-      children,
-      dropAllowed
     }
   }
 }

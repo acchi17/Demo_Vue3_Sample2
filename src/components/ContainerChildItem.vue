@@ -1,25 +1,27 @@
 <template>
   <div class="drop-area"
       :class="{'is-active': dropAllowed}"
-      @drop="(event) => $emit('drop', event, 0)"
-      @dragover="(event) => $emit('dragover', event)"
+      @drop="(event) => onDrop(event, 0)"
+      @dragover="onDragOver"
   />
   <template v-for="(child, index) in children" :key="child.id">
     <component
       :is="child.type === 'block' ? 'BlockItem' : 'ContainerItem'"
       :entry="child"
-      @remove="$emit('remove', $event)"
+      @remove="removeChild"
     />
     <div class="drop-area"
         :class="{'is-active': dropAllowed}"
-        @drop="(event) => $emit('drop', event, index + 1)"
-        @dragover="(event) => $emit('dragover', event)"
+        @drop="(event) => onDrop(event, index + 1)"
+        @dragover="onDragOver"
     />
   </template>
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent, computed } from 'vue'
+import { useDroppable } from '../composables/useDroppable'
+import { useEntryOperation } from '../composables/useEntryOperation'
 import BlockItem from './BlockItem.vue'
 
 export default {
@@ -29,16 +31,54 @@ export default {
     ContainerItem: defineAsyncComponent(() => import('./ContainerItem.vue'))
   },
   props: {
-    children: {
-      type: Array,
-      required: true
-    },
-    dropAllowed: {
-      type: Boolean,
+    entry: {
+      type: Object,
       required: true
     }
   },
-  emits: ['drop', 'dragover', 'remove']
+  setup(props) {
+    const {
+      isDroppable,
+      onDrop,
+      onDragOver,
+      setOnDropCallBack
+    } = useDroppable()
+    const {
+      addBlock,
+      addContainer,
+      removeEntry,
+      reorderEntry,
+      moveEntry
+    } = useEntryOperation()
+
+    const children = computed(() => props.entry.children)
+    const dropAllowed = isDroppable(props.entry.id)
+
+    setOnDropCallBack((event, index) => {
+      const entryType = event.dataTransfer.getData('entryType')
+      const entryName = event.dataTransfer.getData('entryName')
+      const entryId   = event.dataTransfer.getData('entryId')
+      const sourceId  = event.dataTransfer.getData('sourceId')
+
+      if (!entryId) {
+        if (entryType === 'block') {
+          addBlock(props.entry.id, entryName, index)
+        } else if (entryType === 'container') {
+          addContainer(props.entry.id, entryName, index)
+        }
+      } else if (!sourceId || sourceId === props.entry.id) {
+        reorderEntry(props.entry.id, entryId, index)
+      } else {
+        moveEntry(entryId, props.entry.id, index)
+      }
+    })
+
+    const removeChild = (id) => {
+      removeEntry(id)
+    }
+
+    return { children, dropAllowed, onDrop, onDragOver, removeChild }
+  }
 }
 </script>
 
