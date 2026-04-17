@@ -13,26 +13,13 @@
       />
     </div>
     <div class="entry-panel" ref="entryPanelRef">
-      <!-- First drop area (always displayed) -->
-      <div class="drop-area"
-          :class="{'is-active': dropAllowed}"
-          @drop="(event) => onDrop(event, 0)"
-          @dragover="onDragOver"
+      <ContainerChildItem
+        :children="children"
+        :drop-allowed="dropAllowed"
+        @drop="onDrop"
+        @dragover="onDragOver"
+        @remove="removeChild"
       />
-      <!-- Each entry (block or container) and its drop area below -->
-      <template v-for="(entry, index) in children" :key="entry.id">
-        <!-- Switch component based on entry type -->
-        <component
-          :is="entry.type === 'block' ? 'BlockItem' : 'ContainerItem'"
-          :entry="entry"
-          @remove="removeChild"
-        />
-        <div class="drop-area"
-            :class="{'is-active': dropAllowed}"
-            @drop="(event) => onDrop(event, index + 1)"
-            @dragover="onDragOver"
-        />
-      </template>
     </div>
     <div class="connection-panel">
     </div>
@@ -45,14 +32,12 @@ import { useDroppable } from '../composables/useDroppable'
 import { useEntryOperation } from '../composables/useEntryOperation'
 import { entryState } from '../composables/useEntryState'
 import { useEntryRect } from '../composables/useEntryRect'
-import BlockItem from './BlockItem.vue'
-import ContainerItem from './ContainerItem.vue'
+import ContainerChildItem from './ContainerChildItem.vue'
 
 export default {
   name: 'MainArea',
   components: {
-    BlockItem,
-    ContainerItem
+    ContainerChildItem
   },
   
   setup() {
@@ -179,19 +164,5 @@ export default {
   height: 1px;
   background-color: #ccc;
   pointer-events: none;
-}
-
-.drop-area {
-  height: 20px;
-  width: 100%;
-  border: 1px dashed transparent;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-}
-
-.drop-area.is-active {
-  height: 20px;
-  border-color: #007bff;
-  background-color: rgba(0, 123, 255, 0.1);
 }
 </style>

@@ -17,26 +17,13 @@
         <EntryParamsItem v-if="isSelected" :entry-id="entry.id" />
       </div>
       <div class="container-children">
-        <!-- First drop area (always displayed) -->
-        <div class="drop-area" 
-            :class="{'is-active': dropAllowed}"
-            @drop="(event) => onDrop(event, 0)"
-            @dragover="onDragOver"
+        <ContainerChildItem
+          :children="children"
+          :drop-allowed="dropAllowed"
+          @drop="onDrop"
+          @dragover="onDragOver"
+          @remove="removeChild"
         />
-        <!-- Each entry (block or container) and its drop area below -->
-        <template v-for="(child, index) in children" :key="child.id">
-          <!-- Switch component based on entry type -->
-          <component 
-            :is="child.type === 'block' ? 'BlockItem' : 'ContainerItem'"
-            :entry="child"
-            @remove="removeChild"
-          />
-          <div class="drop-area"
-              :class="{'is-active': dropAllowed}"
-              @drop="(event) => onDrop(event, index + 1)"
-              @dragover="onDragOver"
-          />
-        </template>
       </div>
     </div>
   </div>
@@ -49,14 +36,14 @@ import { useDroppable } from '../composables/useDroppable'
 import { useEntryOperation } from '../composables/useEntryOperation'
 import { useEntryExecution } from '../composables/useEntryExecution'
 import { entryState } from '../composables/useEntryState'
-import BlockItem from './BlockItem.vue'
 import EntryParamsItem from './EntryParamsItem.vue'
+import ContainerChildItem from './ContainerChildItem.vue'
 
 export default {
   name: 'ContainerItem',
   components: {
-    BlockItem,
-    EntryParamsItem
+    EntryParamsItem,
+    ContainerChildItem
   },
   props: {
     entry: {
@@ -288,19 +275,5 @@ export default {
   width: 100%;
   display: flex;
   flex-direction: column;
-}
-
-.drop-area {
-  height: 20px;
-  width: 100%;
-  border: 1px dashed transparent;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-}
-
-.drop-area.is-active {
-  height: 20px;
-  border-color: #007bff;
-  background-color: rgba(0, 123, 255, 0.1);
 }
 </style>
