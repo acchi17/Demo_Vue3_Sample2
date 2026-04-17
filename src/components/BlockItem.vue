@@ -1,20 +1,28 @@
 <template>
   <div
     class="block-item"
-    :class="{ 'dragging': isDragging, 'selected': isSelected }"
+    :class="{ 'dragging': isDragging }"
     draggable="true"
     @dragstart="onDragStart"
     @dragend="onDragEnd"
     @click.stop="onSelect"
   >
-    <div class="block-content">
+    <!-- Normal content: shown when not selected -->
+    <div v-if="!isSelected" class="block-content">
+      <div class="block-header" :data-entry-id="entry.id">
+        <div class="entry-text">{{ entry.name }}</div>
+        <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
+      </div>
+    </div>
+    <!-- Absolute content: shown when selected -->
+    <div v-if="isSelected" class="block-content-selected">
       <div class="block-header" :data-entry-id="entry.id">
         <div class="entry-text">{{ entry.name }}</div>
         <div class="entry-button-group">
-          <div v-if="isSelected" class="entry-button entry-button-play" @click.stop="onPlay"></div>
+          <div class="entry-button entry-button-play" @click.stop="onPlay"></div>
           <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
         </div>
-        <EntryParamsItem v-if="isSelected" :entry-id="entry.id" />
+        <EntryParamsItem :entry-id="entry.id" />
       </div>
     </div>
   </div>
@@ -113,21 +121,13 @@ export default {
 
 <style scoped>
 .block-item {
+  position: relative;
   height: 50px;
   width: fit-content;
-  border-radius: 4px;
-  background-color: var(--block-bg-color);
-  box-shadow: var(--block-box-shadow);
-  border: var(--block-border);
 }
 
 .block-item.dragging {
   opacity: 0.5;
-}
-
-.block-item.selected {
-  border: var(--entry-select-border);
-  box-shadow: var(--entry-select-box-shadow);
 }
 
 .block-content {
@@ -135,7 +135,25 @@ export default {
   width: 100%;
   padding: 10px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  border: var(--block-border);
+  border-radius: 4px;
+  background-color: var(--block-bg-color);
+  box-shadow: var(--block-box-shadow);
+}
+
+.block-content-selected {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  border: var(--entry-select-border);
+  border-radius: 4px;
+  background-color: var(--block-bg-color);
+  box-shadow: var(--entry-select-box-shadow);
 }
 
 .block-header {
