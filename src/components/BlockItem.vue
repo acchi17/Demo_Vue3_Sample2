@@ -15,7 +15,7 @@
       </div>
     </div>
     <!-- Absolute content: shown when selected -->
-    <div v-if="isSelected" class="block-content-selected">
+    <div v-else class="block-content-selected">
       <div class="block-header" :data-entry-id="entry.id">
         <div class="entry-text">{{ entry.name }}</div>
         <div class="entry-button-group">
