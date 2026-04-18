@@ -1,5 +1,5 @@
 <template>
-  <div class="block-list-view" @click="entryState.clearState()">
+  <div class="block-list-view" @click="clearState">
     <div class="rect-item">
       <div
         class="rect-icon lime"
@@ -26,7 +26,7 @@
 <script>
 import { inject, ref, onMounted } from 'vue';
 import { useDraggable } from '../composables/useDraggable';
-import { entryState } from '../composables/useEntryState';
+import { useEntryState } from '../composables/useEntryState';
 
 export default {
   name: 'BlockListView',
@@ -50,6 +50,8 @@ export default {
       onDragEnd: onDragEndContainer,
       setOnDragStartCallBack: setContainerDragStartCallback
     } = useDraggable();
+
+    const { clearState } = useEntryState();
 
     // Set custom callbacks for drag start events
     setBlockDragStartCallback((event) => {
@@ -78,7 +80,7 @@ export default {
       onDragEndBlock,
       onDragStartContainer,
       onDragEndContainer,
-      entryState
+      clearState
     };
   }
 }

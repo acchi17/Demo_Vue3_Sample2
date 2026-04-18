@@ -13,7 +13,7 @@
         <div class="entry-button entry-button-play"
              :class="{ 'entry-button--hidden': !isSelected }" @click.stop="onPlay"></div>
         <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
-        <EntryParamsItem v-if="isSelected" :entry-id="entry.id" />
+        <EntryParamsItem v-if="isSelected || isConnecting" :entry-id="entry.id" />
       </div>
       <div class="container-children">
         <ContainerChildItem
@@ -25,10 +25,11 @@
 </template>
 
 <script>
+import { computed } from 'vue'  
 import { useEntryOperation } from '../composables/useEntryOperation'
 import { useDraggable } from '../composables/useDraggable'
 import { useEntryExecution } from '../composables/useEntryExecution'
-import { entryState } from '../composables/useEntryState'
+import { useEntryState } from '../composables/useEntryState'
 import EntryParamsItem from './EntryParamsItem.vue'
 import ContainerChildItem from './ContainerChildItem.vue'
 
@@ -54,17 +55,27 @@ export default {
       onDragEnd,
       setOnDragStartCallBack
     } = useDraggable()
+    const { executeEntry, isExecuting } = useEntryExecution()
     const {
       getAllDescendantIds,
       getParentId,
     } = useEntryOperation()
-    const { executeEntry, isExecuting } = useEntryExecution()
+    const { 
+      getSelectedEntryId,
+      isConnectingParamDst,
+      setSelectedEntry
+    } = useEntryState()
 
     // Selection handling
-    const isSelected = entryState.isSelected(props.entry.id)
+    const isSelected = computed(() => {
+      const selectedId = getSelectedEntryId()
+      return selectedId.value === props.entry.id
+    })
+    
+    const isConnecting = isConnectingParamDst(props.entry.id)
 
     const onSelect = () => {
-      entryState.setSelectedEntry(props.entry)
+      setSelectedEntry(props.entry)
     }
     
     // Set callback for drag start
@@ -114,6 +125,7 @@ export default {
     return {
       isDragging,
       isSelected,
+      isConnecting,
       onDragStart,
       onDragEnd,
       onSelect,
