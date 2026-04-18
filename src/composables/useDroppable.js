@@ -1,11 +1,12 @@
 import { ref, computed } from 'vue'
-import { dragDropState } from './useDragDropState'
+import { useDragDropState } from './useDragDropState'
 
 /**
  * Provides drop functionality as a composable function
  * @returns {Object} Drop-related state and methods
  */
 export function useDroppable() {
+  const dragDropState = useDragDropState()
   // State indicating whether drag is entering the area
   const isDragEntering = ref(false)
   
