@@ -18,6 +18,14 @@
   --entry-select-border: 1px solid #007bff;
   --entry-select-box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
 
+  /* Entry text styles */
+    --entry-text-font-size: 12px;
+    --entry-text-color: #333;
+    --entry-text-white-space: nowrap;
+    --entry-text-overflow: hidden;
+    --entry-text-text-overflow: ellipsis;
+    --entry-text-padding: 0 5px;
+
   /* Entry button base styles */
   --entry-button-size: 24px;
   --entry-button-border-radius: 50%;
@@ -41,11 +49,4 @@
 
   /* Parameter badge styles */
   --param-badge-bg-color: #5a9fd4;
-  
-  /* Entry text styles */
-  --entry-text-font-size: 12px;
-  --entry-text-color: #333;
-  --entry-text-white-space: nowrap;
-  --entry-text-overflow: hidden;
-  --entry-text-text-overflow: ellipsis;
 }

@@ -18,11 +18,9 @@
     <div v-else class="block-content-selected">
       <div class="block-header" :data-entry-id="entry.id">
         <div class="entry-text">{{ entry.name }}</div>
-        <div class="entry-button-group">
-          <div class="entry-button entry-button-play" @click.stop="onPlay"></div>
-          <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
-        </div>
+        <div class="entry-button entry-button-play" @click.stop="onPlay"></div>
         <EntryParamsItem :entry-id="entry.id" />
+        <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
       </div>
     </div>
   </div>
@@ -162,14 +160,17 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
 }
 
-/* Entry button group styles */
-.entry-button-group {
-  display: flex;
-  align-items: center;
-  gap: 2px;
+/* Entry text styles */
+.entry-text {
+  font-size: var(--entry-text-font-size);
+  color: var(--entry-text-color);
+  white-space: var(--entry-text-white-space);
+  overflow: var(--entry-text-overflow);
+  text-overflow: var(--entry-text-text-overflow);
+  padding: var(--entry-text-padding);
 }
 
 /* Entry button base styles */
@@ -203,14 +204,5 @@ export default {
 /* Delete button styles */
 .entry-button-delete {
   background-image: var(--entry-button-delete-image);
-}
-
-/* Entry text styles */
-.entry-text {
-  font-size: var(--entry-text-font-size);
-  color: var(--entry-text-color);
-  white-space: var(--entry-text-white-space);
-  overflow: var(--entry-text-overflow);
-  text-overflow: var(--entry-text-text-overflow);
 }
 </style>
