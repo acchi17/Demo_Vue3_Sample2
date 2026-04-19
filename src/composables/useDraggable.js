@@ -1,11 +1,12 @@
 import { ref } from 'vue'
-import { dragDropState } from './useDragDropState'
+import { useDragDropState } from './useDragDropState'
 
 /**
  * Provides drag functionality as a composable function
  * @returns {Object} Drag-related state and methods
  */
 export function useDraggable() {
+  const dragDropState = useDragDropState()
   // Dragging state
   const isDragging = ref(false)
   

@@ -7,8 +7,8 @@
     @dragend="onDragEnd"
     @click.stop="onSelect"
   >
-    <!-- Normal content: shown when not selected -->
-    <div v-if="!isSelected" class="block-content">
+    <!-- Normal content: shown when not selected and not connecting-expand -->
+    <div v-if="!isSelected && !isConnecting" class="block-content">
       <div class="block-header" :data-entry-id="entry.id">
         <div class="entry-text">{{ entry.name }}</div>
         <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
@@ -27,10 +27,11 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import { useDraggable } from '../composables/useDraggable'
 import { useEntryExecution } from '../composables/useEntryExecution'
 import { useEntryOperation } from '../composables/useEntryOperation'
-import { entryState } from '../composables/useEntryState'
+import { useEntryState } from '../composables/useEntryState'
 import EntryParamsItem from './EntryParamsItem.vue'
 
 export default {
@@ -56,12 +57,22 @@ export default {
     } = useDraggable()
     const { executeEntry, isExecuting } = useEntryExecution()
     const { getParentId } = useEntryOperation()
+    const { 
+      getSelectedEntryId,
+      isConnectingParamDst,
+      setSelectedEntry
+    } = useEntryState()
 
     // Selection handling
-    const isSelected = entryState.isSelected(props.entry.id)
+    const isSelected = computed(() => {
+      const selectedId = getSelectedEntryId()
+      return selectedId.value === props.entry.id
+    })
+
+    const isConnecting = isConnectingParamDst(props.entry.id)
 
     const onSelect = () => {
-      entryState.setSelectedEntry(props.entry)
+      setSelectedEntry(props.entry)
     }
     
     // Set callback for drag start
@@ -107,6 +118,7 @@ export default {
     return {
       isDragging,
       isSelected,
+      isConnecting,
       onDragStart,
       onDragEnd,
       onSelect,

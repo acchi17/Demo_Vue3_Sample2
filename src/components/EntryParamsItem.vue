@@ -1,6 +1,6 @@
 <template>
   <template v-if="hasParams">
-    <div class="param-toggle">
+    <div v-if="!isConnectingDst" class="param-toggle">
       <button
         class="param-toggle-btn"
         :class="{ active: paramCategory === 'input' }"
@@ -18,7 +18,7 @@
         :key="param.name"
         :entry-id="entryId"
         :name="param.name"
-        :param-category="paramCategory"
+        :param-category="effectiveCategory"
         :param-type="param.type"
       />
     </div>
@@ -28,6 +28,7 @@
 <script>
 import { ref, computed, inject } from 'vue'
 import ParamBadgeItem from './ParamBadgeItem.vue'
+import { useEntryState } from '../composables/useEntryState'
 
 export default {
   name: 'EntryParamsItem',
@@ -51,8 +52,17 @@ export default {
 
     const paramCategory = ref('input')
 
+    const { isConnectingParamDst, connectingParam } = useEntryState()
+    const isConnectingDst = isConnectingParamDst(props.entryId)
+
+    // Show the complementary category: output src → show input, input src → show output
+    const effectiveCategory = computed(() => {
+      if (!isConnectingDst.value) return paramCategory.value
+      return connectingParam.value?.paramCategory === 'output' ? 'input' : 'output'
+    })
+
     const paramItems = computed(() => {
-      const types = paramCategory.value === 'input'
+      const types = effectiveCategory.value === 'input'
         ? entryParamManager.getInputParamTypes(props.entryId)
         : entryParamManager.getOutputParamTypes(props.entryId)
       return Object.entries(types).map(([name, type]) => ({ name, type }))
@@ -61,6 +71,8 @@ export default {
     return {
       hasParams,
       paramCategory,
+      isConnectingDst,
+      effectiveCategory,
       paramItems,
     }
   }

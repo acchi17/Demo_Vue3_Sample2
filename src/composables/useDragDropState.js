@@ -10,7 +10,7 @@ const isDragging = ref(false)
  * Composable function for drag & drop state management
  * @returns {Object} Drag state and related methods
  */
-function useDragDropState() {
+export function useDragDropState() {
   /**
    * Activate dragging state
    */
@@ -53,6 +53,3 @@ function useDragDropState() {
   }
 }
 
-// Export a singleton instance at the module level
-// This allows state sharing between components
-export const dragDropState = useDragDropState()

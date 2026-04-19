@@ -1,7 +1,7 @@
 <template>
   <div
     class="main-area"
-    @click="entryState.clearState()"
+    @click="clearState"
   >
     <!-- Connection lines background panel: absolutely positioned behind entry-panel and connection-panel -->
     <div class="background-panel">
@@ -25,7 +25,7 @@
 <script>
 import { ref } from 'vue'
 import { useEntryOperation } from '../composables/useEntryOperation'
-import { entryState } from '../composables/useEntryState'
+import { useEntryState } from '../composables/useEntryState'
 import { useEntryRect } from '../composables/useEntryRect'
 import ContainerChildItem from './ContainerChildItem.vue'
 
@@ -37,6 +37,7 @@ export default {
   
   setup() {
     const { addContainer } = useEntryOperation()
+    const { clearState } = useEntryState()
 
     // Create a top-level container & register it in EntryManager
     const mainContainer = addContainer(null, 'main-area', 0)
@@ -48,7 +49,7 @@ export default {
     // Return values and methods to use in <template>
     return {
       mainContainer,
-      entryState,
+      clearState,
       entryPanelRef,
       entryLayoutMap
     }

@@ -4,6 +4,7 @@ import appConfig from './config/app-config'
 import EntryManager from './classes/EntryManager'
 import EntryParamManager from './classes/EntryParamManager'
 import EntryLayoutManager from './classes/EntryLayoutManager'
+import EntryConnectionManager from './classes/EntryConnectionManager'
 import FileService from './services/file/FileService'
 import EntryExecutionService from './services/entry_execution/EntryExecutionService'
 import ExecutionLogService from './services/log/ExecutionLogService'
@@ -16,6 +17,7 @@ const app = createApp(App)
 const entryManager = new EntryManager()
 const entryParamManager = new EntryParamManager()
 const entryLayoutManager = new EntryLayoutManager()
+const entryConnectionManager = new EntryConnectionManager()
 
 // Create Services
 const fileService = new FileService()
@@ -27,6 +29,7 @@ const entryDefinitionService = new EntryDefinitionService(appConfig, fileService
 app.provide('entryManager', entryManager)
 app.provide('entryParamManager', entryParamManager)
 app.provide('entryLayoutManager', entryLayoutManager)
+app.provide('entryConnectionManager', entryConnectionManager)
 app.provide('fileService', fileService)
 app.provide('executionLogService', executionLogService)
 app.provide('entryExecutionService', entryExecutionService)

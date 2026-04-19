@@ -8,7 +8,7 @@
 
 <script>
 import { computed } from 'vue'
-import { entryState } from '../composables/useEntryState'
+import { useEntryState } from '../composables/useEntryState'
 
 export default {
   name: 'ParamBadgeItem',
@@ -33,15 +33,27 @@ export default {
   },
 
   setup(props) {
+    const {
+      isConnectingParam,
+      isConnectingParamSrc,
+      isConnectingParamDst,
+      startConnection,
+      cancelConnection,
+      completeConnection,
+    } = useEntryState()
+
     const isPending = computed(
-      () => entryState.isConnectingParamFor(props.entryId, props.name, props.paramCategory).value
+      () => isConnectingParamSrc(props.entryId, props.name, props.paramCategory).value
     )
+    const isConnectingDst = isConnectingParamDst(props.entryId)
 
     const onToggle = () => {
       if (isPending.value) {
-        entryState.cancelConnection()
+        cancelConnection()
+      } else if (isConnectingParam.value && isConnectingDst.value) {
+        completeConnection(props.entryId, props.name, props.paramCategory, props.paramType)
       } else {
-        entryState.startConnection(props.entryId, props.name, props.paramCategory, props.paramType)
+        startConnection(props.entryId, props.name, props.paramCategory, props.paramType)
       }
     }
 
