@@ -2,15 +2,15 @@
  * EntryConnectionManager class
  * Manages connection states between entry output parameters and input parameters.
  *
- * Each connection represents a directed link from a source endpoint (typically an
- * output parameter of one entry) to a destination endpoint (typically an input
+ * Each connection represents a directed link from an output endpoint (typically an
+ * output parameter of one entry) to an input endpoint (typically an input
  * parameter of another entry).
  *
  * Endpoint schema:
  *   { entryId: string, category: 'input'|'output', dataType: string, paramName: string }
  *
  * Connection schema:
- *   { id: string, source: Endpoint, destination: Endpoint }
+ *   { id: string, output: Endpoint, input: Endpoint }
  */
 export default class EntryConnectionManager {
   constructor() {
@@ -59,26 +59,26 @@ export default class EntryConnectionManager {
   // ---------------------------------------------------------------------------
 
   /**
-   * Add a new connection between a source and a destination endpoint.
-   * @param {Object} source      - Source endpoint { entryId, category, dataType, paramName }
-   * @param {Object} destination - Destination endpoint { entryId, category, dataType, paramName }
+   * Add a new connection between an output and an input endpoint.
+   * @param {Object} output - Output endpoint { entryId, category, dataType, paramName }
+   * @param {Object} input  - Input endpoint { entryId, category, dataType, paramName }
    * @returns {string|null} The new connection id, or null if validation fails
    */
-  addConnection(source, destination) {
-    if (!this._isValidEndpoint(source)) {
-      console.error('EntryConnectionManager: invalid source endpoint', source);
+  addConnection(output, input) {
+    if (!this._isValidEndpoint(output)) {
+      console.error('EntryConnectionManager: invalid output endpoint', output);
       return null;
     }
-    if (!this._isValidEndpoint(destination)) {
-      console.error('EntryConnectionManager: invalid destination endpoint', destination);
+    if (!this._isValidEndpoint(input)) {
+      console.error('EntryConnectionManager: invalid input endpoint', input);
       return null;
     }
 
     const id = this._generateId();
     this._connectionsById.set(id, {
       id,
-      source: { ...source },
-      destination: { ...destination }
+      output: { ...output },
+      input: { ...input }
     });
     return id;
   }
@@ -111,14 +111,14 @@ export default class EntryConnectionManager {
 
   /**
    * Get all connections that involve the given entry id
-   * (either as source or destination).
+   * (either as output or input).
    * @param {string} entryId
    * @returns {Array<Object>}
    */
   getConnectionsByEntryId(entryId) {
     const result = [];
     for (const conn of this._connectionsById.values()) {
-      if (conn.source.entryId === entryId || conn.destination.entryId === entryId) {
+      if (conn.output.entryId === entryId || conn.input.entryId === entryId) {
         result.push(conn);
       }
     }
@@ -135,11 +135,11 @@ export default class EntryConnectionManager {
   getConnectionsByEndpoint(entryId, category, paramName) {
     const result = [];
     for (const conn of this._connectionsById.values()) {
-      const src = conn.source;
-      const dst = conn.destination;
+      const out = conn.output;
+      const inp = conn.input;
       if (
-        (src.entryId === entryId && src.category === category && src.paramName === paramName) ||
-        (dst.entryId === entryId && dst.category === category && dst.paramName === paramName)
+        (out.entryId === entryId && out.category === category && out.paramName === paramName) ||
+        (inp.entryId === entryId && inp.category === category && inp.paramName === paramName)
       ) {
         result.push(conn);
       }
@@ -155,7 +155,7 @@ export default class EntryConnectionManager {
   removeConnectionsByEntryId(entryId) {
     let count = 0;
     for (const [id, conn] of this._connectionsById.entries()) {
-      if (conn.source.entryId === entryId || conn.destination.entryId === entryId) {
+      if (conn.output.entryId === entryId || conn.input.entryId === entryId) {
         this._connectionsById.delete(id);
         count++;
       }
@@ -194,8 +194,8 @@ export default class EntryConnectionManager {
    *   "connections": [
    *     {
    *       "id": "<optional – overridden with a new uuid if omitted>",
-   *       "source":      { "entryId": "...", "category": "output", "dataType": "integer", "paramName": "result" },
-   *       "destination": { "entryId": "...", "category": "input",  "dataType": "integer", "paramName": "value"  }
+   *       "output": { "entryId": "...", "category": "output", "dataType": "integer", "paramName": "result" },
+   *       "input":  { "entryId": "...", "category": "input",  "dataType": "integer", "paramName": "value"  }
    *     }
    *   ]
    * }
@@ -213,20 +213,20 @@ export default class EntryConnectionManager {
 
     let count = 0;
     data.connections.forEach((item, index) => {
-      if (!this._isValidEndpoint(item.source)) {
-        console.warn(`EntryConnectionManager.restoreFromJson: skipping connection[${index}] – invalid source`);
+      if (!this._isValidEndpoint(item.output)) {
+        console.warn(`EntryConnectionManager.restoreFromJson: skipping connection[${index}] – invalid output`);
         return;
       }
-      if (!this._isValidEndpoint(item.destination)) {
-        console.warn(`EntryConnectionManager.restoreFromJson: skipping connection[${index}] – invalid destination`);
+      if (!this._isValidEndpoint(item.input)) {
+        console.warn(`EntryConnectionManager.restoreFromJson: skipping connection[${index}] – invalid input`);
         return;
       }
 
       const id = (item.id && typeof item.id === 'string') ? item.id : this._generateId();
       this._connectionsById.set(id, {
         id,
-        source: { ...item.source },
-        destination: { ...item.destination }
+        output: { ...item.output },
+        input: { ...item.input }
       });
       count++;
     });

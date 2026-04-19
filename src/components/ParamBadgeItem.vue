@@ -33,19 +33,25 @@ export default {
   },
 
   setup(props) {
-    const { 
+    const {
+      isConnectingParam,
       isConnectingParamSrc,
+      isConnectingParamDst,
       startConnection,
-      cancelConnection
+      cancelConnection,
+      completeConnection,
     } = useEntryState()
 
     const isPending = computed(
       () => isConnectingParamSrc(props.entryId, props.name, props.paramCategory).value
     )
+    const isConnectingDst = isConnectingParamDst(props.entryId)
 
     const onToggle = () => {
       if (isPending.value) {
         cancelConnection()
+      } else if (isConnectingParam.value && isConnectingDst.value) {
+        completeConnection(props.entryId, props.name, props.paramCategory, props.paramType)
       } else {
         startConnection(props.entryId, props.name, props.paramCategory, props.paramType)
       }

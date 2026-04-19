@@ -18,7 +18,7 @@ A Vue 3 drag-and-drop UI builder where users construct nested workflows by dragg
 
 ## Core Architecture
 
-### Entry Hierarchy & Management
+### Entry Management
 
 - **Entry** (base class): Represents any draggable element with `id`, `name`, `type`, and `children`
 - **Block** (extends Entry): Leaf node that executes a single script
@@ -31,21 +31,20 @@ A Vue 3 drag-and-drop UI builder where users construct nested workflows by dragg
 
 **EntryParamManager** (`src/classes/EntryParamManager.js`): Manages input/output parameters for each entry, enabling data flow between blocks in a workflow.
 
-**useEntryOperation** (`src/composables/useEntryOperation.js`): Responsible for providing the entry operation interface (add, remove, move, reorder) to components, acting as the bridge between UI interactions and EntryManager.
+**EntryLayoutManager** (`src/classes/EntryLayoutManager.js`): Stores measured Y position and height of each entry's header in a reactive Map; used to align connection lines in the connection panel with entry headers.
 
-### Drag-and-Drop System
+### Component Structure
 
-**Singleton State Management** (`src/composables/useDragDropState.js`):
-- Module-level singleton pattern shares drag state across all components
-- Tracks `isDragging` and `draggedItemIds` (Set of IDs for dragged item + descendants)
-- Used to prevent dropping an element onto itself or its children
-
-**Composables**:
-- `useDraggable.js`: Provides `onDragStart`, `onDragEnd`, callbacks for draggable elements
-- `useDroppable.js`: Provides `onDragOver`, `onDrop`, `isDroppable()` for drop zones
-- Both access the singleton `dragDropState` for coordination
-
-**Drop Areas**: ContainerItem.vue places drop zones before the first child and after each child, enabling insertion at any position.
+- **App.vue**: 3-column layout (SideArea | MainArea | ExecutionLogView)
+- **BlockItem.vue**: Renders individual blocks
+- **ContainerChildItem.vue**: Renders a container's child list with drop zones between entries, dispatching drop events to add/reorder/move entries.
+- **ContainerItem.vue**: Recursive component rendering nested entries with drop zones
+- **EntryParamsItem.vue**: Displays an In/Out toggle and parameter name badges inside a selected entry rectangle; used by both BlockItem and ContainerItem
+- **EntryView.vue**: Detail panel for the selected entry; shows its name and editable input parameters via `EntryParamManager`
+- **ExecutionLogView.vue**: Displays execution logs from ExecutionLogService
+- **MainArea.vue**: Holds the root container (`id: 'main-area'`) registered in EntryManager without a parent
+- **ParamBadgeItem.vue**: Clickable badge displaying a parameter name; toggles pending connection state via `useEntryState`.
+- **SideArea.vue**: Drag sources for creating new blocks and containers
 
 ### Entry Execution System
 
@@ -73,7 +72,15 @@ A Vue 3 drag-and-drop UI builder where users construct nested workflows by dragg
 - `addLog()` builds the tree; `updateLog()` fills in result and exec time after completion
 - Auto-cleans oldest entries when the total exceeds the configured max (default 1000)
 
-**useEntryExecution** (`src/composables/useEntryExecution.js`): Composable that bridges UI components to `EntryExecutionService`, exposing `executeEntry()` and `getLogs()` to templates.
+### Composables
+
+- **useDragDropState.js**: Module-level singleton tracking `isDragging` and `draggedItemIds`; shared across components to prevent dropping onto self or descendants.
+- **useDraggable.js**: Provides `onDragStart`/`onDragEnd` handlers for draggable elements, updating `useDragDropState` on drag lifecycle.
+- **useDroppable.js**: Provides `onDragOver`/`onDrop`/`isDroppable()` for drop zones; calls a registered callback with the drop event and target index.
+- **useEntryExecution.js**: Bridges UI to `EntryExecutionService`, exposing `executeEntry()`, `isExecuting`, `getLogs()`, and `clearLogs()`.
+- **useEntryOperation.js**: Bridges UI to `EntryManager`, exposing add/remove/move/reorder operations with automatic selection cleanup on removal.
+- **useEntryRect.js**: Measures Y position and height of each entry's header and writes them into `EntryLayoutManager` for connection-line alignment; re-measures on structural changes.
+- **useEntryState.js**: Module-level singleton managing entry selection (`selectedEntryId`) and parameter connection waiting state (`pendingConnection`) across all components.
 
 ### Configuration (src/config/app-config.js)
 
@@ -81,17 +88,6 @@ Centralized configuration for:
 - `block.definitionsFile`: Path to block definitions JSON
 - `script.engineName`: Script execution engine (default: 'javascript')
 - `script.scriptsDir`: Directory for script files
-
-### Component Structure
-
-- **App.vue**: 3-column layout (SideArea | MainArea | ExecutionLogView)
-- **MainArea.vue**: Holds the root container (`id: 'main-area'`) registered in EntryManager without a parent
-- **SideArea.vue**: Drag sources for creating new blocks and containers
-- **ContainerItem.vue**: Recursive component rendering nested entries with drop zones
-- **BlockItem.vue**: Renders individual blocks
-- **ExecutionLogView.vue**: Displays execution logs from ExecutionLogService
-- **EntryView.vue**: Detail panel for the selected entry; shows its name and editable input parameters via `EntryParamManager`
-- **EntryParamsItem.vue**: Displays an In/Out toggle and parameter name badges inside a selected entry rectangle; used by both BlockItem and ContainerItem
 
 ### Data Flow & Execution
 
@@ -122,15 +118,3 @@ Always use EntryManager methods, never manipulate `children` arrays or parent re
 
 ### Cleanup on Unmount
 `EntryExecutionService.terminate()` must be called to clean up Web Workers. App.vue handles this on `beforeunload` and `onBeforeUnmount`.
-
-## MCP Server Usage
-
-### Available Servers
-- `chrome-devtools`: UI testing and browser automation
-
-### Automatic Testing Triggers
-When I say "ready to test" or "check this", you should:
-1. Run the test suite with `npm test`
-2. Start chrome-devtools testing at http://localhost:3000
-3. Verify the specific feature I just asked you to build
-4. Report any errors or issues found
