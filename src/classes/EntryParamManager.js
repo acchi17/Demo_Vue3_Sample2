@@ -115,6 +115,26 @@ export default class EntryParamManager {
   }
 
   /**
+   * Check if an entry has one or more input parameters
+   * @param {string} entryId - ID of the entry
+   * @returns {boolean} True if the entry has at least one input parameter
+   */
+  hasInputParam(entryId) {
+    const params = this._inputParamsMap.get(entryId);
+    return params ? Object.keys(params).length > 0 : false;
+  }
+
+  /**
+   * Check if an entry has one or more output parameters
+   * @param {string} entryId - ID of the entry
+   * @returns {boolean} True if the entry has at least one output parameter
+   */
+  hasOutputParam(entryId) {
+    const params = this._outputParamsMap.get(entryId);
+    return params ? Object.keys(params).length > 0 : false;
+  }
+
+  /**
    * Set a single input parameter
    * @param {string} entryId - ID of the entry
    * @param {string} paramName - Name of the input parameter
