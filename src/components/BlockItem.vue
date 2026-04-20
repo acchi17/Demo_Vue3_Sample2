@@ -19,7 +19,7 @@
       <div class="block-header" :data-entry-id="entry.id">
         <div class="entry-text">{{ entry.name }}</div>
         <div class="entry-button entry-button-play" @click.stop="onPlay"></div>
-        <EntryParamsItem :entry-id="entry.id" />
+        <EntryParamsRow :entry-id="entry.id" />
         <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
       </div>
     </div>
@@ -32,12 +32,12 @@ import { useDraggable } from '../composables/useDraggable'
 import { useEntryExecution } from '../composables/useEntryExecution'
 import { useEntryOperation } from '../composables/useEntryOperation'
 import { useEntryState } from '../composables/useEntryState'
-import EntryParamsItem from './EntryParamsItem.vue'
+import EntryParamsRow from './EntryParamsRow.vue'
 
 export default {
   name: 'BlockItem',
   components: {
-    EntryParamsItem
+    EntryParamsRow
   },
   props: {
     entry: {

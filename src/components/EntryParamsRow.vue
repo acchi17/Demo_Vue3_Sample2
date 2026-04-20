@@ -31,7 +31,7 @@ import ParamBadgeItem from './ParamBadgeItem.vue'
 import { useEntryState } from '../composables/useEntryState'
 
 export default {
-  name: 'EntryParamsItem',
+  name: 'EntryParamsRow',
 
   components: { ParamBadgeItem },
 
