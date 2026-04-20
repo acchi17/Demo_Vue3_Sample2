@@ -11,6 +11,7 @@ const sourceConnection = ref(null) // null | { entryId, paramName, paramCategory
 export function useEntryState() {
   const entryManager = inject('entryManager')
   const entryConnectionManager = inject('entryConnectionManager')
+  const entryParamManager = inject('entryParamManager')
 
   const setSelectedEntry = (entry) => {
     selectedEntryId.value = entry?.id || null
@@ -69,9 +70,13 @@ export function useEntryState() {
       if (mySeq === null || srcSeq === null) return false
       // output src → expand entries before it (input targets)
       // input src  → expand entries after it (output targets)
-      return sourceConnection.value.paramCategory === 'output'
-        ? mySeq < srcSeq
-        : mySeq > srcSeq
+      if (sourceConnection.value.paramCategory === 'output') {
+        if (!entryParamManager?.hasInputParam(entryId)) return false
+        return mySeq < srcSeq
+      } else {
+        if (!entryParamManager?.hasOutputParam(entryId)) return false
+        return mySeq > srcSeq
+      }
     })
 
   const connectingParam = computed(() => sourceConnection.value)
