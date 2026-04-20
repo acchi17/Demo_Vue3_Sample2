@@ -43,7 +43,7 @@ A Vue 3 drag-and-drop UI builder where users construct nested workflows by dragg
 - **EntryView.vue**: Detail panel for the selected entry; shows its name and editable input parameters via `EntryParamManager`
 - **ExecutionLogView.vue**: Displays execution logs from ExecutionLogService
 - **MainArea.vue**: Holds the root container (`id: 'main-area'`) registered in EntryManager without a parent
-- **ParamBadgeItem.vue**: Clickable badge displaying a parameter name; toggles pending connection state via `useEntryState`.
+- **EntryParamItem.vue**: Clickable badge displaying a parameter name; toggles pending connection state via `useEntryState`.
 - **SideArea.vue**: Drag sources for creating new blocks and containers
 
 ### Entry Execution System
