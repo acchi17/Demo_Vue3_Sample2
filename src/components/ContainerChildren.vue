@@ -25,7 +25,7 @@ import { useEntryOperation } from '../composables/useEntryOperation'
 import BlockItem from './BlockItem.vue'
 
 export default {
-  name: 'ContainerChildItem',
+  name: 'ContainerChildren',
   components: {
     BlockItem,
     ContainerItem: defineAsyncComponent(() => import('./ContainerItem.vue'))

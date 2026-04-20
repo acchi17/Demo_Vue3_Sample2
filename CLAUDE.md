@@ -37,7 +37,7 @@ A Vue 3 drag-and-drop UI builder where users construct nested workflows by dragg
 
 - **App.vue**: 3-column layout (SideArea | MainArea | ExecutionLogView)
 - **BlockItem.vue**: Renders individual blocks
-- **ContainerChildItem.vue**: Renders a container's child list with drop zones between entries, dispatching drop events to add/reorder/move entries.
+- **ContainerChildren.vue**: Renders a container's child list with drop zones between entries, dispatching drop events to add/reorder/move entries.
 - **ContainerItem.vue**: Recursive component rendering nested entries with drop zones
 - **EntryParamsItem.vue**: Displays an In/Out toggle and parameter name badges inside a selected entry rectangle; used by both BlockItem and ContainerItem
 - **EntryView.vue**: Detail panel for the selected entry; shows its name and editable input parameters via `EntryParamManager`

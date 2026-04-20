@@ -16,7 +16,7 @@
         <EntryParamsItem v-if="isSelected || isConnecting" :entry-id="entry.id" />
       </div>
       <div class="container-children">
-        <ContainerChildItem
+        <ContainerChildren
           :entry="entry"
         />
       </div>
@@ -31,13 +31,13 @@ import { useDraggable } from '../composables/useDraggable'
 import { useEntryExecution } from '../composables/useEntryExecution'
 import { useEntryState } from '../composables/useEntryState'
 import EntryParamsItem from './EntryParamsItem.vue'
-import ContainerChildItem from './ContainerChildItem.vue'
+import ContainerChildren from './ContainerChildren.vue'
 
 export default {
   name: 'ContainerItem',
   components: {
     EntryParamsItem,
-    ContainerChildItem
+    ContainerChildren
   },
   props: {
     entry: {

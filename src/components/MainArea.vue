@@ -13,7 +13,7 @@
       />
     </div>
     <div class="entry-panel" ref="entryPanelRef">
-      <ContainerChildItem
+      <ContainerChildren
         :entry="mainContainer"
       />
     </div>
@@ -27,12 +27,12 @@ import { ref } from 'vue'
 import { useEntryOperation } from '../composables/useEntryOperation'
 import { useEntryState } from '../composables/useEntryState'
 import { useEntryRect } from '../composables/useEntryRect'
-import ContainerChildItem from './ContainerChildItem.vue'
+import ContainerChildren from './ContainerChildren.vue'
 
 export default {
   name: 'MainArea',
   components: {
-    ContainerChildItem
+    ContainerChildren
   },
   
   setup() {
