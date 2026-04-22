@@ -11,7 +11,7 @@ import { computed } from 'vue'
 import { useEntryState } from '../composables/useEntryState'
 
 export default {
-  name: 'ParamBadgeItem',
+  name: 'EntryParamItem',
 
   props: {
     entryId: {
