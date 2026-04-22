@@ -1,3 +1,5 @@
+import { reactive } from 'vue'
+
 /**
  * EntryConnectionManager class
  * Manages connection states between entry output parameters and input parameters.
@@ -14,8 +16,8 @@
  */
 export default class EntryConnectionManager {
   constructor() {
-    // Map of connection id -> connection object
-    this._connectionsById = new Map();
+    // Map of connection id -> connection object (reactive for Vue computed tracking)
+    this._connectionsById = reactive(new Map());
   }
 
   // ---------------------------------------------------------------------------

@@ -18,6 +18,7 @@
       />
     </div>
     <div class="connection-panel">
+      <ConnectionView />
     </div>
   </div>
 </template>
@@ -28,11 +29,13 @@ import { useEntryOperation } from '../composables/useEntryOperation'
 import { useEntryState } from '../composables/useEntryState'
 import { useEntryRect } from '../composables/useEntryRect'
 import ContainerChildItem from './ContainerChildItem.vue'
+import ConnectionView from './ConnectionView.vue'
 
 export default {
   name: 'MainArea',
   components: {
-    ContainerChildItem
+    ContainerChildItem,
+    ConnectionView
   },
   
   setup() {
