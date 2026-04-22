@@ -7,6 +7,7 @@ export function useEntryOperation() {
   const entryManager = inject('entryManager')
   const entryParamManager = inject('entryParamManager')
   const entryDefinitionService = inject('entryDefinitionService')
+  const entryConnectionManager = inject('entryConnectionManager')
   const {
     getSelectedEntryId,
     clearSelection
@@ -29,9 +30,11 @@ export function useEntryOperation() {
 
   const removeEntry = (id) => {
     const selectedId = getSelectedEntryId().value
-    if (selectedId && (selectedId === id || entryManager.getAllDescendantIds(id).includes(selectedId))) {
+    const descendantIds = entryManager.getAllDescendantIds(id)
+    if (selectedId && (selectedId === id || descendantIds.includes(selectedId))) {
       clearSelection()
     }
+    ;[id, ...descendantIds].forEach(eid => entryConnectionManager.removeConnectionsByEntryId(eid))
     entryManager.removeEntry(id)
   }
 
