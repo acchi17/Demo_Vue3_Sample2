@@ -13,7 +13,7 @@
       >Out</button>
     </div>
     <div class="param-badges">
-      <ParamBadgeItem
+      <EntryParamItem
         v-for="param in paramItems"
         :key="param.name"
         :entry-id="entryId"
@@ -27,13 +27,13 @@
 
 <script>
 import { ref, computed, inject } from 'vue'
-import ParamBadgeItem from './ParamBadgeItem.vue'
+import EntryParamItem from './EntryParamItem.vue'
 import { useEntryState } from '../composables/useEntryState'
 
 export default {
-  name: 'EntryParamsItem',
+  name: 'EntryParamsRow',
 
-  components: { ParamBadgeItem },
+  components: { EntryParamItem },
 
   props: {
     entryId: {
