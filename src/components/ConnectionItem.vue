@@ -1,56 +1,97 @@
 <template>
-  <path
-    v-if="pathD"
-    :d="pathD"
-    class="connection-path"
-  />
+  <g v-if="y1 != null && y2 != null">
+    <line
+      :x1="laneX"
+      :y1="y1"
+      :x2="laneX"
+      :y2="y2"
+      class="connection-line"
+    />
+    <g class="connection-badge">
+      <rect
+        :x="laneX - 30"
+        :y="y1 - 10"
+        width="60"
+        height="20"
+        rx="3"
+      />
+      <text
+        :x="laneX"
+        :y="y1 + 4"
+        text-anchor="middle"
+      >{{ outputParamName }}</text>
+    </g>
+    <g class="connection-badge">
+      <rect
+        :x="laneX - 30"
+        :y="y2 - 10"
+        width="60"
+        height="20"
+        rx="3"
+      />
+      <text
+        :x="laneX"
+        :y="y2 + 4"
+        text-anchor="middle"
+      >{{ inputParamName }}</text>
+    </g>
+  </g>
 </template>
 
 <script>
-import { computed, inject } from 'vue'
+import { computed } from 'vue'
+
+const LANE_WIDTH = 80
 
 export default {
   name: 'ConnectionItem',
 
   props: {
-    output: {
-      type: Object,
+    laneIndex: {
+      type: Number,
       required: true
     },
-    input: {
-      type: Object,
+    y1: {
+      type: Number,
+      required: true
+    },
+    y2: {
+      type: Number,
+      required: true
+    },
+    outputParamName: {
+      type: String,
+      required: true
+    },
+    inputParamName: {
+      type: String,
       required: true
     }
   },
 
   setup(props) {
-    const entryLayoutManager = inject('entryLayoutManager')
+    const laneX = computed(() => props.laneIndex * LANE_WIDTH)
 
-    const pathD = computed(() => {
-      const layoutMap = entryLayoutManager.layoutMap
-      const outLayout = layoutMap.get(props.output.entryId)
-      const inLayout = layoutMap.get(props.input.entryId)
-      if (!outLayout || !inLayout) return null
-
-      const y1 = outLayout.y + outLayout.height / 2
-      const y2 = inLayout.y + inLayout.height / 2
-      const x1 = 0
-      const x2 = 160
-      const cx = (x1 + x2) / 2
-
-      return `M ${x1} ${y1} C ${cx} ${y1}, ${cx} ${y2}, ${x2} ${y2}`
-    })
-
-    return { pathD }
+    return { laneX }
   }
 }
 </script>
 
 <style scoped>
-.connection-path {
+.connection-line {
   fill: none;
   stroke: #5a9fd4;
   stroke-width: 2;
-  stroke-linecap: round;
+}
+
+.connection-badge rect {
+  fill: #1e2a3a;
+  stroke: #5a9fd4;
+  stroke-width: 1;
+}
+
+.connection-badge text {
+  fill: #a0c8e8;
+  font-size: 10px;
 }
 </style>

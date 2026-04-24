@@ -6,10 +6,13 @@
     height="100%"
   >
     <ConnectionItem
-      v-for="conn in connections"
-      :key="conn.id"
-      :output="conn.output"
-      :input="conn.input"
+      v-for="c in connectionsWithLanes"
+      :key="c.id"
+      :laneIndex="c.laneIndex"
+      :y1="c.y1"
+      :y2="c.y2"
+      :outputParamName="c.outputParamName"
+      :inputParamName="c.inputParamName"
     />
   </svg>
 </template>
@@ -24,10 +27,61 @@ export default {
 
   setup() {
     const entryConnectionManager = inject('entryConnectionManager')
+    const entryLayoutManager = inject('entryLayoutManager')
 
-    const connections = computed(() => entryConnectionManager.getConnections())
+    const connectionsWithLanes = computed(() => {
+      const layoutMap = entryLayoutManager.layoutMap
+      const connections = entryConnectionManager.getConnections()
 
-    return { connections }
+      const withCoords = []
+      for (const conn of connections) {
+        const outLayout = layoutMap.get(conn.output.entryId)
+        const inLayout = layoutMap.get(conn.input.entryId)
+        if (!outLayout || !inLayout) continue
+
+        const y1 = outLayout.y + outLayout.height / 2
+        const y2 = inLayout.y + inLayout.height / 2
+        withCoords.push({
+          id: conn.id,
+          y1,
+          y2,
+          yMin: Math.min(y1, y2),
+          yMax: Math.max(y1, y2),
+          outputParamName: conn.output.paramName,
+          inputParamName: conn.input.paramName
+        })
+      }
+
+      withCoords.sort((a, b) => {
+        if (a.yMin !== b.yMin) return a.yMin - b.yMin
+        return a.id < b.id ? -1 : a.id > b.id ? 1 : 0
+      })
+
+      // Greedy interval packing to assign lane indices
+      const assigned = [] // { yMin, yMax, laneIndex }
+      return withCoords.map(conn => {
+        const occupied = new Set(
+          assigned
+            .filter(a => a.yMin <= conn.yMax && a.yMax >= conn.yMin)
+            .map(a => a.laneIndex)
+        )
+        let laneIndex = 0
+        while (occupied.has(laneIndex)) laneIndex++
+
+        assigned.push({ yMin: conn.yMin, yMax: conn.yMax, laneIndex })
+
+        return {
+          id: conn.id,
+          laneIndex,
+          y1: conn.y1,
+          y2: conn.y2,
+          outputParamName: conn.outputParamName,
+          inputParamName: conn.inputParamName
+        }
+      })
+    })
+
+    return { connectionsWithLanes }
   }
 }
 </script>
