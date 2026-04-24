@@ -64,11 +64,11 @@ export default {
 
 <style scoped>
 .param-badge {
-  font-size: 10px;
-  color: #fff;
+  font-size: var(--param-badge-font-size);
+  color: var(--param-badge-color);
   background-color: var(--param-badge-bg-color);
   padding: 2px 6px;
-  border-radius: 10px;
+  border-radius: var(--param-badge-border-radius);
   white-space: nowrap;
   cursor: pointer;
 }

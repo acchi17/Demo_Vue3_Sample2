@@ -13,7 +13,6 @@
         :y="y1 - 10"
         width="60"
         height="20"
-        rx="3"
       />
       <text
         :x="laneX"
@@ -27,7 +26,6 @@
         :y="y2 - 10"
         width="60"
         height="20"
-        rx="3"
       />
       <text
         :x="laneX"
@@ -86,13 +84,12 @@ export default {
 }
 
 .connection-badge rect {
-  fill: #1e2a3a;
-  stroke: #5a9fd4;
-  stroke-width: 1;
+  fill: var(--param-badge-bg-color);
+  border-radius: var(--param-badge-border-radius);
 }
 
 .connection-badge text {
-  fill: #a0c8e8;
-  font-size: 10px;
+  fill: var(--param-badge-color);
+  font-size: var(--param-badge-font-size);
 }
 </style>

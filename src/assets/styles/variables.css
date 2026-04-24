@@ -49,4 +49,7 @@
 
   /* Parameter badge styles */
   --param-badge-bg-color: #5a9fd4;
+  --param-badge-color: #fff;
+  --param-badge-font-size: 10px;
+  --param-badge-border-radius: 10px;
 }
