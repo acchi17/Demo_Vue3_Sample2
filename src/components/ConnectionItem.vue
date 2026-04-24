@@ -1,5 +1,5 @@
 <template>
-  <g v-if="y1 != null && y2 != null">
+  <g>
     <line
       :x1="laneX"
       :y1="y1"
@@ -49,7 +49,8 @@ export default {
   props: {
     laneIndex: {
       type: Number,
-      required: true
+      required: true,
+      validator: v => Number.isInteger(v) && v >= 0
     },
     y1: {
       type: Number,
@@ -70,7 +71,7 @@ export default {
   },
 
   setup(props) {
-    const laneX = computed(() => props.laneIndex * LANE_WIDTH)
+    const laneX = computed(() => (props.laneIndex + 0.5) * LANE_WIDTH)
 
     return { laneX }
   }
