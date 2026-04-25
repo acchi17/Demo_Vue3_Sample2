@@ -79,6 +79,13 @@ export function useEntryState() {
       }
     })
 
+  const isConnectedParam = (entryId, paramName, paramCategory) =>
+    computed(() =>
+      entryConnectionManager
+        ? entryConnectionManager.getConnectionsByEndpoint(entryId, paramCategory, paramName).length > 0
+        : false
+    )
+
   const connectingParam = computed(() => sourceConnection.value)
 
   // When connecting: cancel connection only (keep selection)
@@ -104,6 +111,7 @@ export function useEntryState() {
     isConnectingParam,
     isConnectingParamSrc,
     isConnectingParamDst,
+    isConnectedParam,
     connectingParam,
     // combined
     clearState,

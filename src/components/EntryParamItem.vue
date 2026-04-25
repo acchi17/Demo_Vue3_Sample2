@@ -1,9 +1,9 @@
 <template>
   <span
     class="param-badge"
-    :class="{ pending: isPending }"
+    :class="{ pending: isPending, connected: isConnected }"
     @click.stop="onToggle"
-  >{{ name }}</span>
+  >{{ isConnected ? (paramCategory === 'output' ? '→ ' : '← ') : '' }}{{ name }}</span>
 </template>
 
 <script>
@@ -37,6 +37,7 @@ export default {
       isConnectingParam,
       isConnectingParamSrc,
       isConnectingParamDst,
+      isConnectedParam,
       startConnection,
       cancelConnection,
       completeConnection,
@@ -46,6 +47,9 @@ export default {
       () => isConnectingParamSrc(props.entryId, props.name, props.paramCategory).value
     )
     const isConnectingDst = isConnectingParamDst(props.entryId)
+    const isConnected = computed(
+      () => isConnectedParam(props.entryId, props.name, props.paramCategory).value
+    )
 
     const onToggle = () => {
       if (isPending.value) {
@@ -57,7 +61,7 @@ export default {
       }
     }
 
-    return { isPending, onToggle }
+    return { isPending, isConnected, onToggle }
   }
 }
 </script>
@@ -76,5 +80,10 @@ export default {
 .param-badge.pending {
   outline: 2px solid #fff;
   opacity: 0.8;
+}
+
+.param-badge.connected {
+  outline: 2px solid #fff;
+  font-weight: 600;
 }
 </style>
