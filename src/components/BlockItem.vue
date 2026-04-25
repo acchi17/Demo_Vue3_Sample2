@@ -57,10 +57,11 @@ export default {
     } = useDraggable()
     const { executeEntry, isExecuting } = useEntryExecution()
     const { getParentId } = useEntryOperation()
-    const { 
+    const {
       getSelectedEntryId,
       isConnectingParamDst,
-      setSelectedEntry
+      setSelectedEntry,
+      clearSelection
     } = useEntryState()
 
     // Selection handling
@@ -72,7 +73,11 @@ export default {
     const isConnecting = isConnectingParamDst(props.entry.id)
 
     const onSelect = () => {
-      setSelectedEntry(props.entry)
+      if (isSelected.value) {
+        clearSelection()
+      } else {
+        setSelectedEntry(props.entry)
+      }
     }
     
     // Set callback for drag start
