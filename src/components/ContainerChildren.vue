@@ -19,16 +19,17 @@
 </template>
 
 <script>
-import { defineAsyncComponent, computed } from 'vue'
+import { computed } from 'vue'
 import { useDroppable } from '../composables/useDroppable'
 import { useEntryOperation } from '../composables/useEntryOperation'
 import BlockItem from './BlockItem.vue'
+import ContainerItem from './ContainerItem.vue'
 
 export default {
   name: 'ContainerChildren',
   components: {
     BlockItem,
-    ContainerItem: defineAsyncComponent(() => import('./ContainerItem.vue'))
+    ContainerItem,
   },
   props: {
     entry: {

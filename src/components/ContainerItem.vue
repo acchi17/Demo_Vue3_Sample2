@@ -31,13 +31,11 @@ import { useDraggable } from '../composables/useDraggable'
 import { useEntryExecution } from '../composables/useEntryExecution'
 import { useEntryState } from '../composables/useEntryState'
 import EntryParamsRow from './EntryParamsRow.vue'
-import ContainerChildren from './ContainerChildren.vue'
 
 export default {
   name: 'ContainerItem',
   components: {
     EntryParamsRow,
-    ContainerChildren
   },
   props: {
     entry: {

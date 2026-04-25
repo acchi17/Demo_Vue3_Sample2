@@ -9,6 +9,7 @@ import FileService from './services/file/FileService'
 import EntryExecutionService from './services/entry_execution/EntryExecutionService'
 import ExecutionLogService from './services/log/ExecutionLogService'
 import EntryDefinitionService from './services/entry_definition/EntryDefinitionService'
+import ContainerChildren from './components/ContainerChildren.vue'
 import './assets/styles/variables.css'
 
 const app = createApp(App)
@@ -34,5 +35,7 @@ app.provide('fileService', fileService)
 app.provide('executionLogService', executionLogService)
 app.provide('entryExecutionService', entryExecutionService)
 app.provide('entryDefinitionService', entryDefinitionService)
+
+app.component('ContainerChildren', ContainerChildren)
 
 app.mount('#app')
