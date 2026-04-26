@@ -1,21 +1,23 @@
 <template>
-  <div class="drop-area"
-      :class="{'is-active': dropAllowed}"
-      @drop="(event) => onDrop(event, 0)"
-      @dragover="onDragOver"
-  />
-  <template v-for="(child, index) in children" :key="child.id">
-    <component
-      :is="child.type === 'block' ? 'BlockItem' : 'ContainerItem'"
-      :entry="child"
-      @remove="removeChild"
-    />
+  <div class="container-children">
     <div class="drop-area"
         :class="{'is-active': dropAllowed}"
-        @drop="(event) => onDrop(event, index + 1)"
+        @drop="(event) => onDrop(event, 0)"
         @dragover="onDragOver"
     />
-  </template>
+    <template v-for="(child, index) in children" :key="child.id">
+      <component
+        :is="child.type === 'block' ? 'BlockItem' : 'ContainerItem'"
+        :entry="child"
+        @remove="removeChild"
+      />
+      <div class="drop-area"
+          :class="{'is-active': dropAllowed}"
+          @drop="(event) => onDrop(event, index + 1)"
+          @dragover="onDragOver"
+      />
+    </template>
+  </div>
 </template>
 
 <script>
@@ -84,6 +86,12 @@ export default {
 </script>
 
 <style scoped>
+.container-children {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .drop-area {
   height: 20px;
   width: 100%;

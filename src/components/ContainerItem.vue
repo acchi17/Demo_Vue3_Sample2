@@ -15,11 +15,9 @@
         <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
         <EntryParamsRow v-if="isSelected || isConnectingTgt" :entry-id="entry.id" />
       </div>
-      <div class="container-children">
-        <ContainerChildren
-          :entry="entry"
-        />
-      </div>
+      <ContainerChildren
+        :entry="entry"
+      />
     </div>
   </div>
 </template>
@@ -141,11 +139,12 @@ export default {
 
 <style scoped>
 .container-item {
+  position: relative;
   width: fit-content;
-  border-radius: 4px;
   background-color: var(--container-bg-color);
   box-shadow: var(--container-box-shadow);
   border: var(--container-border);
+  border-radius: var(--entry-border-radius);
 }
 
 .container-item.dragging {
@@ -165,6 +164,7 @@ export default {
 }
 
 .container-header {
+  height: var(--entry-header-height);
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -219,9 +219,4 @@ export default {
   visibility: hidden;
 }
 
-.container-children {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
 </style>

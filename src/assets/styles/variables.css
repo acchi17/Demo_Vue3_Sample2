@@ -14,6 +14,10 @@
   --container-border: 1px solid #AAAAAA;
   --container-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
+  /* Entry rectangle styles */
+  --entry-header-height: 30px;
+  --entry-border-radius: 4px;
+
   /* Entry select state styles */
   --entry-select-border: 1px solid #007bff;
   --entry-select-box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
