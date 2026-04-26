@@ -8,7 +8,7 @@
     @click.stop="onSelect"
   >
     <!-- Normal content: shown when not selected and not connecting-expand -->
-    <div v-if="!isSelected && !isConnecting" class="block-content">
+    <div v-if="!isSelected && !isConnectingTgt" class="block-content">
       <div class="block-header" :data-entry-id="entry.id">
         <div class="entry-text">{{ entry.name }}</div>
         <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
@@ -59,24 +59,24 @@ export default {
     const { getParentId } = useEntryOperation()
     const {
       getSelectedEntryId,
-      isConnectingParamDst,
-      setSelectedEntry,
-      clearSelection
+      setSelection,
+      clearSelection,
+      isConnectingTarget
     } = useEntryState()
 
     // Selection handling
     const isSelected = computed(() => {
-      const selectedId = getSelectedEntryId()
-      return selectedId.value === props.entry.id
+      const selectedId = getSelectedEntryId.value
+      return selectedId === props.entry.id
     })
 
-    const isConnecting = isConnectingParamDst(props.entry.id)
+    const isConnectingTgt = isConnectingTarget(props.entry.id)
 
     const onSelect = () => {
       if (isSelected.value) {
         clearSelection()
       } else {
-        setSelectedEntry(props.entry)
+        setSelection(props.entry)
       }
     }
     
@@ -123,7 +123,7 @@ export default {
     return {
       isDragging,
       isSelected,
-      isConnecting,
+      isConnectingTgt,
       onDragStart,
       onDragEnd,
       onSelect,

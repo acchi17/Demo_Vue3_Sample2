@@ -1,7 +1,7 @@
 <template>
   <span
     class="param-badge"
-    :class="{ pending: isPending, connected: isConnected }"
+    :class="{ 'connecting-src': isConnectingSrc, 'connected': isConnected }"
     @click.stop="onToggle"
   >{{ isConnected ? (paramCategory === 'output' ? '→ ' : '← ') : '' }}{{ name }}</span>
 </template>
@@ -29,39 +29,46 @@ export default {
     paramType: {
       type: String,
       default: null
+    },
+    isDisabledAction: {
+      type: Boolean,
+      default: false
     }
   },
 
   setup(props) {
     const {
-      isConnectingParam,
-      isConnectingParamSrc,
-      isConnectingParamDst,
-      isConnectedParam,
+      isConnecting,
+      isConnectingSource,
+      isConnectingTarget,
+      isConnectedEndPoint,
       startConnection,
       cancelConnection,
-      completeConnection,
+      endConnection,
     } = useEntryState()
 
-    const isPending = computed(
-      () => isConnectingParamSrc(props.entryId, props.name, props.paramCategory).value
+    const isConnectingSrc = computed(
+      () => !props.isDisabledAction && isConnectingSource(props.entryId, props.name, props.paramCategory).value
     )
-    const isConnectingDst = isConnectingParamDst(props.entryId)
+    const isConnectingTgt = computed(
+      () => !props.isDisabledAction && isConnectingTarget(props.entryId).value
+    )
     const isConnected = computed(
-      () => isConnectedParam(props.entryId, props.name, props.paramCategory).value
+      () => !props.isDisabledAction && isConnectedEndPoint(props.entryId, props.name, props.paramCategory).value
     )
 
     const onToggle = () => {
-      if (isPending.value) {
+      if (props.isDisabledAction) return
+      if (isConnectingSrc.value) {
         cancelConnection()
-      } else if (isConnectingParam.value && isConnectingDst.value) {
-        completeConnection(props.entryId, props.name, props.paramCategory, props.paramType)
+      } else if (isConnecting.value && isConnectingTgt.value) {
+        endConnection(props.entryId, props.name, props.paramCategory, props.paramType)
       } else {
         startConnection(props.entryId, props.name, props.paramCategory, props.paramType)
       }
     }
 
-    return { isPending, isConnected, onToggle }
+    return { isConnectingSrc, isConnectingTgt, isConnected, onToggle }
   }
 }
 </script>
@@ -77,7 +84,7 @@ export default {
   cursor: pointer;
 }
 
-.param-badge.pending {
+.param-badge.connecting-src {
   outline: 2px solid #fff;
   opacity: 0.8;
 }

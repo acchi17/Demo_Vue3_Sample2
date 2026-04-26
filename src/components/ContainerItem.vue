@@ -13,7 +13,7 @@
         <div class="entry-button entry-button-play"
              :class="{ 'entry-button--hidden': !isSelected }" @click.stop="onPlay"></div>
         <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
-        <EntryParamsRow v-if="isSelected || isConnecting" :entry-id="entry.id" />
+        <EntryParamsRow v-if="isSelected || isConnectingTgt" :entry-id="entry.id" />
       </div>
       <div class="container-children">
         <ContainerChildren
@@ -60,24 +60,24 @@ export default {
     } = useEntryOperation()
     const {
       getSelectedEntryId,
-      isConnectingParamDst,
-      setSelectedEntry,
-      clearSelection
+      setSelection,
+      clearSelection,
+      isConnectingTarget,
     } = useEntryState()
 
     // Selection handling
     const isSelected = computed(() => {
-      const selectedId = getSelectedEntryId()
-      return selectedId.value === props.entry.id
+      const selectedId = getSelectedEntryId.value
+      return selectedId === props.entry.id
     })
     
-    const isConnecting = isConnectingParamDst(props.entry.id)
+    const isConnectingTgt = isConnectingTarget(props.entry.id)
 
     const onSelect = () => {
       if (isSelected.value) {
         clearSelection()
       } else {
-        setSelectedEntry(props.entry)
+        setSelection(props.entry)
       }
     }
     
@@ -128,7 +128,7 @@ export default {
     return {
       isDragging,
       isSelected,
-      isConnecting,
+      isConnectingTgt,
       onDragStart,
       onDragEnd,
       onSelect,

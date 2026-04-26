@@ -1,6 +1,6 @@
 <template>
   <template v-if="hasParams">
-    <div v-if="!isConnectingDst" class="param-toggle">
+    <div v-if="!isConnectingTgt" class="param-toggle">
       <button
         class="param-toggle-btn"
         :class="{ active: paramCategory === 'input' }"
@@ -20,6 +20,7 @@
         :name="param.name"
         :param-category="effectiveCategory"
         :param-type="param.type"
+        :is-disabled-action="false"
       />
     </div>
   </template>
@@ -52,13 +53,13 @@ export default {
 
     const paramCategory = ref('input')
 
-    const { isConnectingParamDst, connectingParam } = useEntryState()
-    const isConnectingDst = isConnectingParamDst(props.entryId)
+    const { isConnectingTarget, getConnectingSource } = useEntryState()
+    const isConnectingTgt = isConnectingTarget(props.entryId)
 
     // Show the complementary category: output src → show input, input src → show output
     const effectiveCategory = computed(() => {
-      if (!isConnectingDst.value) return paramCategory.value
-      return connectingParam.value?.paramCategory === 'output' ? 'input' : 'output'
+      if (!isConnectingTgt.value) return paramCategory.value
+      return getConnectingSource.value?.paramCategory === 'output' ? 'input' : 'output'
     })
 
     const paramItems = computed(() => {
@@ -71,7 +72,7 @@ export default {
     return {
       hasParams,
       paramCategory,
-      isConnectingDst,
+      isConnectingTgt,
       effectiveCategory,
       paramItems,
     }

@@ -29,7 +29,7 @@ export function useEntryOperation() {
   }
 
   const removeEntry = (id) => {
-    const selectedId = getSelectedEntryId().value
+    const selectedId = getSelectedEntryId.value
     const descendantIds = entryManager.getAllDescendantIds(id)
     if (selectedId && (selectedId === id || descendantIds.includes(selectedId))) {
       clearSelection()

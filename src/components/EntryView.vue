@@ -62,11 +62,11 @@ export default {
     const entryParamManager = inject('entryParamManager')
     const entryDefinitionService = inject('entryDefinitionService')
 
-    const selectedEntryId = getSelectedEntryId()
+    const selectedIdRef = getSelectedEntryId
 
     const selectedEntry = computed(() => {
-      if (!selectedEntryId.value) return null
-      return entryManager.getEntry(selectedEntryId.value)
+      if (!selectedIdRef.value) return null
+      return entryManager.getEntry(selectedIdRef.value)
     })
 
     // Input parameter definitions from block definition (empty for containers)
@@ -89,17 +89,17 @@ export default {
     // Computed output params reads directly from the reactive EntryParamManager map,
     // so it updates automatically when values change during execution
     const localOutputParams = computed(() => {
-      const id = selectedEntryId.value
+      const id = selectedIdRef.value
       return id ? entryParamManager.getOutputParams(id) : {}
     })
 
     // Reload local input params when selected entry changes
-    watch(selectedEntryId, (id) => {
+    watch(selectedIdRef, (id) => {
       localInputParams.value = id ? { ...entryParamManager.getInputParams(id) } : {}
     }, { immediate: true })
 
     const onParamChange = (paramName, value) => {
-      const id = selectedEntryId.value
+      const id = selectedIdRef.value
       if (!id) return
       localInputParams.value[paramName] = value
       entryParamManager.setInputParam(id, paramName, value)

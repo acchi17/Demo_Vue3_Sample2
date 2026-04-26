@@ -1,8 +1,8 @@
-import { ref, readonly, computed, inject } from 'vue'
+import { ref, computed, inject } from 'vue'
 
 // Module-level singleton state
 const selectedEntryId = ref(null)
-const sourceConnection = ref(null) // null | { entryId, paramName, paramCategory, paramType }
+const connectingSource = ref(null) // null | { entryId, paramName, paramCategory, paramType }
 
 /**
  * Composable for entry selection and parameter connection waiting state.
@@ -13,7 +13,13 @@ export function useEntryState() {
   const entryConnectionManager = inject('entryConnectionManager')
   const entryParamManager = inject('entryParamManager')
 
-  const setSelectedEntry = (entry) => {
+
+  const isSelected = (entryId) =>
+    computed(() => selectedEntryId.value === entryId)
+
+  const getSelectedEntryId = computed(() => selectedEntryId.value)
+
+  const setSelection = (entry) => {
     selectedEntryId.value = entry?.id || null
   }
 
@@ -21,77 +27,74 @@ export function useEntryState() {
     selectedEntryId.value = null
   }
 
-  const isSelected = (entryId) =>
-    computed(() => selectedEntryId.value === entryId)
+  const isConnecting = computed(() => connectingSource.value !== null)
 
-  const getSelectedEntryId = () => readonly(selectedEntryId)
-
-  const startConnection = (entryId, paramName, paramCategory, paramType) => {
-    sourceConnection.value = { entryId, paramName, paramCategory, paramType }
-  }
-
-  const cancelConnection = () => {
-    sourceConnection.value = null
-  }
-
-  const completeConnection = (entryId, paramName, paramCategory, paramType) => {
-    if (!sourceConnection.value) return
-    const source = sourceConnection.value
-    if (source.paramCategory === paramCategory) return
-
-    const sourceEndpoint = { entryId: source.entryId, category: source.paramCategory, dataType: source.paramType, paramName: source.paramName }
-    const otherEndpoint = { entryId: entryId, category: paramCategory, dataType: paramType, paramName: paramName }
-
-    const [outputEndpoint, inputEndpoint] = source.paramCategory === 'output'
-      ? [sourceEndpoint, otherEndpoint]
-      : [otherEndpoint, sourceEndpoint]
-
-    entryConnectionManager.addConnection(outputEndpoint, inputEndpoint)
-    cancelConnection()
-  }
-
-  const isConnectingParam = computed(() => sourceConnection.value !== null)
-
-  const isConnectingParamSrc = (entryId, paramName, paramCategory) =>
+  const isConnectingSource = (entryId, paramName, paramCategory) =>
     computed(() =>
-      sourceConnection.value !== null &&
-      sourceConnection.value.entryId === entryId &&
-      sourceConnection.value.paramName === paramName &&
-      sourceConnection.value.paramCategory === paramCategory
+      connectingSource.value !== null &&
+      connectingSource.value.entryId === entryId &&
+      connectingSource.value.paramName === paramName &&
+      connectingSource.value.paramCategory === paramCategory
     )
 
-  const isConnectingParamDst = (entryId) =>
+  const isConnectingTarget = (entryId) =>
     computed(() => {
-      if (!entryManager || sourceConnection.value === null) return false
+      if (connectingSource.value === null) return false
       entryManager.updateTick.value // reactive dependency
-      const srcId = sourceConnection.value.entryId
-      const mySeq = entryManager.getSequenceNumber(entryId)
+      const srcId = connectingSource.value.entryId
       const srcSeq = entryManager.getSequenceNumber(srcId)
-      if (mySeq === null || srcSeq === null) return false
-      // output src → expand entries before it (input targets)
-      // input src  → expand entries after it (output targets)
-      if (sourceConnection.value.paramCategory === 'output') {
-        if (!entryParamManager?.hasInputParam(entryId)) return false
-        return mySeq < srcSeq
+      const dstSeq = entryManager.getSequenceNumber(entryId)
+      console.log(`Checking connection: ${srcId} -> ${entryId}, Seq: ${srcSeq} -> ${dstSeq}`)
+      if (dstSeq === null || srcSeq === null) return false
+      
+      if (connectingSource.value.paramCategory === 'input') {
+        // input src  → expand entries after it (output targets)
+        if (!entryParamManager.hasOutputParam(entryId)) return false
+        return dstSeq < srcSeq
       } else {
-        if (!entryParamManager?.hasOutputParam(entryId)) return false
-        return mySeq > srcSeq
+        // output src → expand entries before it (input targets)
+        if (!entryParamManager.hasInputParam(entryId)) return false
+        return dstSeq > srcSeq
       }
     })
 
-  const isConnectedParam = (entryId, paramName, paramCategory) =>
+  const isConnectedEndPoint = (entryId, paramName, paramCategory) =>
     computed(() =>
       entryConnectionManager
         ? entryConnectionManager.getConnectionsByEndpoint(entryId, paramCategory, paramName).length > 0
         : false
     )
 
-  const connectingParam = computed(() => sourceConnection.value)
+  const getConnectingSource = computed(() => connectingSource.value)
+
+  const startConnection = (entryId, paramName, paramCategory, paramType) => {
+    connectingSource.value = { entryId, paramName, paramCategory, paramType }
+  }
+
+  const cancelConnection = () => {
+    connectingSource.value = null
+  }
+
+  const endConnection = (entryId, paramName, paramCategory, paramType) => {
+    if (!connectingSource.value) return
+    const source = connectingSource.value
+    if (source.paramCategory === paramCategory) return
+
+    const sourceEndpoint = { entryId: source.entryId, category: source.paramCategory, dataType: source.paramType, paramName: source.paramName }
+    const targetEndpoint = { entryId: entryId, category: paramCategory, dataType: paramType, paramName: paramName }
+    
+    const [outputEndpoint, inputEndpoint] = source.paramCategory === 'output'
+      ? [sourceEndpoint, targetEndpoint]
+      : [targetEndpoint, sourceEndpoint]
+
+    entryConnectionManager.addConnection(outputEndpoint, inputEndpoint)
+    cancelConnection()
+  }
 
   // When connecting: cancel connection only (keep selection)
   // When idle: clear selection (existing behavior)
   const clearState = () => {
-    if (isConnectingParam.value) {
+    if (isConnecting.value) {
       cancelConnection()
     } else {
       clearSelection()
@@ -100,19 +103,19 @@ export function useEntryState() {
 
   return {
     // selection
-    setSelectedEntry,
-    clearSelection,
     isSelected,
     getSelectedEntryId,
+    setSelection,
+    clearSelection,
     // connection
+    isConnecting,
+    isConnectingSource,
+    isConnectingTarget,
+    isConnectedEndPoint,
+    getConnectingSource,
     startConnection,
     cancelConnection,
-    completeConnection,
-    isConnectingParam,
-    isConnectingParamSrc,
-    isConnectingParamDst,
-    isConnectedParam,
-    connectingParam,
+    endConnection,
     // combined
     clearState,
   }
