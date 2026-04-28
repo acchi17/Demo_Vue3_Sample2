@@ -7,20 +7,22 @@
     @dragend="onDragEnd"
     @click.stop="onSelect"
   >
-    <!-- Normal content: shown when not selected and not connecting-expand -->
-    <div v-if="!isSelected && !isConnectingTgt" class="block-content">
-      <div class="block-header" :data-entry-id="entry.id">
-        <div class="entry-text">{{ entry.name }}</div>
-        <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
+    <div class="block-content-outer">
+      <!-- Normal content: shown when not selected and not connecting-expand -->
+      <div v-if="!isSelected && !isConnectingTgt" class="block-content-inner">
+        <div class="block-header" :data-entry-id="entry.id">
+          <div class="entry-text">{{ entry.name }}</div>
+          <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
+        </div>
       </div>
-    </div>
-    <!-- Absolute content: shown when selected -->
-    <div v-else class="block-content-selected">
-      <div class="block-header" :data-entry-id="entry.id">
-        <div class="entry-text">{{ entry.name }}</div>
-        <div class="entry-button entry-button-play" @click.stop="onPlay"></div>
-        <EntryParamsRow :entry-id="entry.id" />
-        <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
+      <!-- Absolute content: shown when selected -->
+      <div v-else class="block-content-inner-selected">
+        <div class="block-header" :data-entry-id="entry.id">
+          <div class="entry-text">{{ entry.name }}</div>
+          <div class="entry-button entry-button-play" @click.stop="onPlay"></div>
+          <EntryParamsRow :entry-id="entry.id" />
+          <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -137,7 +139,7 @@ export default {
 <style scoped>
 .block-item {
   position: relative;
-  height: 50px;
+  height: fit-content;
   width: fit-content;
 }
 
@@ -145,7 +147,12 @@ export default {
   opacity: 0.5;
 }
 
-.block-content {
+.block-content-outer {
+  height: 50px;
+  width: 100%;
+}
+
+.block-content-inner {
   height: 100%;
   width: 100%;
   padding: 10px;
@@ -157,7 +164,7 @@ export default {
   box-shadow: var(--block-box-shadow);
 }
 
-.block-content-selected {
+.block-content-inner-selected {
   position: absolute;
   top: 0;
   left: 0;
