@@ -33,18 +33,22 @@ A Vue 3 drag-and-drop UI builder where users construct nested workflows by dragg
 
 **EntryLayoutManager** (`src/classes/EntryLayoutManager.js`): Stores measured Y position and height of each entry's header in a reactive Map; used to align connection lines in the connection panel with entry headers.
 
+**EntryConnectionManager** (`src/classes/EntryConnectionManager.js`): Manages directed connections between entry output and input parameter endpoints.
+
 ### Component Structure
 
 - **App.vue**: 3-column layout (SideArea | MainArea | ExecutionLogView)
+- **MainArea.vue**: Holds the root container (`id: 'main-area'`) registered in EntryManager without a parent
+- **SideArea.vue**: Drag sources for creating new blocks and containers
 - **BlockItem.vue**: Renders individual blocks
-- **ContainerChildren.vue**: Renders a container's child list with drop zones between entries, dispatching drop events to add/reorder/move entries.
 - **ContainerItem.vue**: Recursive component rendering nested entries with drop zones
 - **EntryParamsRow.vue**: Displays an In/Out toggle and parameter name badges inside a selected entry rectangle; used by both BlockItem and ContainerItem
+- **EntryParamItem.vue**: Clickable badge displaying a parameter name; toggles pending connection state via `useEntryState`.
 - **EntryView.vue**: Detail panel for the selected entry; shows its name and editable input parameters via `EntryParamManager`
 - **ExecutionLogView.vue**: Displays execution logs from ExecutionLogService
-- **MainArea.vue**: Holds the root container (`id: 'main-area'`) registered in EntryManager without a parent
-- **EntryParamItem.vue**: Clickable badge displaying a parameter name; toggles pending connection state via `useEntryState`.
-- **SideArea.vue**: Drag sources for creating new blocks and containers
+- **ContainerChildren.vue**: Renders a container's child list with drop zones between entries, dispatching drop events to add/reorder/move entries.
+- **ConnectionView.vue**: SVG overlay rendering all parameter connections as `ConnectionItem`s, with lane indices assigned via greedy interval packing to prevent overlap.
+- **ConnectionItem.vue**: SVG `<g>` drawing a single connection line between two entry headers at a computed lane X, with parameter name badges at each endpoint.
 
 ### Entry Execution System
 
