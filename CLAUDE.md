@@ -18,7 +18,7 @@ A Vue 3 drag-and-drop UI builder where users construct nested workflows by dragg
 
 ## Core Architecture
 
-### Entry Management
+### Entities
 
 - **Entry** (base class): Represents any draggable element with `id`, `name`, `type`, and `children`
 - **Block** (extends Entry): Leaf node that executes a single script
@@ -35,7 +35,7 @@ A Vue 3 drag-and-drop UI builder where users construct nested workflows by dragg
 
 **EntryConnectionManager** (`src/classes/EntryConnectionManager.js`): Manages directed connections between entry output and input parameter endpoints.
 
-### Component Structure
+### Components
 
 - **App.vue**: 3-column layout (SideArea | MainArea | ExecutionLogView)
 - **MainArea.vue**: Holds the root container (`id: 'main-area'`) registered in EntryManager without a parent
@@ -49,6 +49,16 @@ A Vue 3 drag-and-drop UI builder where users construct nested workflows by dragg
 - **ContainerChildren.vue**: Renders a container's child list with drop zones between entries, dispatching drop events to add/reorder/move entries.
 - **ConnectionView.vue**: SVG overlay rendering all parameter connections as `ConnectionItem`s, with lane indices assigned via greedy interval packing to prevent overlap.
 - **ConnectionItem.vue**: SVG `<g>` drawing a single connection line between two entry headers at a computed lane X, with parameter name badges at each endpoint.
+
+### Composables
+
+- **useDragDropState.js**: Module-level singleton tracking `isDragging` and `draggedItemIds`; shared across components to prevent dropping onto self or descendants.
+- **useDraggable.js**: Provides `onDragStart`/`onDragEnd` handlers for draggable elements, updating `useDragDropState` on drag lifecycle.
+- **useDroppable.js**: Provides `onDragOver`/`onDrop`/`isDroppable()` for drop zones; calls a registered callback with the drop event and target index.
+- **useEntryExecution.js**: Bridges UI to `EntryExecutionService`, exposing `executeEntry()`, `isExecuting`, `getLogs()`, and `clearLogs()`.
+- **useEntryOperation.js**: Bridges UI to `EntryManager`, exposing add/remove/move/reorder operations with automatic selection cleanup on removal.
+- **useEntryRect.js**: Measures Y position and height of each entry's header and writes them into `EntryLayoutManager` for connection-line alignment; re-measures on structural changes.
+- **useEntryState.js**: Module-level singleton managing entry selection (`selectedEntryId`) and parameter connection waiting state (`pendingConnection`) across all components.
 
 ### Entry Execution System
 
@@ -76,16 +86,6 @@ A Vue 3 drag-and-drop UI builder where users construct nested workflows by dragg
 - `addLog()` builds the tree; `updateLog()` fills in result and exec time after completion
 - Auto-cleans oldest entries when the total exceeds the configured max (default 1000)
 
-### Composables
-
-- **useDragDropState.js**: Module-level singleton tracking `isDragging` and `draggedItemIds`; shared across components to prevent dropping onto self or descendants.
-- **useDraggable.js**: Provides `onDragStart`/`onDragEnd` handlers for draggable elements, updating `useDragDropState` on drag lifecycle.
-- **useDroppable.js**: Provides `onDragOver`/`onDrop`/`isDroppable()` for drop zones; calls a registered callback with the drop event and target index.
-- **useEntryExecution.js**: Bridges UI to `EntryExecutionService`, exposing `executeEntry()`, `isExecuting`, `getLogs()`, and `clearLogs()`.
-- **useEntryOperation.js**: Bridges UI to `EntryManager`, exposing add/remove/move/reorder operations with automatic selection cleanup on removal.
-- **useEntryRect.js**: Measures Y position and height of each entry's header and writes them into `EntryLayoutManager` for connection-line alignment; re-measures on structural changes.
-- **useEntryState.js**: Module-level singleton managing entry selection (`selectedEntryId`) and parameter connection waiting state (`pendingConnection`) across all components.
-
 ### Configuration (src/config/app-config.js)
 
 Centralized configuration for:
@@ -93,7 +93,9 @@ Centralized configuration for:
 - `script.engineName`: Script execution engine (default: 'javascript')
 - `script.scriptsDir`: Directory for script files
 
-### Data Flow & Execution
+## Typical Use Case
+
+### Place entries & Execution Flow
 
 1. User drags blocks/containers from SideArea into MainArea
 2. EntryManager maintains the hierarchical structure
@@ -103,6 +105,14 @@ Centralized configuration for:
 4. ScriptExecutionService loads script from `public/scripts/{blockName}.js` and executes via JavaScriptExecutionEngine (Web Worker)
 5. EntryParamManager manages parameter passing between blocks
 6. ExecutionLogService records results with hierarchical tracing
+
+### Parameter Connection Flow
+
+1. User clicks an `EntryParamItem` badge → `useEntryState.startConnection()` stores the source endpoint (`entryId`, `paramName`, `paramCategory`, `paramType`) in the module-level `connectingSource` ref
+2. While connecting, `isConnectingTarget` computes eligible target entries by comparing sequence numbers via `EntryManager.getSequenceNumber()`: output sources accept input badges on later entries; input sources accept output badges on earlier entries
+3. User clicks a badge on an eligible target entry → `useEntryState.endConnection()` normalises the two endpoints into `(outputEndpoint, inputEndpoint)` order and calls `EntryConnectionManager.addConnection()`
+4. Clicking the active source badge cancels the pending connection via `cancelConnection()`
+5. `ConnectionView` reactively reads all connections from `EntryConnectionManager` and Y positions from `EntryLayoutManager` to render `ConnectionItem` lines in the SVG overlay
 
 ## Coding Conventions
 
