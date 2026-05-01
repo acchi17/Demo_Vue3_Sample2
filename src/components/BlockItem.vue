@@ -1,27 +1,27 @@
 <template>
   <div
     class="block-item"
-    :class="{ 'dragging': isDragging }"
+    :class="{ 'dragging': isDragging, 'selected': isSelected }"
     draggable="true"
     @dragstart="onDragStart"
     @dragend="onDragEnd"
     @click.stop="onSelect"
   >
-    <div class="block-content-outer">
-      <!-- Normal content: shown when not selected and not connecting-expand -->
-      <div v-if="!isSelected && !isConnectingTgt" class="block-content-inner">
-        <div class="block-header" :data-entry-id="entry.id">
-          <div class="entry-text">{{ entry.name }}</div>
-          <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
-        </div>
-      </div>
-      <!-- Absolute content: shown when selected -->
-      <div v-else class="block-content-inner-selected">
-        <div class="block-header" :data-entry-id="entry.id">
-          <div class="entry-text">{{ entry.name }}</div>
-          <div class="entry-button entry-button-play" @click.stop="onPlay"></div>
-          <EntryParamsRow :entry-id="entry.id" />
-          <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
+    <div class="block-content">
+      <div class="block-header" :data-entry-id="entry.id">
+        <div class="entry-spacer"/>
+        <div class="entry-text">{{ entry.name }}</div>
+        <div class="entry-button entry-button-play"
+            :class="{ 'entry-button--hidden': !isSelected }" @click.stop="onPlay"></div>
+        <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
+        <div class="block-header-tail">
+          <div
+            v-if="(isSelected || isConnectingTgt) && hasParams"
+            class="block-content-param"
+            :class="{ 'selected': isSelected }"
+          >        
+            <EntryParamsRow :entry-id="entry.id" :is-connecting-tgt="isConnectingTgt" />
+          </div>            
         </div>
       </div>
     </div>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import { useDraggable } from '../composables/useDraggable'
 import { useEntryExecution } from '../composables/useEntryExecution'
 import { useEntryOperation } from '../composables/useEntryOperation'
@@ -50,6 +50,8 @@ export default {
   emits: ['remove'],
 
   setup(props, { emit }) {
+    const entryParamManager = inject('entryParamManager')
+
     // Get composables
     const {
       isDragging,
@@ -73,6 +75,11 @@ export default {
     })
 
     const isConnectingTgt = isConnectingTarget(props.entry.id)
+
+    const hasParams = computed(() =>
+      Object.keys(entryParamManager.getInputParamTypes(props.entry.id)).length > 0 ||
+      Object.keys(entryParamManager.getOutputParamTypes(props.entry.id)).length > 0
+    )
 
     const onSelect = () => {
       if (isSelected.value) {
@@ -126,6 +133,7 @@ export default {
       isDragging,
       isSelected,
       isConnectingTgt,
+      hasParams,
       onDragStart,
       onDragEnd,
       onSelect,
@@ -138,58 +146,72 @@ export default {
 
 <style scoped>
 .block-item {
-  position: relative;
   height: fit-content;
   width: fit-content;
+  border: var(--entry-border);
+  border-radius: var(--entry-border-radius);
+  box-shadow: var(--entry-box-shadow);
+  background-color: var(--block-bg-color);
 }
 
 .block-item.dragging {
   opacity: 0.5;
 }
 
-.block-content-outer {
-  height: 50px;
-  width: 100%;
-}
-
-.block-content-inner {
-  height: 100%;
-  width: 100%;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  border: var(--block-border);
-  border-radius: 4px;
-  background-color: var(--block-bg-color);
-  box-shadow: var(--block-box-shadow);
-}
-
-.block-content-inner-selected {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  padding: 10px;
-  display: flex;
-  align-items: center;
+.block-item.selected {
   border: var(--entry-select-border);
-  border-radius: 4px;
-  background-color: var(--block-bg-color);
   box-shadow: var(--entry-select-box-shadow);
 }
 
-.block-header {
+.block-content {
   height: 100%;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.block-header {
+  height: var(--entry-header-height);
   width: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 5px;
+  gap: 2px;
+}
+
+.block-header-tail {
+  position: relative;
+  height: 100%;
+  width: 1px;
+}
+
+.block-content-param {
+  position: absolute;
+  top: 0;
+  left: 20px;
+  height: var(--entry-header-height);
+  padding: 0px 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border: var(--entry-border);
+  border-radius: var(--entry-border-radius);
+  box-shadow: var(--entry-box-shadow);
+  background-color: var(--block-bg-color);
+}
+
+.block-content-param.selected {
+  border: var(--entry-select-border);
+  box-shadow: var(--entry-select-box-shadow);
+}
+
+.entry-spacer {
+  width: var(--entry-spacer-width);
 }
 
 /* Entry text styles */
 .entry-text {
   font-size: var(--entry-text-font-size);
+  font-weight: var(--entry-text-font-weight);
   color: var(--entry-text-color);
   white-space: var(--entry-text-white-space);
   overflow: var(--entry-text-overflow);
@@ -228,5 +250,9 @@ export default {
 /* Delete button styles */
 .entry-button-delete {
   background-image: var(--entry-button-delete-image);
+}
+
+.entry-button--hidden {
+  visibility: hidden;
 }
 </style>

@@ -9,21 +9,28 @@
   >
     <div class="container-content">
       <div class="container-header" :data-entry-id="entry.id">
+        <div class="entry-spacer"/>
         <div class="entry-text">{{ entry.name }}</div>
         <div class="entry-button entry-button-play"
              :class="{ 'entry-button--hidden': !isSelected }" @click.stop="onPlay"></div>
         <div class="entry-button entry-button-delete" @click.stop="onRemove"></div>
-        <EntryParamsRow v-if="isSelected || isConnectingTgt" :entry-id="entry.id" />
+        <div class="container-header-tail">
+          <div
+            v-if="(isSelected || isConnectingTgt) && hasParams"
+            class="container-content-param"
+            :class="{ 'selected': isSelected }"
+          >
+            <EntryParamsRow :entry-id="entry.id" :is-connecting-tgt="isConnectingTgt" />
+          </div>   
+        </div>
       </div>
-      <ContainerChildren
-        :entry="entry"
-      />
+      <ContainerChildren :entry="entry"/>
     </div>
   </div>
 </template>
 
 <script>
-import { computed } from 'vue'  
+import { computed, inject } from 'vue'
 import { useEntryOperation } from '../composables/useEntryOperation'
 import { useDraggable } from '../composables/useDraggable'
 import { useEntryExecution } from '../composables/useEntryExecution'
@@ -44,6 +51,8 @@ export default {
   emits: ['remove'],
 
   setup(props, { emit }) {
+    const entryParamManager = inject('entryParamManager')
+
     // Get composable
     const {
       isDragging,
@@ -70,6 +79,11 @@ export default {
     })
     
     const isConnectingTgt = isConnectingTarget(props.entry.id)
+
+    const hasParams = computed(() =>
+      Object.keys(entryParamManager.getInputParamTypes(props.entry.id)).length > 0 ||
+      Object.keys(entryParamManager.getOutputParamTypes(props.entry.id)).length > 0
+    )
 
     const onSelect = () => {
       if (isSelected.value) {
@@ -127,6 +141,7 @@ export default {
       isDragging,
       isSelected,
       isConnectingTgt,
+      hasParams,
       onDragStart,
       onDragEnd,
       onSelect,
@@ -139,12 +154,12 @@ export default {
 
 <style scoped>
 .container-item {
-  position: relative;
+  height: fit-content;
   width: fit-content;
-  background-color: var(--container-bg-color);
-  box-shadow: var(--container-box-shadow);
   border: var(--container-border);
   border-radius: var(--entry-border-radius);
+  box-shadow: var(--container-box-shadow);
+  background-color: var(--container-bg-color);
 }
 
 .container-item.dragging {
@@ -158,7 +173,7 @@ export default {
 
 .container-content {
   width: 100%;
-  padding: 10px;
+  padding: 0 10px;
   display: flex;
   flex-direction: column;
 }
@@ -169,12 +184,44 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 5px;
+  gap: 2px;
+}
+
+.container-header-tail {
+  position: relative;
+  height: 100%;
+  width: 1px;
+}
+
+.container-content-param {
+  position: absolute;
+  top: 0;
+  left: 20px;
+  height: var(--entry-header-height);
+  padding: 0px 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  border: var(--entry-border);
+  border-radius: var(--entry-border-radius);
+  box-shadow: var(--entry-box-shadow);
+  background-color: var(--container-bg-color);
+}
+
+.container-content-param.selected {
+  border: var(--entry-select-border);
+  box-shadow: var(--entry-select-box-shadow);
+}
+
+.entry-spacer {
+  width: var(--entry-spacer-width);
 }
 
 /* Entry text styles */
 .entry-text {
   font-size: var(--entry-text-font-size);
+  font-weight: var(--entry-text-font-weight);
   color: var(--entry-text-color);
   white-space: var(--entry-text-white-space);
   overflow: var(--entry-text-overflow);

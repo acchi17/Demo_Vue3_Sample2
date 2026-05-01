@@ -88,6 +88,7 @@ export default {
 <style scoped>
 .container-children {
   width: 100%;
+  padding-bottom: 10px;
   display: flex;
   flex-direction: column;
 }

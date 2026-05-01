@@ -1,5 +1,5 @@
 <template>
-  <template v-if="hasParams">
+  <div class="entry-params-row">
     <div v-if="!isConnectingTgt" class="param-toggle">
       <button
         class="param-toggle-btn"
@@ -18,12 +18,12 @@
         :key="param.name"
         :entry-id="entryId"
         :name="param.name"
-        :param-category="effectiveCategory"
+        :param-category="param.category"
         :param-type="param.type"
         :is-disabled-action="false"
       />
     </div>
-  </template>
+  </div>
 </template>
 
 <script>
@@ -40,40 +40,34 @@ export default {
     entryId: {
       type: String,
       required: true
+    },
+    isConnectingTgt: {
+      type: Boolean,
+      required: true
     }
   },
 
   setup(props) {
     const entryParamManager = inject('entryParamManager')
-
-    const hasParams = computed(() =>
-      Object.keys(entryParamManager.getInputParamTypes(props.entryId)).length > 0 ||
-      Object.keys(entryParamManager.getOutputParamTypes(props.entryId)).length > 0
-    )
+    const { getConnectingSource } = useEntryState()
 
     const paramCategory = ref('input')
 
-    const { isConnectingTarget, getConnectingSource } = useEntryState()
-    const isConnectingTgt = isConnectingTarget(props.entryId)
-
-    // Show the complementary category: output src → show input, input src → show output
-    const effectiveCategory = computed(() => {
-      if (!isConnectingTgt.value) return paramCategory.value
+    const paramCategoryDyn = computed(() => {
+      if (!props.isConnectingTgt) return paramCategory.value
       return getConnectingSource.value?.paramCategory === 'output' ? 'input' : 'output'
     })
 
     const paramItems = computed(() => {
-      const types = effectiveCategory.value === 'input'
+      const category = paramCategoryDyn.value
+      const types = category === 'input'
         ? entryParamManager.getInputParamTypes(props.entryId)
         : entryParamManager.getOutputParamTypes(props.entryId)
-      return Object.entries(types).map(([name, type]) => ({ name, type }))
+      return Object.entries(types).map(([name, type]) => ({ name, type, category }))
     })
 
     return {
-      hasParams,
       paramCategory,
-      isConnectingTgt,
-      effectiveCategory,
       paramItems,
     }
   }
@@ -81,6 +75,12 @@ export default {
 </script>
 
 <style scoped>
+.entry-params-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .param-toggle {
   display: flex;
   align-items: center;

@@ -1,4 +1,5 @@
 import { ref, readonly, inject } from 'vue';
+import { useEntryState } from './useEntryState'
 
 /**
  * Provides entry execution functionality as a composable function
@@ -7,6 +8,7 @@ import { ref, readonly, inject } from 'vue';
 export function useEntryExecution() {
   const entryExecutionService = inject('entryExecutionService');
   const executionLogService = inject('executionLogService');
+  const { cancelConnection } = useEntryState()
   const isExecuting = ref(false);
   
   /**
@@ -15,6 +17,7 @@ export function useEntryExecution() {
    */
   const executeEntry = async (entry) => {
     if (!entry) return;
+    cancelConnection();
     
     isExecuting.value = true;
     try {
