@@ -10,7 +10,8 @@ export function useEntryOperation() {
   const entryConnectionManager = inject('entryConnectionManager')
   const {
     getSelectedEntryId,
-    clearSelection
+    clearSelection,
+    cancelConnection
   } = useEntryState()
 
   const addBlock = (parentId, name, index) => {
@@ -36,6 +37,7 @@ export function useEntryOperation() {
     }
     //;[id, ...descendantIds].forEach(eid => entryConnectionManager.removeConnectionsByEntryId(eid))
     [id, ...descendantIds].forEach(eid => entryConnectionManager.removeConnectionsByEntryId(eid))
+    cancelConnection()
     entryManager.removeEntry(id)
   }
 

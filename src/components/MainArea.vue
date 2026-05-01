@@ -85,9 +85,6 @@ export default {
   z-index: 1;
   flex: 1;
   padding: 0px 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: left;
 }
 
 .connection-panel {
