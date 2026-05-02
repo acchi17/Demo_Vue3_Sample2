@@ -1,6 +1,6 @@
 :root {
   /* App-wide styles */
-  --app-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --app-font-family: -apple-system, BlinkMacSystemFont, sans-serif, "Segoe UI";
 
   /* Block-related styles */
   --block-bg-color: #f0f0f0;
@@ -55,9 +55,28 @@
   /* Scalar param type icons */
   --scalar-int-param-icon: url('@/assets/images/cyan-gray-integer-type-256.png');
 
+  /* Parameter toggle button styles */
+  --param-toggle-font-size: 10px;
+  --param-toggle-border: 1px solid #333;
+  --param-toggle-light-color: #fff;
+  --param-toggle-dark-color: #333;
+  /* --param-toggle-bg-color: #5a9fd4; */
+
   /* Parameter badge styles */
+  --param-badge-height: 30px;
   --param-badge-bg-color: #5a9fd4;
-  --param-badge-color: #fff;
+  --param-badge-color: #333;
   --param-badge-font-size: 10px;
-  --param-badge-border-radius: 10px;
+  --param-badge-border: 1px solid #aaa;
+  --param-badge-border-radius: 6px;
+
+  /* Parameter badge partition styles */
+  --param-badge-partition-height: 80%;
+  --param-badge-partition-width: 1px;
+  --param-badge-partition-color: #666;
+  --param-badge-partition-margin: 0 6px;
+
+  /* Parameter badge button styles */
+  --param-badge-button-size: 16px;
+  --param-badge-button-cursor: pointer;
 }

@@ -1,9 +1,15 @@
 <template>
-  <span
+  <div
     class="param-badge"
     :class="{ 'connecting-src': isConnectingSrc, 'connected': isConnected }"
     @click.stop="onToggle"
-  >{{ isConnected ? (paramCategory === 'output' ? '→ ' : '← ') : '' }}{{ name }}</span>
+  >
+    <span>123</span>
+    <span class="element-partition"/>
+    <span class="param-name">{{ name }}</span>
+    <span class="element-partition"/>
+    <span class="link-button">{{ isConnected ? (paramCategory === 'output' ? '→' : '←') : '' }}</span>
+  </div>
 </template>
 
 <script>
@@ -75,13 +81,16 @@ export default {
 
 <style scoped>
 .param-badge {
+  height: var(--param-badge-height);
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
   font-size: var(--param-badge-font-size);
   color: var(--param-badge-color);
-  background-color: var(--param-badge-bg-color);
-  padding: 2px 6px;
+  border: var(--param-badge-border);
   border-radius: var(--param-badge-border-radius);
-  white-space: nowrap;
-  cursor: pointer;
+  background-color: var(--param-badge-bg-color);
 }
 
 .param-badge.connecting-src {
@@ -92,5 +101,22 @@ export default {
 .param-badge.connected {
   outline: 2px solid #fff;
   font-weight: 600;
+}
+
+.element-partition {
+  height: var(--param-badge-partition-height);
+  width: var(--param-badge-partition-width);
+  margin: var(--param-badge-partition-margin);
+  background-color: var(--param-badge-partition-color);
+}
+
+.param-name {
+  white-space: nowrap;
+}
+
+.link-button {
+  width: var(--param-badge-button-size);
+  height: var(--param-badge-button-size);
+  cursor: var(--param-badge-button-cursor);
 }
 </style>
