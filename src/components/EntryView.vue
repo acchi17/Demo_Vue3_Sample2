@@ -3,9 +3,9 @@
     <div v-if="selectedEntry">
       <div class="entry-header">{{ selectedEntry?.name }}</div>
       <div class="section-divider" />
-      <div v-if="inputParamDefs.length > 0">
-        <div class="entry-param-header">Input</div>
-        <div class="param-grid">
+      <div v-if="inputParamDefs.length > 0 || outputParamDefs.length > 0" class="param-grid">
+        <template v-if="inputParamDefs.length > 0">
+          <div class="entry-param-header span-all">Input</div>
           <template v-for="paramDef in inputParamDefs" :key="paramDef.name">
             <EntryParamItem
               :entry-id="selectedEntry.id"
@@ -22,12 +22,9 @@
               @update:value="onParamChange(paramDef.name, $event)"
             />
           </template>
-        </div>
-      </div>
-      <div v-if="outputParamDefs.length > 0">
-        <div class="section-divider" />
-        <div class="entry-param-header">Output</div>
-        <div class="param-grid">
+        </template>
+        <template v-if="outputParamDefs.length > 0">
+          <div class="entry-param-header span-all">Output</div>
           <template v-for="paramDef in outputParamDefs" :key="paramDef.name">
             <EntryParamItem
               :entry-id="selectedEntry.id"
@@ -44,7 +41,7 @@
               :disabled="true"
             />
           </template>
-        </div>
+        </template>
       </div>
     </div>
   </div>
@@ -159,8 +156,12 @@ export default {
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
-  column-gap: 20px;
+  column-gap: 30px;
   row-gap: 10px;
   padding: 10px;
+}
+
+.span-all {
+  grid-column: 1 / -1;
 }
 </style>

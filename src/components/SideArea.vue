@@ -24,7 +24,7 @@ export default {
 
 <style scoped>
 .side-area {
-  width: 300px;
+  width: 330px;
   height: 100vh;
   background: #f0f0f0;
   display: flex;
