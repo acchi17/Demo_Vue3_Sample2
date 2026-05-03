@@ -9,6 +9,8 @@
           <div v-for="paramDef in inputParamDefs" :key="paramDef.name" class="entry-param-row">
             <component
               :is="paramComponents[paramDef.ctrlType]"
+              :entryId="selectedEntry.id"
+              :paramCategory="'input'"
               :name="paramDef.name"
               :min="paramDef.min"
               :max="paramDef.max"
@@ -26,6 +28,8 @@
           <div v-for="paramDef in outputParamDefs" :key="paramDef.name" class="entry-param-row">
             <component
               :is="paramComponents[paramDef.ctrlType]"
+              :entryId="selectedEntry.id"
+              :paramCategory="'output'"
               :name="paramDef.name"
               :min="paramDef.min"
               :max="paramDef.max"

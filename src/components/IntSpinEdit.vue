@@ -1,7 +1,11 @@
 <template>
   <div class="spin-edit">
-    <span class="spin-edit-icon"></span>
-    <label class="spin-edit-label">{{ name }}</label>
+    <EntryParamItem
+      :entryId="entryId"
+      :name="name"
+      :paramCategory="paramCategory"
+      :paramType="paramType"
+    />
     <input
       type="number"
       class="spin-edit-input"
@@ -16,16 +20,22 @@
 </template>
 
 <script>
+import EntryParamItem from './EntryParamItem.vue'
+
 export default {
   name: 'IntSpinEdit',
+  components: { EntryParamItem },
 
   props: {
-    name:     { type: String, required: true },
-    min:      { type: Number, default: null },
-    max:      { type: Number, default: null },
-    step:     { type: Number, default: null },
-    value:    { type: Number, default: 0 },
-    disabled: { type: Boolean, default: false }
+    entryId:       { type: String, required: true },
+    paramCategory: { type: String, required: true },
+    paramType:     { type: String, default: 'integer' },
+    name:          { type: String, required: true },
+    min:           { type: Number, default: null },
+    max:           { type: Number, default: null },
+    step:          { type: Number, default: null },
+    value:         { type: Number, default: 0 },
+    disabled:      { type: Boolean, default: false }
   },
 
   computed: {
@@ -53,21 +63,6 @@ export default {
   display: flex;
   align-items: center;
   gap: 20px;
-}
-
-.spin-edit-icon {
-  width: 28px;
-  height: 28px;
-  background-image: var(--scalar-int-param-icon);
-  background-size: contain;
-  background-repeat: no-repeat;
-  flex-shrink: 0;
-}
-
-.spin-edit-label {
-  min-width: 60px;
-  font-size: 14px;
-  color: #555;
 }
 
 .spin-edit-input {

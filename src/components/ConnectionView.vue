@@ -12,7 +12,13 @@
       :y1="c.y1"
       :y2="c.y2"
       :outputParamName="c.outputParamName"
+      :outputEntryId="c.outputEntryId"
+      :outputParamCategory="c.outputParamCategory"
+      :outputParamType="c.outputParamType"
       :inputParamName="c.inputParamName"
+      :inputEntryId="c.inputEntryId"
+      :inputParamCategory="c.inputParamCategory"
+      :inputParamType="c.inputParamType"
     />
   </svg>
 </template>
@@ -48,7 +54,13 @@ export default {
           yMin: Math.min(y1, y2),
           yMax: Math.max(y1, y2),
           outputParamName: conn.output.paramName,
-          inputParamName: conn.input.paramName
+          outputEntryId: conn.output.entryId,
+          outputParamCategory: conn.output.category,
+          outputParamType: conn.output.dataType,
+          inputParamName: conn.input.paramName,
+          inputEntryId: conn.input.entryId,
+          inputParamCategory: conn.input.category,
+          inputParamType: conn.input.dataType,
         })
       }
 
@@ -76,7 +88,13 @@ export default {
           y1: conn.y1,
           y2: conn.y2,
           outputParamName: conn.outputParamName,
-          inputParamName: conn.inputParamName
+          outputEntryId: conn.outputEntryId,
+          outputParamCategory: conn.outputParamCategory,
+          outputParamType: conn.outputParamType,
+          inputParamName: conn.inputParamName,
+          inputEntryId: conn.inputEntryId,
+          inputParamCategory: conn.inputParamCategory,
+          inputParamType: conn.inputParamType,
         }
       })
     })

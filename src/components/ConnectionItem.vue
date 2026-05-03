@@ -6,43 +6,44 @@
       :x2="laneX"
       :y2="y2"
       class="connection-line"
+      :class="lineTypeClass"
     />
-    <g class="connection-badge">
-      <rect
-        :x="laneX - 30"
-        :y="y1 - 10"
-        width="60"
-        height="20"
-      />
-      <text
-        :x="laneX"
-        :y="y1 + 4"
-        text-anchor="middle"
-      >{{ outputParamName }}</text>
-    </g>
-    <g class="connection-badge">
-      <rect
-        :x="laneX - 30"
-        :y="y2 - 10"
-        width="60"
-        height="20"
-      />
-      <text
-        :x="laneX"
-        :y="y2 + 4"
-        text-anchor="middle"
-      >{{ inputParamName }}</text>
-    </g>
+    <foreignObject :x="laneX - 100" :y="y1 - 15" width="200" height="30">
+      <div class="badge-container">
+        <EntryParamItem
+          :entryId="outputEntryId"
+          :name="outputParamName"
+          :paramCategory="outputParamCategory"
+          :paramType="outputParamType"
+          :isParamTypeVisible="false"
+          :isParamLinkVisible="false"
+        />
+      </div>
+    </foreignObject>
+    <foreignObject :x="laneX - 100" :y="y2 - 15" width="200" height="30">
+      <div class="badge-container">
+        <EntryParamItem
+          :entryId="inputEntryId"
+          :name="inputParamName"
+          :paramCategory="inputParamCategory"
+          :paramType="inputParamType"
+          :isParamTypeVisible="false"
+          :isParamLinkVisible="false"
+        />
+      </div>
+    </foreignObject>
   </g>
 </template>
 
 <script>
 import { computed } from 'vue'
+import EntryParamItem from './EntryParamItem.vue'
 
 const LANE_WIDTH = 80
 
 export default {
   name: 'ConnectionItem',
+  components: { EntryParamItem },
 
   props: {
     laneIndex: {
@@ -62,16 +63,43 @@ export default {
       type: String,
       required: true
     },
+    outputEntryId: {
+      type: String,
+      required: true
+    },
+    outputParamCategory: {
+      type: String,
+      required: true
+    },
+    outputParamType: {
+      type: String,
+      default: null
+    },
     inputParamName: {
       type: String,
       required: true
-    }
+    },
+    inputEntryId: {
+      type: String,
+      required: true
+    },
+    inputParamCategory: {
+      type: String,
+      required: true
+    },
+    inputParamType: {
+      type: String,
+      default: null
+    },
   },
 
   setup(props) {
     const laneX = computed(() => (props.laneIndex + 0.5) * LANE_WIDTH)
+    const lineTypeClass = computed(() =>
+      props.outputParamType ? `type-${props.outputParamType}` : null
+    )
 
-    return { laneX }
+    return { laneX, lineTypeClass }
   }
 }
 </script>
@@ -83,13 +111,30 @@ export default {
   stroke-width: 2;
 }
 
-.connection-badge rect {
-  fill: var(--param-badge-bg-color);
-  border-radius: var(--param-badge-border-radius);
+.connection-line.type-boolean {
+  stroke: var(--param-badge-bg-color-boolean);
 }
 
-.connection-badge text {
-  fill: var(--param-badge-color);
-  font-size: var(--param-badge-font-size);
+.connection-line.type-integer {
+  stroke: var(--param-badge-bg-color-integer);
+}
+
+.connection-line.type-real {
+  stroke: var(--param-badge-bg-color-real);
+}
+
+.connection-line.type-string {
+  stroke: var(--param-badge-bg-color-string);
+}
+
+.connection-line.type-image {
+  stroke: var(--param-badge-bg-color-image);
+}
+
+.badge-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
 }
 </style>
