@@ -5,39 +5,45 @@
       <div class="section-divider" />
       <div v-if="inputParamDefs.length > 0">
         <div class="entry-param-header">Input</div>
-        <div class="entry-param-content">
-          <div v-for="paramDef in inputParamDefs" :key="paramDef.name" class="entry-param-row">
+        <div class="param-grid">
+          <template v-for="paramDef in inputParamDefs" :key="paramDef.name">
+            <EntryParamItem
+              :entry-id="selectedEntry.id"
+              :param-name="paramDef.name"
+              :param-category="'input'"
+              :param-type="paramDef.dataType"
+            />
             <component
               :is="paramComponents[paramDef.ctrlType]"
-              :entryId="selectedEntry.id"
-              :paramCategory="'input'"
-              :name="paramDef.name"
               :min="paramDef.min"
               :max="paramDef.max"
               :step="paramDef.step"
               :value="localInputParams[paramDef.name]"
               @update:value="onParamChange(paramDef.name, $event)"
             />
-          </div>
+          </template>
         </div>
       </div>
       <div v-if="outputParamDefs.length > 0">
         <div class="section-divider" />
         <div class="entry-param-header">Output</div>
-        <div class="entry-param-content">
-          <div v-for="paramDef in outputParamDefs" :key="paramDef.name" class="entry-param-row">
+        <div class="param-grid">
+          <template v-for="paramDef in outputParamDefs" :key="paramDef.name">
+            <EntryParamItem
+              :entry-id="selectedEntry.id"
+              :param-name="paramDef.name"
+              :param-category="'output'"
+              :param-type="paramDef.dataType"
+            />
             <component
               :is="paramComponents[paramDef.ctrlType]"
-              :entryId="selectedEntry.id"
-              :paramCategory="'output'"
-              :name="paramDef.name"
               :min="paramDef.min"
               :max="paramDef.max"
               :step="paramDef.step"
               :value="localOutputParams[paramDef.name]"
               :disabled="true"
             />
-          </div>
+          </template>
         </div>
       </div>
     </div>
@@ -47,13 +53,14 @@
 <script>
 import { inject, computed, ref, watch } from 'vue'
 import { useEntryState } from '../composables/useEntryState'
+import EntryParamItem from './EntryParamItem.vue'
 import IntSpinEdit from './IntSpinEdit.vue'
 import RealSpinEdit from './RealSpinEdit.vue'
 import CheckEdit from './CheckEdit.vue'
 
 export default {
   name: 'EntryView',
-  components: { IntSpinEdit, RealSpinEdit, CheckEdit },
+  components: { EntryParamItem, IntSpinEdit, RealSpinEdit, CheckEdit },
 
   setup() {
     const { getSelectedEntryId } = useEntryState()
@@ -148,13 +155,12 @@ export default {
   padding: 5px 0px;
 }
 
-.entry-param-content {
-  display: flex;
-  flex-direction: column;
-  padding: 10px 10px;
-}
-
-.entry-param-row {
-  margin-bottom: 10px;
+.param-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 20px;
+  row-gap: 10px;
+  padding: 10px;
 }
 </style>

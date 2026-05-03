@@ -1,17 +1,14 @@
 <template>
-  <div class="spin-edit">
-    <label class="spin-edit-label">{{ name }}</label>
-    <input
-      type="number"
-      class="spin-edit-input"
-      :min="min"
-      :max="max"
-      :step="effectiveStep"
-      :value="value"
-      :disabled="disabled"
-      @change="onChange($event.target)"
-    />
-  </div>
+  <input
+    type="number"
+    class="spin-edit-input"
+    :min="min"
+    :max="max"
+    :step="effectiveStep"
+    :value="value"
+    :disabled="disabled"
+    @change="onChange($event.target)"
+  />
 </template>
 
 <script>
@@ -19,7 +16,6 @@ export default {
   name: 'RealSpinEdit',
 
   props: {
-    name:     { type: String, required: true },
     min:      { type: Number, default: null },
     max:      { type: Number, default: null },
     step:     { type: Number, default: null },
@@ -48,18 +44,6 @@ export default {
 </script>
 
 <style scoped>
-.spin-edit {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.spin-edit-label {
-  min-width: 60px;
-  font-size: 14px;
-  color: #555;
-}
-
 .spin-edit-input {
   width: 90px;
   padding: 4px 4px;

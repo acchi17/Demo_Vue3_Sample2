@@ -1,14 +1,11 @@
 <template>
-  <div class="check-edit">
-    <label class="check-edit-label">{{ name }}</label>
-    <input
-      type="checkbox"
-      class="check-edit-input"
-      :checked="value"
-      :disabled="disabled"
-      @change="$emit('update:value', $event.target.checked)"
-    />
-  </div>
+  <input
+    type="checkbox"
+    class="check-edit-input"
+    :checked="value"
+    :disabled="disabled"
+    @change="$emit('update:value', $event.target.checked)"
+  />
 </template>
 
 <script>
@@ -16,7 +13,6 @@ export default {
   name: 'CheckEdit',
 
   props: {
-    name:  { type: String, required: true },
     value:    { type: Boolean, default: false },
     disabled: { type: Boolean, default: false }
   },
@@ -26,18 +22,6 @@ export default {
 </script>
 
 <style scoped>
-.check-edit {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.check-edit-label {
-  min-width: 60px;
-  font-size: 13px;
-  color: #333;
-}
-
 .check-edit-input {
   width: 16px;
   height: 16px;

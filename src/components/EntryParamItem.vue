@@ -18,7 +18,7 @@
         'restricted': !isParamTypeVisible && isParamLinkVisible,
         'fixed': !isParamTypeVisible && !isParamLinkVisible
       }"
-    >{{ name }}</span>
+    >{{ paramName }}</span>
   </div>
 </template>
 
@@ -34,7 +34,7 @@ export default {
       type: String,
       required: true
     },
-    name: {
+    paramName: {
       type: String,
       required: true
     },
@@ -68,22 +68,22 @@ export default {
     } = useEntryState()
 
     const isConnectingSrc = computed(
-      () => isConnectingSource(props.entryId, props.name, props.paramCategory).value
+      () => isConnectingSource(props.entryId, props.paramName, props.paramCategory).value
     )
     const isConnectingTgt = computed(
       () => isConnectingTarget(props.entryId).value
     )
     const isConnected = computed(
-      () => isConnectedEndPoint(props.entryId, props.name, props.paramCategory).value
+      () => isConnectedEndPoint(props.entryId, props.paramName, props.paramCategory).value
     )
 
     const onConnect = () => {
       if (isConnectingSrc.value) {
         cancelConnection()
       } else if (isConnecting.value && isConnectingTgt.value) {
-        endConnection(props.entryId, props.name, props.paramCategory, props.paramType)
+        endConnection(props.entryId, props.paramName, props.paramCategory, props.paramType)
       } else {
-        startConnection(props.entryId, props.name, props.paramCategory, props.paramType)
+        startConnection(props.entryId, props.paramName, props.paramCategory, props.paramType)
       }
     }
 

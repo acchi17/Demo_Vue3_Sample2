@@ -1,41 +1,26 @@
 <template>
-  <div class="spin-edit">
-    <EntryParamItem
-      :entryId="entryId"
-      :name="name"
-      :paramCategory="paramCategory"
-      :paramType="paramType"
-    />
-    <input
-      type="number"
-      class="spin-edit-input"
-      :min="min"
-      :max="max"
-      :step="effectiveStep"
-      :value="value"
-      :disabled="disabled"
-      @change="onChange($event.target)"
-    />
-  </div>
+  <input
+    type="number"
+    class="spin-edit-input"
+    :min="min"
+    :max="max"
+    :step="effectiveStep"
+    :value="value"
+    :disabled="disabled"
+    @change="onChange($event.target)"
+  />
 </template>
 
 <script>
-import EntryParamItem from './EntryParamItem.vue'
-
 export default {
   name: 'IntSpinEdit',
-  components: { EntryParamItem },
 
   props: {
-    entryId:       { type: String, required: true },
-    paramCategory: { type: String, required: true },
-    paramType:     { type: String, default: 'integer' },
-    name:          { type: String, required: true },
-    min:           { type: Number, default: null },
-    max:           { type: Number, default: null },
-    step:          { type: Number, default: null },
-    value:         { type: Number, default: 0 },
-    disabled:      { type: Boolean, default: false }
+    min:      { type: Number, default: null },
+    max:      { type: Number, default: null },
+    step:     { type: Number, default: null },
+    value:    { type: Number, default: 0 },
+    disabled: { type: Boolean, default: false }
   },
 
   computed: {
@@ -59,12 +44,6 @@ export default {
 </script>
 
 <style scoped>
-.spin-edit {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
 .spin-edit-input {
   width: 90px;
   padding: 4px 4px;

@@ -11,24 +11,24 @@
     <foreignObject :x="laneX - 100" :y="y1 - 15" width="200" height="30">
       <div class="badge-container">
         <EntryParamItem
-          :entryId="outputEntryId"
-          :name="outputParamName"
-          :paramCategory="outputParamCategory"
-          :paramType="outputParamType"
-          :isParamTypeVisible="false"
-          :isParamLinkVisible="false"
+          :entry-id="outputEntryId"
+          :param-name="outputParamName"
+          :param-category="outputParamCategory"
+          :param-type="outputParamType"
+          :is-param-type-visible="false"
+          :is-param-link-visible="false"
         />
       </div>
     </foreignObject>
     <foreignObject :x="laneX - 100" :y="y2 - 15" width="200" height="30">
       <div class="badge-container">
         <EntryParamItem
-          :entryId="inputEntryId"
-          :name="inputParamName"
-          :paramCategory="inputParamCategory"
-          :paramType="inputParamType"
-          :isParamTypeVisible="false"
-          :isParamLinkVisible="false"
+          :entry-id="inputEntryId"
+          :param-name="inputParamName"
+          :param-category="inputParamCategory"
+          :param-type="inputParamType"
+          :is-param-type-visible="false"
+          :is-param-link-visible="false"
         />
       </div>
     </foreignObject>
