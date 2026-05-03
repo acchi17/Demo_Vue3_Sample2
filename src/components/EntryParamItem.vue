@@ -1,9 +1,25 @@
 <template>
-  <span
+  <div
     class="param-badge"
-    :class="{ 'connecting-src': isConnectingSrc, 'connected': isConnected }"
-    @click.stop="onToggle"
-  >{{ isConnected ? (paramCategory === 'output' ? '→ ' : '← ') : '' }}{{ name }}</span>
+    :class="[{ 'connecting-src': isConnectingSrc }, paramTypeClass]"
+    @click.stop="isParamLinkVisible && onConnect()"
+  >
+    <template v-if="isParamTypeVisible">
+      <span class="param-type">123</span>
+      <span class="element-partition"/>
+    </template>
+    <template v-if="isParamLinkVisible">
+      <span class="link-button" :class="{ 'connected': isConnected }"/>
+      <span class="element-partition"/>
+    </template>
+    <span
+      class="param-name"
+      :class="{
+        'restricted': !isParamTypeVisible && isParamLinkVisible,
+        'fixed': !isParamTypeVisible && !isParamLinkVisible
+      }"
+    >{{ name }}</span>
+  </div>
 </template>
 
 <script>
@@ -30,9 +46,13 @@ export default {
       type: String,
       default: null
     },
-    isDisabledAction: {
+    isParamTypeVisible: {
       type: Boolean,
-      default: false
+      default: true
+    },
+    isParamLinkVisible: {
+      type: Boolean,
+      default: true
     }
   },
 
@@ -48,17 +68,16 @@ export default {
     } = useEntryState()
 
     const isConnectingSrc = computed(
-      () => !props.isDisabledAction && isConnectingSource(props.entryId, props.name, props.paramCategory).value
+      () => isConnectingSource(props.entryId, props.name, props.paramCategory).value
     )
     const isConnectingTgt = computed(
-      () => !props.isDisabledAction && isConnectingTarget(props.entryId).value
+      () => isConnectingTarget(props.entryId).value
     )
     const isConnected = computed(
-      () => !props.isDisabledAction && isConnectedEndPoint(props.entryId, props.name, props.paramCategory).value
+      () => isConnectedEndPoint(props.entryId, props.name, props.paramCategory).value
     )
 
-    const onToggle = () => {
-      if (props.isDisabledAction) return
+    const onConnect = () => {
       if (isConnectingSrc.value) {
         cancelConnection()
       } else if (isConnecting.value && isConnectingTgt.value) {
@@ -68,20 +87,48 @@ export default {
       }
     }
 
-    return { isConnectingSrc, isConnectingTgt, isConnected, onToggle }
+    const paramTypeClass = computed(() => {
+      if (!props.paramType) return null
+      return `type-${props.paramType}`
+    })
+
+    return { isConnectingSrc, isConnectingTgt, isConnected, onConnect, paramTypeClass }
   }
 }
 </script>
 
 <style scoped>
 .param-badge {
+  height: var(--param-badge-height);
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
   font-size: var(--param-badge-font-size);
+  font-weight: var(--param-badge-font-weight);
   color: var(--param-badge-color);
-  background-color: var(--param-badge-bg-color);
-  padding: 2px 6px;
+  border: var(--param-badge-border);
   border-radius: var(--param-badge-border-radius);
-  white-space: nowrap;
-  cursor: pointer;
+}
+
+.param-badge.type-integer {
+  background-color: var(--param-badge-bg-color-integer);
+}
+
+.param-badge.type-real {
+  background-color: var(--param-badge-bg-color-real);
+}
+
+.param-badge.type-boolean {
+  background-color: var(--param-badge-bg-color-boolean);
+}
+
+.param-badge.type-string {
+  background-color: var(--param-badge-bg-color-string);
+}
+
+.param-badge.type-image {
+  background-color: var(--param-badge-bg-color-image);
 }
 
 .param-badge.connecting-src {
@@ -89,8 +136,45 @@ export default {
   opacity: 0.8;
 }
 
-.param-badge.connected {
-  outline: 2px solid #fff;
-  font-weight: 600;
+.element-partition {
+  height: var(--param-badge-partition-height);
+  width: var(--param-badge-partition-width);
+  margin: var(--param-badge-partition-margin);
+  background-color: var(--param-badge-partition-color);
+}
+
+.param-name {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.param-name.restricted {
+  max-width: var(--param-badge-name-max-width);
+  font-size: var(--param-badge-name-compact-font-size);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.param-name.fixed {
+  width: var(--param-badge-name-fixed-width);
+  font-size: var(--param-badge-name-compact-font-size);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.link-button {
+  width: var(--param-badge-button-size);
+  height: var(--param-badge-button-size);
+  cursor: pointer;
+  border-radius: 4px;
+  background-image: var(--param-badge-button-unlinked-image);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.link-button.connected {
+  background-image: var(--param-badge-button-linked-image);
+  background-color: var(--param-badge-button-linked-color);
 }
 </style>

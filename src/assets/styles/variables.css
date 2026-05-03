@@ -1,6 +1,6 @@
 :root {
   /* App-wide styles */
-  --app-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --app-font-family: -apple-system, BlinkMacSystemFont, sans-serif, "Segoe UI";
 
   /* Block-related styles */
   --block-bg-color: #f0f0f0;
@@ -55,9 +55,41 @@
   /* Scalar param type icons */
   --scalar-int-param-icon: url('@/assets/images/cyan-gray-integer-type-256.png');
 
+  /* Parameter toggle button styles */
+  --param-toggle-font-size: 10px;
+  --param-toggle-border: 1px solid #333;
+  --param-toggle-light-color: #fff;
+  --param-toggle-dark-color: #333;
+
   /* Parameter badge styles */
-  --param-badge-bg-color: #5a9fd4;
-  --param-badge-color: #fff;
-  --param-badge-font-size: 10px;
-  --param-badge-border-radius: 10px;
+  --param-badge-height: 30px;
+  --param-badge-color: #333;
+  --param-badge-font-size: 14px;
+  --param-badge-font-weight: 500;
+  --param-badge-border: 1px solid #aaa;
+  --param-badge-border-radius: 6px;
+
+  /* Parameter badge background colors depending on type */
+  --param-badge-bg-color-boolean: #fca5a5;
+  --param-badge-bg-color-integer: #6ee7b7;
+  --param-badge-bg-color-real: #93c5fd;
+  --param-badge-bg-color-string: #fcd34d;
+  --param-badge-bg-color-image: #a5b4fc;
+
+  /* Parameter badge name styles */
+  --param-badge-name-max-width: 160px;
+  --param-badge-name-fixed-width: 80px;
+  --param-badge-name-compact-font-size: 10px;
+
+  /* Parameter badge button styles */
+  --param-badge-button-size: 20px;
+  --param-badge-button-linked-color: #ffcb77;
+  --param-badge-button-linked-image: url('../images/linked-icon-gray-256.png');
+  --param-badge-button-unlinked-image: url('../images/unlink-icon-gray-256.png');
+
+  /* Parameter badge partition styles */
+    --param-badge-partition-height: 80%;
+    --param-badge-partition-width: 1px;
+    --param-badge-partition-color: #666;
+    --param-badge-partition-margin: 0 6px;
 }

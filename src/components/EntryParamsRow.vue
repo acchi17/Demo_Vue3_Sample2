@@ -20,7 +20,7 @@
         :name="param.name"
         :param-category="param.category"
         :param-type="param.type"
-        :is-disabled-action="false"
+        :is-param-type-visible="false"
       />
     </div>
   </div>
@@ -87,13 +87,16 @@ export default {
 }
 
 .param-toggle-btn {
-  font-size: 10px;
+  font-size: var(--param-toggle-font-size);
   padding: 2px 5px;
-  cursor: pointer;
   line-height: 1.4;
-  border: 1px solid var(--param-badge-bg-color);
-  background: transparent;
-  color: var(--param-badge-bg-color);
+  border: var(--param-toggle-border);
+  cursor: pointer;
+}
+
+.param-toggle-btn.active {
+  color: var(--param-toggle-light-color);
+  background: var(--param-toggle-dark-color);
 }
 
 .param-toggle-btn:first-child {
@@ -103,11 +106,6 @@ export default {
 .param-toggle-btn:last-child {
   border-radius: 0 4px 4px 0;
   border-left: none;
-}
-
-.param-toggle-btn.active {
-  background: var(--param-badge-bg-color);
-  color: #fff;
 }
 
 .param-badges {
