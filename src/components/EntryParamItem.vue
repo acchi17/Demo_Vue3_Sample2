@@ -9,7 +9,19 @@
       <span class="element-partition"/>
     </template>
     <template v-if="isParamLinkVisible">
-      <span class="link-button" :class="{ 'connected': isConnected }"/>
+      <span
+        class="link-wrapper"
+        @mouseenter="isListVisible = true"
+        @mouseleave="isListVisible = false"
+      >
+        <span class="link-button" :class="{ 'connected': isConnected }"/>
+        <ConnectionListView
+          v-if="isListVisible && isConnected"
+          :entry-id="entryId"
+          :param-name="paramName"
+          :param-category="paramCategory"
+        />
+      </span>
       <span class="element-partition"/>
     </template>
     <span
@@ -23,11 +35,13 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useEntryState } from '../composables/useEntryState'
+import ConnectionListView from './ConnectionListView.vue'
 
 export default {
   name: 'EntryParamItem',
+  components: { ConnectionListView },
 
   props: {
     entryId: {
@@ -87,12 +101,14 @@ export default {
       }
     }
 
+    const isListVisible = ref(false)
+
     const paramTypeClass = computed(() => {
       if (!props.paramType) return null
       return `type-${props.paramType}`
     })
 
-    return { isConnectingSrc, isConnectingTgt, isConnected, onConnect, paramTypeClass }
+    return { isConnectingSrc, isConnectingTgt, isConnected, onConnect, isListVisible, paramTypeClass }
   }
 }
 </script>
@@ -103,9 +119,10 @@ export default {
   width: fit-content;
   display: flex;
   align-items: center;
+  gap: 8px;
   padding: 0 8px;
-  font-size: var(--param-badge-font-size);
-  font-weight: var(--param-badge-font-weight);
+  font-size: var(--param-badge-normal-font-size);
+  font-weight: 500;
   color: var(--param-badge-color);
   border: var(--param-badge-border);
   border-radius: var(--param-badge-border-radius);
@@ -137,44 +154,51 @@ export default {
 }
 
 .element-partition {
-  height: var(--param-badge-partition-height);
-  width: var(--param-badge-partition-width);
-  margin: var(--param-badge-partition-margin);
-  background-color: var(--param-badge-partition-color);
+  height: 80%;
+  width: 1px;
+  background-color: #666;
 }
 
 .param-name {
   text-align: center;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .param-name.restricted {
-  max-width: var(--param-badge-name-max-width);
-  font-size: var(--param-badge-name-compact-font-size);
+  max-width: 160px;
+  font-size: var(--param-badge-compact-font-size);
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .param-name.fixed {
-  width: var(--param-badge-name-fixed-width);
-  font-size: var(--param-badge-name-compact-font-size);
+  width: 80px;
+  font-size: var(--param-badge-compact-font-size);
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: default;
+}
+
+.link-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
 }
 
 .link-button {
-  width: var(--param-badge-button-size);
-  height: var(--param-badge-button-size);
-  cursor: pointer;
+  width: 20px;
+  height: 20px;
   border-radius: 4px;
-  background-image: var(--param-badge-button-unlinked-image);
+  background-image: var(--param-badge-unlinked-image);
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  cursor: pointer;
 }
 
 .link-button.connected {
-  background-image: var(--param-badge-button-linked-image);
-  background-color: var(--param-badge-button-linked-color);
+  background-image: var(--param-badge-linked-image);
+  background-color: #ffcb77;
 }
 </style>

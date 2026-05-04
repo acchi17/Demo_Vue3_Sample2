@@ -63,14 +63,13 @@ export default {
 <style scoped>
 .main-area {
   position: relative;
+  height: 100vh;
+  min-width: 800px;
   display: flex;
   flex-direction: row;
-  /* align-items: flex-start; */
-  min-width: 800px;
-  height: 100vh;
   overflow-y: auto;
   box-sizing: border-box;
-  background-color: #f5f5f5;
+  background-color: var(--main-bg-color);
 }
 
 .background-panel {
@@ -99,7 +98,7 @@ export default {
   left: 10px;
   right: 10px;
   height: 1px;
-  background-color: #ccc;
+  background-color: var(--main-bg-line-color);
   pointer-events: none;
 }
 </style>
