@@ -17,7 +17,7 @@
         v-for="param in paramItems"
         :key="param.name"
         :entry-id="entryId"
-        :name="param.name"
+        :param-name="param.name"
         :param-category="param.category"
         :param-type="param.type"
         :is-param-type-visible="false"
@@ -111,6 +111,6 @@ export default {
 .param-badges {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
 }
 </style>

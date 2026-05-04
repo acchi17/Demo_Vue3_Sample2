@@ -24,11 +24,11 @@ export default {
 
 <style scoped>
 .side-area {
-  width: 300px;
   height: 100vh;
-  background: #f0f0f0;
+  width: var(--left-side-width);
   display: flex;
   flex-direction: column;
+  background-color: var(--left-side-bg-color);
 }
 
 .top-item {

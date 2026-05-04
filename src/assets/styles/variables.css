@@ -2,6 +2,12 @@
   /* App-wide styles */
   --app-font-family: -apple-system, BlinkMacSystemFont, sans-serif, "Segoe UI";
 
+  /* Main-layout styles */
+  --main-bg-color: #f5f5f5;
+  --main-bg-line-color: #ccc;
+  --left-side-bg-color: #f0f0f0;
+  --left-side-width: 330px;
+
   /* Block-related styles */
   --block-bg-color: #f0f0f0;
   --block-hover-bg-color: #e8e8e8;
@@ -25,7 +31,7 @@
   /* Entry text styles */
   --entry-text-font-size: 16px;
   --entry-text-font-weight: 600;
-  --entry-text-color: #333;
+  --entry-text-font-color: #333;
   --entry-text-white-space: nowrap;
   --entry-text-overflow: hidden;
   --entry-text-text-overflow: ellipsis;
@@ -48,12 +54,10 @@
   /* Entry button images */
   --entry-button-play-image: url('@/assets/images/play-button-gray-96.png');
   --entry-button-delete-image: url('@/assets/images/close-button-gray-96.png');
+  --entry-button-unlink-image: url('@/assets/images/close-button-noframe-gray-96.png');
 
   /* Entry empty object styles */
   --entry-spacer-width: 20px;
-
-  /* Scalar param type icons */
-  --scalar-int-param-icon: url('@/assets/images/cyan-gray-integer-type-256.png');
 
   /* Parameter toggle button styles */
   --param-toggle-font-size: 10px;
@@ -63,33 +67,22 @@
 
   /* Parameter badge styles */
   --param-badge-height: 30px;
-  --param-badge-color: #333;
-  --param-badge-font-size: 14px;
-  --param-badge-font-weight: 500;
+  --param-badge-font-color: #333;
+  --param-badge-normal-font-size: 14px;
+  --param-badge-compact-font-size: 10px;
   --param-badge-border: 1px solid #aaa;
   --param-badge-border-radius: 6px;
+  --param-badge-linked-color: #ffcb77;
 
-  /* Parameter badge background colors depending on type */
   --param-badge-bg-color-boolean: #fca5a5;
   --param-badge-bg-color-integer: #6ee7b7;
   --param-badge-bg-color-real: #93c5fd;
   --param-badge-bg-color-string: #fcd34d;
   --param-badge-bg-color-image: #a5b4fc;
 
-  /* Parameter badge name styles */
-  --param-badge-name-max-width: 160px;
-  --param-badge-name-fixed-width: 80px;
-  --param-badge-name-compact-font-size: 10px;
-
-  /* Parameter badge button styles */
-  --param-badge-button-size: 20px;
-  --param-badge-button-linked-color: #ffcb77;
-  --param-badge-button-linked-image: url('../images/linked-icon-gray-256.png');
-  --param-badge-button-unlinked-image: url('../images/unlink-icon-gray-256.png');
-
-  /* Parameter badge partition styles */
-    --param-badge-partition-height: 80%;
-    --param-badge-partition-width: 1px;
-    --param-badge-partition-color: #666;
-    --param-badge-partition-margin: 0 6px;
+  /* Parameter link styles */
+  --param-badge-linked-image: url('../images/linked-icon-gray-256.png');
+  --param-badge-unlinked-image: url('../images/unlink-icon-gray-256.png');
+  --left-arrow-linked-image: url('../images/left-2-arrow-gray-96.png');
+  --right-arrow-linked-image: url('../images/right-2-arrow-gray-96.png');
 }

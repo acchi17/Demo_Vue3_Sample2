@@ -212,7 +212,7 @@ export default {
 .entry-text {
   font-size: var(--entry-text-font-size);
   font-weight: var(--entry-text-font-weight);
-  color: var(--entry-text-color);
+  color: var(--entry-text-font-color);
   white-space: var(--entry-text-white-space);
   overflow: var(--entry-text-overflow);
   text-overflow: var(--entry-text-text-overflow);
