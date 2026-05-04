@@ -1,7 +1,7 @@
 <template>
   <div
     class="param-badge"
-    :class="[{ 'connecting-src': isConnectingSrc }, paramTypeClass]"
+    :class="paramTypeClass"
     @click.stop="isParamLinkVisible && onConnect()"
   >
     <template v-if="isParamTypeVisible">
@@ -14,9 +14,13 @@
         @mouseenter="isListVisible = true"
         @mouseleave="isListVisible = false"
       >
-        <span class="link-button" :class="{ 'connected': isConnected }"/>
+        <span class="link-button"
+              :class="{ 'connected': isConnected,
+                        'connecting-src': isConnectingSrc,
+                        'connecting-tgt': isConnectingTgt }"
+        />
         <ConnectionListView
-          v-if="isListVisible && isConnected"
+          v-if="isListVisible && isConnected && !isConnecting"
           :entry-id="entryId"
           :param-name="paramName"
           :param-category="paramCategory"
@@ -108,7 +112,7 @@ export default {
       return `type-${props.paramType}`
     })
 
-    return { isConnectingSrc, isConnectingTgt, isConnected, onConnect, isListVisible, paramTypeClass }
+    return { isConnecting, isConnectingSrc, isConnectingTgt, isConnected, onConnect, isListVisible, paramTypeClass }
   }
 }
 </script>
@@ -123,7 +127,7 @@ export default {
   padding: 0 8px;
   font-size: var(--param-badge-normal-font-size);
   font-weight: 500;
-  color: var(--param-badge-color);
+  color: var(--param-badge-font-color);
   border: var(--param-badge-border);
   border-radius: var(--param-badge-border-radius);
 }
@@ -148,11 +152,6 @@ export default {
   background-color: var(--param-badge-bg-color-image);
 }
 
-.param-badge.connecting-src {
-  outline: 2px solid #fff;
-  opacity: 0.8;
-}
-
 .element-partition {
   height: 80%;
   width: 1px;
@@ -173,7 +172,7 @@ export default {
 }
 
 .param-name.fixed {
-  width: 80px;
+  width: 60px;
   font-size: var(--param-badge-compact-font-size);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -199,6 +198,21 @@ export default {
 
 .link-button.connected {
   background-image: var(--param-badge-linked-image);
-  background-color: #ffcb77;
+  background-color: var(--param-badge-linked-color);
+}
+
+.link-button.connecting-src {
+  background-image: none;
+  background-color: var(--param-badge-linked-color);
+}
+
+.link-button.connecting-tgt {
+  background-image: none;
+  animation: link-button-blink 1.0s ease-in-out infinite;
+}
+
+@keyframes link-button-blink {
+  0%, 100% { background-color: var(--param-badge-linked-color); }
+  50% { background-color: transparent; }
 }
 </style>

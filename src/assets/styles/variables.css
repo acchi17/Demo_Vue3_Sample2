@@ -31,7 +31,7 @@
   /* Entry text styles */
   --entry-text-font-size: 16px;
   --entry-text-font-weight: 600;
-  --entry-text-color: #333;
+  --entry-text-font-color: #333;
   --entry-text-white-space: nowrap;
   --entry-text-overflow: hidden;
   --entry-text-text-overflow: ellipsis;
@@ -67,11 +67,12 @@
 
   /* Parameter badge styles */
   --param-badge-height: 30px;
-  --param-badge-color: #333;
+  --param-badge-font-color: #333;
   --param-badge-normal-font-size: 14px;
   --param-badge-compact-font-size: 10px;
   --param-badge-border: 1px solid #aaa;
   --param-badge-border-radius: 6px;
+  --param-badge-linked-color: #ffcb77;
 
   --param-badge-bg-color-boolean: #fca5a5;
   --param-badge-bg-color-integer: #6ee7b7;

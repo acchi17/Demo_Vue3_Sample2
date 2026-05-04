@@ -82,14 +82,14 @@ export default {
 .entry-panel {
   position: relative;
   z-index: 1;
-  flex: 1;
+  flex: 7;
   padding: 0px 40px;
 }
 
 .connection-panel {
   position: relative;
   z-index: 1;
-  flex: 1;
+  flex: 3;
   padding: 0px 40px;
 }
 
