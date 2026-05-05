@@ -9,11 +9,13 @@ export default class EntryExecutionService {
    * Constructor
    * @param {Object} config Configuration object
    * @param {EntryParamManager} entryParamManager Entry parameter manager instance (optional)
+   * @param {EntryConnectionManager} entryConnectionManager Entry connection manager instance (optional)
    * @param {ExecutionLogService} executionLogService Execution log service instance (optional)
    */
-  constructor(config, entryParamManager = null, executionLogService = null) {
+  constructor(config, entryParamManager = null, entryConnectionManager = null, executionLogService = null) {
     this.scriptExecutionService = new ScriptExecutionService(config.script);
     this.entryParamManager = entryParamManager;
+    this.entryConnectionManager = entryConnectionManager;
     this.executionLogService = executionLogService;
     this._executionStack = []; // Stack to track currently executing entries
     
@@ -31,6 +33,30 @@ export default class EntryExecutionService {
   _generateExecutionId(entryId) {
     this._executionSequence++;
     return `${this._sessionId}_${this._executionSequence}_${entryId}`;
+  }
+
+  /**
+   * Build effective input params by overlaying connected upstream output values onto static params.
+   * EntryParamManager is never mutated; the result is transient per execution call.
+   * @param {string} entryId
+   * @returns {Object} Effective input params { paramName: value }
+   * @private
+   */
+  _resolveInputParams(entryId) {
+    const base = this.entryParamManager ? this.entryParamManager.getInputParams(entryId) : {};
+    if (!this.entryConnectionManager) return base;
+
+    const result = { ...base };
+    const connections = this.entryConnectionManager
+      .getConnectionsByEntryId(entryId)
+      .filter(conn => conn.input.entryId === entryId);
+    for (const conn of connections) {
+      const value = this.entryParamManager.getOutputParam(conn.output.entryId, conn.output.paramName);
+      if (value !== undefined) {
+        result[conn.input.paramName] = value;
+      }
+    }
+    return result;
   }
 
   /**
@@ -114,7 +140,7 @@ export default class EntryExecutionService {
       // Generate execution ID
       const executionId = this._generateExecutionId(entry.id);
       // Log execution start if execution log service is available
-      const inputParams = this.entryParamManager ? this.entryParamManager.getInputParams(entry.id) : {};
+      const inputParams = this._resolveInputParams(entry.id);
       if (this.executionLogService) {
         this.executionLogService.addLog(entry, inputParams, executionId, traceId);
       }
