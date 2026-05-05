@@ -85,4 +85,7 @@
   --param-badge-unlinked-image: url('../images/unlink-icon-gray-256.png');
   --left-arrow-linked-image: url('../images/left-2-arrow-gray-96.png');
   --right-arrow-linked-image: url('../images/right-2-arrow-gray-96.png');
+
+  /* Connection view styles */
+  --connection-lane-width: 96px;
 }

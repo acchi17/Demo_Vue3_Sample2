@@ -172,7 +172,7 @@ export default {
 }
 
 .param-name.fixed {
-  width: 60px;
+  width: calc(var(--connection-lane-width) - 44px);
   font-size: var(--param-badge-compact-font-size);
   overflow: hidden;
   text-overflow: ellipsis;
