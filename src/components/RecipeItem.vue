@@ -12,9 +12,12 @@
       />
     </div>
     <div class="entry-panel" ref="entryPanelRef">
-      <ContainerChildren
-        :entry="mainContainer"
-      />
+      <div class="main-container">
+        <ContainerChildren
+          :entry="mainContainer"
+        />
+        <div class="bottom-spacer" />
+      </div>
     </div>
     <div class="connection-panel">
       <ConnectionView />
@@ -82,14 +85,23 @@ export default {
   position: relative;
   z-index: 1;
   flex: 7;
-  padding: 0px 40px;
+  padding: 20px 40px;
 }
 
 .connection-panel {
   position: relative;
   z-index: 1;
   flex: 3;
-  padding: 0px 40px;
+}
+
+.main-container {
+  height: fit-content;
+  width: fit-content;
+  min-width: 200px;
+}
+
+.bottom-spacer {
+  height: 200px;
 }
 
 .background-line {
