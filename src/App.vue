@@ -4,7 +4,7 @@
       <SideArea />
     </div>
     <div class="center">
-      <WorkspaceArea />
+      <MainArea />
     </div>
     <div class="right">
       <ExecutionLogView />
@@ -14,14 +14,14 @@
 
 <script>
 import { onMounted, onBeforeUnmount, inject } from 'vue'
-import WorkspaceArea from './components/WorkspaceArea.vue'
+import MainArea from './components/MainArea.vue'
 import SideArea from './components/SideArea.vue'
 import ExecutionLogView from './components/ExecutionLogView.vue'
 
 export default {
   name: 'App',
   components: {
-    WorkspaceArea,
+    MainArea,
     SideArea,
     ExecutionLogView
   },

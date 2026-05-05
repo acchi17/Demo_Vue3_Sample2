@@ -1,8 +1,8 @@
 <template>
-  <div class="workspace-area">
+  <div class="main-area">
     <div class="tab-bar">
       <div class="tab active">
-        <span class="tab-label">Main Area</span>
+        <span class="tab-label">Recipe</span>
         <button class="tab-btn" title="Run">▷</button>
         <button class="tab-btn" title="Settings">⚙</button>
       </div>
@@ -15,7 +15,7 @@
 import RecipeItem from './RecipeItem.vue'
 
 export default {
-  name: 'WorkspaceArea',
+  name: 'MainArea',
   components: {
     RecipeItem
   }
@@ -23,7 +23,7 @@ export default {
 </script>
 
 <style scoped>
-.workspace-area {
+.main-area {
   display: flex;
   flex-direction: column;
   height: 100vh;
