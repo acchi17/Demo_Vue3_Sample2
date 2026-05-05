@@ -63,7 +63,7 @@ export default {
 <style scoped>
 .main-area {
   position: relative;
-  height: 100vh;
+  height: 100%;
   min-width: 800px;
   display: flex;
   flex-direction: row;
