@@ -7,17 +7,17 @@
         <button class="tab-btn" title="Settings">⚙</button>
       </div>
     </div>
-    <MainArea class="workspace-content" />
+    <RecipeItem class="workspace-content" />
   </div>
 </template>
 
 <script>
-import MainArea from './MainArea.vue'
+import RecipeItem from './RecipeItem.vue'
 
 export default {
   name: 'WorkspaceArea',
   components: {
-    MainArea
+    RecipeItem
   }
 }
 </script>
