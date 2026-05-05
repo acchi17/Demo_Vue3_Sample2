@@ -1,4 +1,6 @@
 import { createApp } from 'vue'
+
+import './assets/styles/variables.css'
 import App from './App.vue'
 import appConfig from './config/app-config'
 import EntryManager from './classes/EntryManager'
@@ -10,7 +12,6 @@ import EntryExecutionService from './services/entry_execution/EntryExecutionServ
 import ExecutionLogService from './services/log/ExecutionLogService'
 import EntryDefinitionService from './services/entry_definition/EntryDefinitionService'
 import ContainerChildren from './components/ContainerChildren.vue'
-import './assets/styles/variables.css'
 
 const app = createApp(App)
 
@@ -23,7 +24,9 @@ const entryConnectionManager = new EntryConnectionManager()
 // Create Services
 const fileService = new FileService()
 const executionLogService = new ExecutionLogService()
-const entryExecutionService = new EntryExecutionService(appConfig, entryParamManager, executionLogService)
+const entryExecutionService = new EntryExecutionService(
+  appConfig, entryParamManager, entryConnectionManager, executionLogService
+)
 const entryDefinitionService = new EntryDefinitionService(appConfig, fileService)
 
 // Provide

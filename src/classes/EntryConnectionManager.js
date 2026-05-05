@@ -41,6 +41,36 @@ export default class EntryConnectionManager {
   }
 
   /**
+   * @param {{ entryId: string }} a
+   * @param {{ entryId: string }} b
+   * @returns {boolean}
+   * @private
+   */
+  _endpointsMatch(a, b) {
+    return a.entryId === b.entryId;
+  }
+
+  /**
+   * @param {Object} output
+   * @param {Object} input
+   * @returns {boolean}
+   * @private
+   */
+  _connectionExists(output, input) {
+    for (const conn of this._connectionsById.values()) {
+      if (
+        conn.output.entryId === output.entryId &&
+        conn.output.paramName === output.paramName &&
+        conn.input.entryId === input.entryId &&
+        conn.input.paramName === input.paramName
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Generate a UUID for a new connection.
    * @returns {string}
    * @private
@@ -73,6 +103,16 @@ export default class EntryConnectionManager {
     }
     if (!this._isValidEndpoint(input)) {
       console.error('EntryConnectionManager: invalid input endpoint', input);
+      return null;
+    }
+
+    if (this._endpointsMatch(output, input)) {
+      console.warn('EntryConnectionManager: cannot connect an entry to itself', output, input);
+      return null;
+    }
+
+    if (this._connectionExists(output, input)) {
+      console.warn('EntryConnectionManager: connection already exists', output, input);
       return null;
     }
 
@@ -221,6 +261,11 @@ export default class EntryConnectionManager {
       }
       if (!this._isValidEndpoint(item.input)) {
         console.warn(`EntryConnectionManager.restoreFromJson: skipping connection[${index}] – invalid input`);
+        return;
+      }
+
+      if (this._connectionExists(item.output, item.input)) {
+        console.warn(`EntryConnectionManager.restoreFromJson: skipping duplicate connection[${index}]`);
         return;
       }
 

@@ -8,7 +8,7 @@
       class="connection-line"
       :class="lineTypeClass"
     />
-    <foreignObject :x="laneX - 100" :y="y1 - 15" width="200" height="30">
+    <foreignObject :x="laneX - LANE_WIDTH / 2" :y="y1 - BADGE_HEIGHT / 2" :width="LANE_WIDTH" :height="BADGE_HEIGHT">
       <div class="badge-container">
         <EntryParamItem
           :entry-id="outputEntryId"
@@ -20,7 +20,7 @@
         />
       </div>
     </foreignObject>
-    <foreignObject :x="laneX - 100" :y="y2 - 15" width="200" height="30">
+    <foreignObject :x="laneX - LANE_WIDTH / 2" :y="y2 - BADGE_HEIGHT / 2" :width="LANE_WIDTH" :height="BADGE_HEIGHT">
       <div class="badge-container">
         <EntryParamItem
           :entry-id="inputEntryId"
@@ -39,7 +39,12 @@
 import { computed } from 'vue'
 import EntryParamItem from './EntryParamItem.vue'
 
-const LANE_WIDTH = 80
+const LANE_WIDTH = parseInt(
+  getComputedStyle(document.documentElement).getPropertyValue('--connection-lane-width')
+)
+const BADGE_HEIGHT = parseInt(
+  getComputedStyle(document.documentElement).getPropertyValue('--param-badge-height')
+)
 
 export default {
   name: 'ConnectionItem',
@@ -99,7 +104,7 @@ export default {
       props.outputParamType ? `type-${props.outputParamType}` : null
     )
 
-    return { laneX, lineTypeClass }
+    return { laneX, lineTypeClass, LANE_WIDTH, BADGE_HEIGHT }
   }
 }
 </script>
@@ -135,6 +140,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 30px;
+  height: var(--param-badge-height);
 }
 </style>
