@@ -1,5 +1,5 @@
 <template>
-  <div class="side-area">
+  <div class="side-area" :class="{ 'executing': isExecuting }">
     <div class="top-item">
       <BlockListView />
     </div>
@@ -12,12 +12,17 @@
 <script>
 import BlockListView from './BlockListView.vue';
 import EntryView from './EntryView.vue';
+import { useSystemState } from '../composables/useSystemState';
 
 export default {
   name: 'SideArea',
   components: {
     BlockListView,
     EntryView
+  },
+  setup() {
+    const { isExecuting } = useSystemState()
+    return { isExecuting }
   }
 }
 </script>
@@ -29,6 +34,11 @@ export default {
   display: flex;
   flex-direction: column;
   background-color: var(--left-side-bg-color);
+}
+
+.side-area.executing {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .top-item {

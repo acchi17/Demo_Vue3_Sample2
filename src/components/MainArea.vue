@@ -6,11 +6,11 @@
       {{ showLog ? '»' : '«' }}
     </button>
   </div>
-  <div class="main-area">
+  <div class="main-area" :class="{ 'executing': isExecuting }">
     <div class="tab-bar">
       <div class="tab active">
         <span class="tab-label">Recipe</span>
-        <button class="tab-btn" title="Run" @click="executeRecipe" :disabled="isExecuting">▷</button>
+        <button class="tab-btn" title="Run" @click="executeRecipe">▷</button>
         <button class="tab-btn" title="Settings">⚙</button>
       </div>
     </div>
@@ -69,6 +69,11 @@ export default {
   display: flex;
   flex-direction: column;
   background-color: var(--main-bg-color);
+}
+
+.main-area.executing {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .tab-bar {

@@ -8,7 +8,7 @@ import { useSystemState } from './useSystemState'
 export function useEntryExecution() {
   const entryExecutionService = inject('entryExecutionService');
   const executionLogService = inject('executionLogService');
-  const { cancelConnection, setExecuting } = useSystemState()
+  const { setExecuting, clearSelection, cancelConnection } = useSystemState()
 
   /**
    * Execute an entry (Block or Container)
@@ -16,12 +16,14 @@ export function useEntryExecution() {
    */
   const executeEntry = async (entry) => {
     if (!entry) return;
+    clearSelection();
     cancelConnection();
-
+    
     setExecuting(true);
     try {
       await entryExecutionService.executeEntry(entry);
     } finally {
+      await new Promise(resolve => setTimeout(resolve, 1000));
       setExecuting(false);
     }
   };
