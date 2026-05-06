@@ -10,7 +10,7 @@
     <div class="tab-bar">
       <div class="tab active">
         <span class="tab-label">Recipe</span>
-        <button class="tab-btn" title="Run">▷</button>
+        <button class="tab-btn" title="Run" @click="executeRecipe" :disabled="isExecuting">▷</button>
         <button class="tab-btn" title="Settings">⚙</button>
       </div>
     </div>
@@ -22,14 +22,27 @@
 </template>
 
 <script>
+import { inject } from 'vue'
 import RecipeItem from './RecipeItem.vue'
 import ExecutionLogView from './ExecutionLogView.vue'
+import { useEntryExecution } from '../composables/useEntryExecution'
 
 export default {
   name: 'MainArea',
   components: {
     RecipeItem,
     ExecutionLogView
+  },
+  setup() {
+    const entryManager = inject('entryManager')
+    const { executeEntry, isExecuting } = useEntryExecution()
+
+    const executeRecipe = () => {
+      const rootEntry = entryManager.getRootEntry()
+      if (rootEntry) executeEntry(rootEntry)
+    }
+
+    return { executeRecipe, isExecuting }
   },
   data() {
     return {
