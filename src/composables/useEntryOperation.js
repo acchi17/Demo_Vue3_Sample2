@@ -1,7 +1,7 @@
 import { inject } from 'vue'
 import Block from '../classes/Block'
 import Container from '../classes/Container'
-import { useEntryState } from './useEntryState'
+import { useSystemState } from './useSystemState'
 
 export function useEntryOperation() {
   const entryManager = inject('entryManager')
@@ -12,7 +12,7 @@ export function useEntryOperation() {
     getSelectedEntryId,
     clearSelection,
     cancelConnection
-  } = useEntryState()
+  } = useSystemState()
 
   const addBlock = (parentId, name, index) => {
     const newBlock = new Block(name)

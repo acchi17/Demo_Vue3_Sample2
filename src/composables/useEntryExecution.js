@@ -1,5 +1,4 @@
 import { inject } from 'vue';
-import { useEntryState } from './useEntryState'
 import { useSystemState } from './useSystemState'
 
 /**
@@ -9,8 +8,7 @@ import { useSystemState } from './useSystemState'
 export function useEntryExecution() {
   const entryExecutionService = inject('entryExecutionService');
   const executionLogService = inject('executionLogService');
-  const { cancelConnection } = useEntryState()
-  const { setExecuting } = useSystemState()
+  const { cancelConnection, setExecuting } = useSystemState()
 
   /**
    * Execute an entry (Block or Container)

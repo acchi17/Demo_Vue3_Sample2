@@ -28,7 +28,7 @@
 <script>
 import { ref } from 'vue'
 import { useEntryOperation } from '../composables/useEntryOperation'
-import { useEntryState } from '../composables/useEntryState'
+import { useSystemState } from '../composables/useSystemState'
 import { useEntryRect } from '../composables/useEntryRect'
 import ConnectionView from './ConnectionView.vue'
 import ContainerChildren from './ContainerChildren.vue'
@@ -42,7 +42,7 @@ export default {
 
   setup() {
     const { addContainer } = useEntryOperation()
-    const { clearState } = useEntryState()
+    const { clearState } = useSystemState()
 
     // Create a top-level container & register it in EntryManager
     const mainContainer = addContainer(null, 'main-area', 0)

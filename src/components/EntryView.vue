@@ -49,7 +49,7 @@
 
 <script>
 import { inject, computed, ref, watch } from 'vue'
-import { useEntryState } from '../composables/useEntryState'
+import { useSystemState } from '../composables/useSystemState'
 import EntryParamItem from './EntryParamItem.vue'
 import IntSpinEdit from './IntSpinEdit.vue'
 import RealSpinEdit from './RealSpinEdit.vue'
@@ -60,7 +60,7 @@ export default {
   components: { EntryParamItem, IntSpinEdit, RealSpinEdit, CheckEdit },
 
   setup() {
-    const { getSelectedEntryId } = useEntryState()
+    const { getSelectedEntryId } = useSystemState()
     const paramComponents = {
       integer_spinner: IntSpinEdit,
       real_spinner:    RealSpinEdit,

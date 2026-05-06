@@ -26,7 +26,7 @@
 <script>
 import { inject, ref, onMounted } from 'vue';
 import { useDraggable } from '../composables/useDraggable';
-import { useEntryState } from '../composables/useEntryState';
+import { useSystemState } from '../composables/useSystemState';
 
 export default {
   name: 'BlockListView',
@@ -51,7 +51,7 @@ export default {
       setOnDragStartCallBack: setContainerDragStartCallback
     } = useDraggable();
 
-    const { clearState } = useEntryState();
+    const { clearState } = useSystemState();
 
     // Set custom callbacks for drag start events
     setBlockDragStartCallback((event) => {
