@@ -35,6 +35,7 @@ import { useEntryOperation } from '../composables/useEntryOperation'
 import { useDraggable } from '../composables/useDraggable'
 import { useEntryExecution } from '../composables/useEntryExecution'
 import { useEntryState } from '../composables/useEntryState'
+import { useSystemState } from '../composables/useSystemState'
 import EntryParamsRow from './EntryParamsRow.vue'
 
 export default {
@@ -60,7 +61,8 @@ export default {
       onDragEnd,
       setOnDragStartCallBack
     } = useDraggable()
-    const { executeEntry, isExecuting } = useEntryExecution()
+    const { executeEntry } = useEntryExecution()
+    const { isExecuting } = useSystemState()
     const {
       getAllDescendantIds,
       getParentId,

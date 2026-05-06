@@ -26,6 +26,7 @@ import { inject } from 'vue'
 import RecipeItem from './RecipeItem.vue'
 import ExecutionLogView from './ExecutionLogView.vue'
 import { useEntryExecution } from '../composables/useEntryExecution'
+import { useSystemState } from '../composables/useSystemState'
 
 export default {
   name: 'MainArea',
@@ -35,7 +36,8 @@ export default {
   },
   setup() {
     const entryManager = inject('entryManager')
-    const { executeEntry, isExecuting } = useEntryExecution()
+    const { executeEntry } = useEntryExecution()
+    const { isExecuting } = useSystemState()
 
     const executeRecipe = () => {
       const rootEntry = entryManager.getRootEntry()

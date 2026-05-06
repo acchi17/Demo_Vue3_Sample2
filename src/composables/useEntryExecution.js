@@ -1,4 +1,4 @@
-import { ref, readonly, inject } from 'vue';
+import { inject } from 'vue';
 import { useEntryState } from './useEntryState'
 import { useSystemState } from './useSystemState'
 
@@ -11,8 +11,7 @@ export function useEntryExecution() {
   const executionLogService = inject('executionLogService');
   const { cancelConnection } = useEntryState()
   const { setExecuting } = useSystemState()
-  const isExecuting = ref(false);
-  
+
   /**
    * Execute an entry (Block or Container)
    * @param {Entry} entry Entry to execute
@@ -20,13 +19,11 @@ export function useEntryExecution() {
   const executeEntry = async (entry) => {
     if (!entry) return;
     cancelConnection();
-    
-    isExecuting.value = true;
+
     setExecuting(true);
     try {
       await entryExecutionService.executeEntry(entry);
     } finally {
-      isExecuting.value = false;
       setExecuting(false);
     }
   };
@@ -50,7 +47,6 @@ export function useEntryExecution() {
   // Return public API
   return {
     executeEntry,
-    isExecuting: readonly(isExecuting),
     getLogs,
     clearLogs
   };
