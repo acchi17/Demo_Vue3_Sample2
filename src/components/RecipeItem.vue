@@ -71,7 +71,7 @@ export default {
   flex-direction: row;
   overflow-y: auto;
   box-sizing: border-box;
-  background-color: var(--main-bg-color);
+  background-color: var(--recipe-bg-color);
 }
 
 .background-panel {
@@ -109,7 +109,7 @@ export default {
   left: 10px;
   right: 10px;
   height: 1px;
-  background-color: var(--main-bg-line-color);
+  background-color: var(--recipe-bg-line-color);
   pointer-events: none;
 }
 </style>

@@ -207,10 +207,8 @@ const transformedLogs = computed(() => {
 /* Main container for the execution log view */
 .execution-log-view {
   width: 600px;
-  height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #fafafa;
 }
 
 /* Header section with title and clear button */

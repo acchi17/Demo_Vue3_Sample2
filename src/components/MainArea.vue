@@ -1,4 +1,11 @@
 <template>
+  <div class="main-header">
+    <button class="log-toggle-btn"
+            :title="showLog ? 'Hide Log' : 'Show Log'"
+            @click="showLog = !showLog">
+      {{ showLog ? '»' : '«' }}
+    </button>
+  </div>
   <div class="main-area">
     <div class="tab-bar">
       <div class="tab active">
@@ -7,27 +14,46 @@
         <button class="tab-btn" title="Settings">⚙</button>
       </div>
     </div>
-    <RecipeItem class="workspace-content" />
+    <RecipeItem class="recipe-content" />
+    <div v-show="showLog" class="log-popup">
+      <ExecutionLogView />
+    </div>
   </div>
 </template>
 
 <script>
 import RecipeItem from './RecipeItem.vue'
+import ExecutionLogView from './ExecutionLogView.vue'
 
 export default {
   name: 'MainArea',
   components: {
-    RecipeItem
+    RecipeItem,
+    ExecutionLogView
+  },
+  data() {
+    return {
+      showLog: false
+    }
   }
 }
 </script>
 
 <style scoped>
+.main-header {
+  height: 24px;
+  background-color: var(--main-bg-color);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .main-area {
+  position: relative;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  background-color: #f0f0f0;
+  background-color: var(--main-bg-color);
 }
 
 .tab-bar {
@@ -36,7 +62,7 @@ export default {
   height: 36px;
   padding: 0 8px;
   flex-shrink: 0;
-  border-bottom: 1px solid #ccc;
+  border-bottom: var(--main-tab-border);
 }
 
 .tab {
@@ -48,26 +74,24 @@ export default {
   max-width: 240px;
   padding: 0 10px;
   border-radius: 12px 12px 0 0;
-  font-size: 13px;
-  cursor: default;
-  background-color: #c8c8c8;
+  background-color: var(--main-bg-color);
 }
 
 .tab.active {
-  position: relative;
-  background-color: var(--main-bg-color);
-  border: 1px solid #ccc;
-  border-bottom: 1px solid var(--main-bg-color);
   margin-bottom: -1px;
+  border: var(--main-tab-border);
+  border-bottom: 1px solid var(--recipe-bg-color);
+  background-color: var(--recipe-bg-color);
 }
 
 .tab-label {
   flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--main-tab-font-color);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #333;
-  font-weight: 500;
 }
 
 .tab-btn {
@@ -89,7 +113,33 @@ export default {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-.workspace-content {
+.recipe-content {
   flex: 1;
+}
+
+.log-toggle-btn {
+  margin-right: 4px;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+  color: #555;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.log-toggle-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.log-popup {
+  position: absolute;
+  top: -1px;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  border: var(--common-outline-border);
+  background-color: #fafafa;
 }
 </style>
