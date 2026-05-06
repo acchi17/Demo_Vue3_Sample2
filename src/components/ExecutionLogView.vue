@@ -207,26 +207,25 @@ const transformedLogs = computed(() => {
 /* Main container for the execution log view */
 .execution-log-view {
   width: 600px;
-  height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #fafafa;
 }
 
 /* Header section with title and clear button */
 .log-header {
+  height: 36px;
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 12px;
-  background-color: #f5f5f5;
-  border-bottom: 1px solid #ddd;
+  padding: 0 12px;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ccc;
   color: #333;
 }
 
 .clear-button {
-  padding: 6px 12px;
+  padding: 4px 12px;
   background-color: #f0f0f0;
   border: 1px solid #ddd;
   border-radius: 3px;
@@ -329,7 +328,6 @@ const transformedLogs = computed(() => {
 
 .entry-row td {
   padding: 8px;
-  /* border-right: 1px solid #f0f0f0; */
   vertical-align: middle;
   color: #333;
 }

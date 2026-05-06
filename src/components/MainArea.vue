@@ -1,104 +1,145 @@
 <template>
-  <div
-    class="main-area"
-    @click="clearState"
-  >
-    <!-- Connection lines background panel: absolutely positioned behind entry-panel and connection-panel -->
-    <div class="background-panel">
-      <div
-        v-for="[id, rect] in entryLayoutMap"
-        :key="id"
-        class="background-line"
-        :style="{ top: rect.y + rect.height / 2 + 'px' }"
-      />
+  <div class="main-header">
+    <button class="log-toggle-btn"
+            :title="showLog ? 'Hide Log' : 'Show Log'"
+            @click="showLog = !showLog">
+      {{ showLog ? '»' : '«' }}
+    </button>
+  </div>
+  <div class="main-area">
+    <div class="tab-bar">
+      <div class="tab active">
+        <span class="tab-label">Recipe</span>
+        <button class="tab-btn" title="Run">▷</button>
+        <button class="tab-btn" title="Settings">⚙</button>
+      </div>
     </div>
-    <div class="entry-panel" ref="entryPanelRef">
-      <ContainerChildren
-        :entry="mainContainer"
-      />
-    </div>
-    <div class="connection-panel">
-      <ConnectionView />
+    <RecipeItem class="recipe-content" />
+    <div v-show="showLog" class="log-popup">
+      <ExecutionLogView />
     </div>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue'
-import { useEntryOperation } from '../composables/useEntryOperation'
-import { useEntryState } from '../composables/useEntryState'
-import { useEntryRect } from '../composables/useEntryRect'
-import ConnectionView from './ConnectionView.vue'
-import ContainerChildren from './ContainerChildren.vue'
+import RecipeItem from './RecipeItem.vue'
+import ExecutionLogView from './ExecutionLogView.vue'
 
 export default {
   name: 'MainArea',
   components: {
-    ConnectionView,
-    ContainerChildren
+    RecipeItem,
+    ExecutionLogView
   },
-  
-  setup() {
-    const { addContainer } = useEntryOperation()
-    const { clearState } = useEntryState()
-
-    // Create a top-level container & register it in EntryManager
-    const mainContainer = addContainer(null, 'main-area', 0)
-
-    // Template ref for the entry panel
-    const entryPanelRef = ref(null)
-    const entryLayoutMap = useEntryRect(entryPanelRef)
-
-    // Return values and methods to use in <template>
+  data() {
     return {
-      mainContainer,
-      clearState,
-      entryPanelRef,
-      entryLayoutMap
+      showLog: false
     }
   }
 }
 </script>
 
 <style scoped>
+.main-header {
+  height: 24px;
+  background-color: var(--main-bg-color);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .main-area {
   position: relative;
-  height: 100%;
-  min-width: 800px;
+  height: 100vh;
   display: flex;
-  flex-direction: row;
-  overflow-y: auto;
-  box-sizing: border-box;
+  flex-direction: column;
   background-color: var(--main-bg-color);
 }
 
-.background-panel {
+.tab-bar {
+  display: flex;
+  align-items: flex-end;
+  height: 36px;
+  padding: 0 8px;
+  flex-shrink: 0;
+  border-bottom: var(--main-tab-border);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 30px;
+  min-width: 160px;
+  max-width: 240px;
+  padding: 0 10px;
+  border-radius: 12px 12px 0 0;
+  background-color: var(--main-bg-color);
+}
+
+.tab.active {
+  margin-bottom: -1px;
+  border: var(--main-tab-border);
+  border-bottom: 1px solid var(--recipe-bg-color);
+  background-color: var(--recipe-bg-color);
+}
+
+.tab-label {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--main-tab-font-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  color: #555;
+  padding: 0;
+}
+
+.tab-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.recipe-content {
+  flex: 1;
+}
+
+.log-toggle-btn {
+  margin-right: 4px;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+  color: #555;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.log-toggle-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.log-popup {
   position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.entry-panel {
-  position: relative;
-  z-index: 1;
-  flex: 7;
-  padding: 0px 40px;
-}
-
-.connection-panel {
-  position: relative;
-  z-index: 1;
-  flex: 3;
-  padding: 0px 40px;
-}
-
-.background-line {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  height: 1px;
-  background-color: var(--main-bg-line-color);
-  pointer-events: none;
+  top: -1px;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  border: var(--common-outline-border);
+  background-color: #fafafa;
 }
 </style>

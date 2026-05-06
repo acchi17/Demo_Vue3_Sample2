@@ -38,7 +38,7 @@ A Vue 3 drag-and-drop UI builder where users construct nested workflows by dragg
 ### Components
 
 - **App.vue**: 3-column layout (SideArea | MainArea | ExecutionLogView)
-- **MainArea.vue**: Holds the root container (`id: 'main-area'`) registered in EntryManager without a parent
+- **RecipeItem.vue**: Holds the root container (`id: 'main-area'`) registered in EntryManager without a parent
 - **SideArea.vue**: Drag sources for creating new blocks and containers
 - **BlockItem.vue**: Renders individual blocks
 - **ContainerItem.vue**: Recursive component rendering nested entries with drop zones
@@ -97,7 +97,7 @@ Centralized configuration for:
 
 ### Place entries & Execution Flow
 
-1. User drags blocks/containers from SideArea into MainArea
+1. User drags blocks/containers from SideArea into RecipeItem
 2. EntryManager maintains the hierarchical structure
 3. When user triggers execution, EntryExecutionService:
    - For containers: recursively executes each child

@@ -4,26 +4,21 @@
       <SideArea />
     </div>
     <div class="center">
-      <WorkspaceArea />
-    </div>
-    <div class="right">
-      <ExecutionLogView />
+      <MainArea />
     </div>
   </div>
 </template>
 
 <script>
 import { onMounted, onBeforeUnmount, inject } from 'vue'
-import WorkspaceArea from './components/WorkspaceArea.vue'
+import MainArea from './components/MainArea.vue'
 import SideArea from './components/SideArea.vue'
-import ExecutionLogView from './components/ExecutionLogView.vue'
 
 export default {
   name: 'App',
   components: {
-    WorkspaceArea,
-    SideArea,
-    ExecutionLogView
+    MainArea,
+    SideArea
   },
   setup() {
     // Get injected service instance
@@ -79,20 +74,12 @@ export default {
 /* Left sidebar - contains drag-drop items */
 .left {
   flex: 0 0 auto;
-  background: #f0f0f0;
-  border-right: 1px solid #ccc;
+  border-right: var(--common-outline-border);
 }
 
 /* Center content area - main workspace */
 .center {
   flex: 1 0 auto;
-  background: #fff;
 }
 
-/* Right panel - execution log viewer */
-.right {
-  flex: 0 0 auto;
-  background: #fafafa;
-  border-left: 1px solid #ccc;
-}
 </style>
