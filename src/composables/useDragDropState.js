@@ -6,6 +6,9 @@ const draggedItemIds = ref(new Set())
 // Dragging state
 const isDragging = ref(false)
 
+// Execution lock — drag is disabled while an entry is executing
+const isExecuting = ref(false)
+
 /**
  * Composable function for drag & drop state management
  * @returns {Object} Drag state and related methods
@@ -42,14 +45,24 @@ export function useDragDropState() {
   const hasDraggedIds = (id) => {
     return draggedItemIds.value.has(id)
   }
-  
+
+  /**
+   * Set the execution lock state
+   * @param {boolean} value - Whether an entry is currently executing
+   */
+  const setExecuting = (value) => {
+    isExecuting.value = value
+  }
+
   // Return public methods and state
   return {
     isDragging: readonly(isDragging),
+    isExecuting: readonly(isExecuting),
     activateDragging,
     deactivateDragging,
     setDraggedIds,
-    hasDraggedIds
+    hasDraggedIds,
+    setExecuting
   }
 }
 

@@ -26,6 +26,10 @@ export function useDraggable() {
    * @param {DragEvent} event - The drag event
    */
   const onDragStart = (event) => {
+    if (dragDropState.isExecuting.value) {
+      event.preventDefault()
+      return
+    }
     isDragging.value = true
     dragDropState.activateDragging()
     if (OnDragStartCallBack) {

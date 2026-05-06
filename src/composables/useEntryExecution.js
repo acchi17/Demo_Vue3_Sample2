@@ -1,5 +1,6 @@
 import { ref, readonly, inject } from 'vue';
 import { useEntryState } from './useEntryState'
+import { useDragDropState } from './useDragDropState'
 
 /**
  * Provides entry execution functionality as a composable function
@@ -9,6 +10,7 @@ export function useEntryExecution() {
   const entryExecutionService = inject('entryExecutionService');
   const executionLogService = inject('executionLogService');
   const { cancelConnection } = useEntryState()
+  const { setExecuting } = useDragDropState()
   const isExecuting = ref(false);
   
   /**
@@ -20,10 +22,12 @@ export function useEntryExecution() {
     cancelConnection();
     
     isExecuting.value = true;
+    setExecuting(true);
     try {
       await entryExecutionService.executeEntry(entry);
     } finally {
       isExecuting.value = false;
+      setExecuting(false);
     }
   };
 

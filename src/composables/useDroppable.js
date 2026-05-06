@@ -23,6 +23,8 @@ export function useDroppable() {
    */
   const isDroppable = (entryId) => {
     return computed(() => {
+      // Not droppable if currently executing an entry
+      if (dragDropState.isExecuting.value) return false
       // Not droppable if no dragging is occurring
       if (!dragDropState.isDragging.value) {
         return false
