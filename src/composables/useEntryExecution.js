@@ -1,6 +1,6 @@
 import { ref, readonly, inject } from 'vue';
 import { useEntryState } from './useEntryState'
-import { useDragDropState } from './useDragDropState'
+import { useSystemState } from './useSystemState'
 
 /**
  * Provides entry execution functionality as a composable function
@@ -10,7 +10,7 @@ export function useEntryExecution() {
   const entryExecutionService = inject('entryExecutionService');
   const executionLogService = inject('executionLogService');
   const { cancelConnection } = useEntryState()
-  const { setExecuting } = useDragDropState()
+  const { setExecuting } = useSystemState()
   const isExecuting = ref(false);
   
   /**
