@@ -5,8 +5,8 @@
   >
     <div class="recipe-content">
       <div class="recipe-header">
-        <button class="recipe-btn" title="Run" @click.stop="executeRecipe">▷</button>
-        <button class="recipe-btn" title="Settings">⚙</button>
+        <button class="recipe-btn recipe-run-btn" title="Run" @click.stop="executeRecipe"></button>
+        <button class="recipe-btn recipe-clear-btn" title="Clear"></button>
       </div>
       <div class="recipe-panel">
         <div class="background-panel">
@@ -156,5 +156,19 @@ export default {
 
 .recipe-btn:hover {
   background-color: rgba(0, 0, 0, 0.1);
+}
+
+.recipe-run-btn {
+  background-image: var(--recipe-run-button-image);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.recipe-clear-btn {
+  background-image: var(--recipe-clear-button-image);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 </style>

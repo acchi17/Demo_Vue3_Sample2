@@ -18,6 +18,8 @@
   /* Recipe-rlated styles */
   --recipe-bg-color: #f5f5f5;
   --recipe-bg-line-color: #ccc;
+  --recipe-run-button-image: url('@/assets/images/play-button-noframe-gray-96.png');
+  --recipe-clear-button-image: url('@/assets/images/trash-icon-gray-96.png');
 
   /* Block-related styles */
   --block-bg-color: #f0f0f0;
