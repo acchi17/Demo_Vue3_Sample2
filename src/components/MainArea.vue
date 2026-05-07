@@ -1,20 +1,22 @@
 <template>
-  <div class="main-header">
-    <button class="log-toggle-btn"
-            :title="showLog ? 'Hide Log' : 'Show Log'"
-            @click="showLog = !showLog">
-      {{ showLog ? '»' : '«' }}
-    </button>
-  </div>
-  <div class="main-area" :class="{ 'executing': isExecuting }">
-    <div class="tab-bar">
-      <div class="tab active">
-        <span class="tab-label">Recipe</span>
-      </div>
+  <div class="main-area">
+    <div class="top-spacer">
+      <button class="log-toggle-btn"
+              :title="showLog ? 'Hide Log' : 'Show Log'"
+              @click="showLog = !showLog">
+        {{ showLog ? '»' : '«' }}
+      </button>
     </div>
-    <RecipeItem class="recipe-panel" />
-    <div v-show="showLog" class="log-popup">
-      <ExecutionLogView />
+    <div class="main-content" :class="{ 'executing': isExecuting }">
+      <div class="tab-bar">
+        <div class="tab active">
+          <span class="tab-label">Recipe</span>
+        </div>
+      </div>
+      <RecipeItem class="tab-content" />
+      <div v-show="showLog" class="log-popup">
+        <ExecutionLogView />
+      </div>
     </div>
   </div>
 </template>
@@ -43,44 +45,47 @@ export default {
 </script>
 
 <style scoped>
-.main-header {
-  height: 24px;
-  background-color: var(--main-bg-color);
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
 .main-area {
-  position: relative;
   height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: var(--main-bg-color);
 }
 
-.main-area.executing {
+.top-spacer {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.main-content {
+  position: relative;
+  height: calc(100% - 24px);
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content.executing {
   pointer-events: none;
   opacity: 0.5;
 }
 
 .tab-bar {
+  height: var(--main-tab-bar-height);
+  padding: 0 8px;
   display: flex;
   align-items: flex-end;
-  height: 36px;
-  padding: 0 8px;
-  flex-shrink: 0;
   border-bottom: var(--main-tab-border);
 }
 
 .tab {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  height: 30px;
+  height: calc(var(--main-tab-bar-height) - 6px);
   min-width: 160px;
   max-width: 240px;
-  padding: 0 10px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
   border-radius: 12px 12px 0 0;
   background-color: var(--main-bg-color);
 }
@@ -102,19 +107,17 @@ export default {
   white-space: nowrap;
 }
 
-.recipe-panel {
-  flex: 1;
+.tab-content {
+  height: calc(100% - var(--main-tab-bar-height));
 }
 
 .log-toggle-btn {
-  margin-right: 4px;
   width: 20px;
   height: 20px;
   font-size: 14px;
   color: #555;
   border: none;
   border-radius: 4px;
-  background: transparent;
   cursor: pointer;
 }
 
@@ -128,7 +131,7 @@ export default {
   right: 0;
   bottom: 0;
   z-index: 10;
-  border: var(--common-outline-border);
-  background-color: #fafafa;
+  border: var(--base-outline-border);
+  background-color: var(--popup-bg-color);
 }
 </style>

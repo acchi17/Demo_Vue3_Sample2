@@ -23,7 +23,7 @@ export function useEntryExecution() {
     try {
       await entryExecutionService.executeEntry(entry);
     } finally {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 500));
       setExecuting(false);
     }
   };

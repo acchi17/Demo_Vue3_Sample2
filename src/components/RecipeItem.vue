@@ -3,29 +3,31 @@
     class="recipe-item"
     @click="clearState"
   >
-    <div class="recipe-header">
-      <button class="recipe-btn" title="Run" @click.stop="executeRecipe">▷</button>
-      <button class="recipe-btn" title="Settings">⚙</button>
-    </div>
     <div class="recipe-content">
-      <div class="background-panel">
-        <div
-          v-for="[id, rect] in entryLayoutMap"
-          :key="id"
-          class="background-line"
-          :style="{ top: rect.y + rect.height / 2 + 'px' }"
-        />
+      <div class="recipe-header">
+        <button class="recipe-btn" title="Run" @click.stop="executeRecipe">▷</button>
+        <button class="recipe-btn" title="Settings">⚙</button>
       </div>
-      <div class="entry-panel" ref="entryPanelRef">
-        <div class="main-container">
-          <ContainerChildren
-            :entry="mainContainer"
+      <div class="recipe-panel">
+        <div class="background-panel">
+          <div
+            v-for="[id, rect] in entryLayoutMap"
+            :key="id"
+            class="background-line"
+            :style="{ top: rect.y + rect.height / 2 + 'px' }"
           />
-          <div class="bottom-spacer" />
         </div>
-      </div>
-      <div class="connection-panel">
-        <ConnectionView />
+        <div class="entry-panel" ref="entryPanelRef">
+          <div class="main-container">
+            <ContainerChildren
+              :entry="mainContainer"
+            />
+            <div class="bottom-spacer" />
+          </div>
+        </div>
+        <div class="connection-panel">
+          <ConnectionView />
+        </div>
       </div>
     </div>
   </div>
@@ -74,34 +76,29 @@ export default {
 
 <style scoped>
 .recipe-item {
+  background-color: var(--recipe-bg-color);
+}
+
+.recipe-content {
   height: 100%;
-  width: 100%;
+  padding: 0 10px;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
-  background-color: var(--recipe-bg-color);
 }
 
 .recipe-header {
   height: 24px;
-  padding: 0 12px;
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.recipe-btn:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-.recipe-content {
+.recipe-panel {
   position: relative;
   height: 100%;
-  width: 100%;
-  flex: 1;
   display: flex;
   flex-direction: row;
-  overflow-y: auto;
+  overflow-y: auto;  
 }
 
 .background-panel {
@@ -111,11 +108,19 @@ export default {
   pointer-events: none;
 }
 
+.background-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--recipe-bg-line-color);
+  pointer-events: none;
+}
+
 .entry-panel {
   position: relative;
   z-index: 1;
   flex: 7;
-  padding: 20px 40px;
 }
 
 .connection-panel {
@@ -125,22 +130,13 @@ export default {
 }
 
 .main-container {
-  height: fit-content;
   width: fit-content;
   min-width: 200px;
+  padding: 20px;
 }
 
 .bottom-spacer {
-  height: 200px;
-}
-
-.background-line {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  height: 1px;
-  background-color: var(--recipe-bg-line-color);
-  pointer-events: none;
+  height: 300px;
 }
 
 .recipe-btn {
@@ -156,5 +152,9 @@ export default {
   font-size: 14px;
   color: #555;
   padding: 0;
+}
+
+.recipe-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
 }
 </style>

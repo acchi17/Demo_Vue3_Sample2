@@ -2,14 +2,18 @@
   /* App-wide styles */
   --app-font-family: -apple-system, BlinkMacSystemFont, sans-serif, "Segoe UI";
 
-  /* Main-layout styles */
+  /* Base-layout styles */
   --main-bg-color: #f0f0f0;
-  --main-tab-border: 1px solid #ccc;
-  --main-tab-font-color: #333;
   --left-side-bg-color: #f0f0f0;
+  --popup-bg-color: #fafafa;
   --left-side-width: 330px;
   --left-side-border: 1px solid #ccc;
-  --common-outline-border: 1px solid #ccc;
+  --base-outline-border: 1px solid #ccc;
+
+  /* Main-tab styles */
+  --main-tab-bar-height: 36px;
+  --main-tab-border: 1px solid #ccc;
+  --main-tab-font-color: #333;
 
   /* Recipe-rlated styles */
   --recipe-bg-color: #f5f5f5;

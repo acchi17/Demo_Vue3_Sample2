@@ -74,7 +74,7 @@ export default {
 /* Left sidebar - contains drag-drop items */
 .left {
   flex: 0 0 auto;
-  border-right: var(--common-outline-border);
+  border-right: var(--base-outline-border);
 }
 
 /* Center content area - main workspace */
