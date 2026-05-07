@@ -10,11 +10,9 @@
     <div class="tab-bar">
       <div class="tab active">
         <span class="tab-label">Recipe</span>
-        <button class="tab-btn" title="Run" @click="executeRecipe">▷</button>
-        <button class="tab-btn" title="Settings">⚙</button>
       </div>
     </div>
-    <RecipeItem class="recipe-content" />
+    <RecipeItem class="recipe-panel" />
     <div v-show="showLog" class="log-popup">
       <ExecutionLogView />
     </div>
@@ -22,10 +20,8 @@
 </template>
 
 <script>
-import { inject } from 'vue'
 import RecipeItem from './RecipeItem.vue'
 import ExecutionLogView from './ExecutionLogView.vue'
-import { useEntryExecution } from '../composables/useEntryExecution'
 import { useSystemState } from '../composables/useSystemState'
 
 export default {
@@ -35,16 +31,8 @@ export default {
     ExecutionLogView
   },
   setup() {
-    const entryManager = inject('entryManager')
-    const { executeEntry } = useEntryExecution()
     const { isExecuting } = useSystemState()
-
-    const executeRecipe = () => {
-      const rootEntry = entryManager.getRootEntry()
-      if (rootEntry) executeEntry(rootEntry)
-    }
-
-    return { executeRecipe, isExecuting }
+    return { isExecuting }
   },
   data() {
     return {
@@ -114,26 +102,7 @@ export default {
   white-space: nowrap;
 }
 
-.tab-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border: none;
-  border-radius: 4px;
-  background: transparent;
-  cursor: pointer;
-  font-size: 12px;
-  color: #555;
-  padding: 0;
-}
-
-.tab-btn:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-.recipe-content {
+.recipe-panel {
   flex: 1;
 }
 

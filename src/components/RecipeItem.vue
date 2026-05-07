@@ -3,24 +3,30 @@
     class="recipe-item"
     @click="clearState"
   >
-    <div class="background-panel">
-      <div
-        v-for="[id, rect] in entryLayoutMap"
-        :key="id"
-        class="background-line"
-        :style="{ top: rect.y + rect.height / 2 + 'px' }"
-      />
+    <div class="recipe-header">
+      <button class="recipe-btn" title="Run" @click.stop="executeRecipe">▷</button>
+      <button class="recipe-btn" title="Settings">⚙</button>
     </div>
-    <div class="entry-panel" ref="entryPanelRef">
-      <div class="main-container">
-        <ContainerChildren
-          :entry="mainContainer"
+    <div class="recipe-content">
+      <div class="background-panel">
+        <div
+          v-for="[id, rect] in entryLayoutMap"
+          :key="id"
+          class="background-line"
+          :style="{ top: rect.y + rect.height / 2 + 'px' }"
         />
-        <div class="bottom-spacer" />
       </div>
-    </div>
-    <div class="connection-panel">
-      <ConnectionView />
+      <div class="entry-panel" ref="entryPanelRef">
+        <div class="main-container">
+          <ContainerChildren
+            :entry="mainContainer"
+          />
+          <div class="bottom-spacer" />
+        </div>
+      </div>
+      <div class="connection-panel">
+        <ConnectionView />
+      </div>
     </div>
   </div>
 </template>
@@ -30,6 +36,7 @@ import { ref } from 'vue'
 import { useEntryOperation } from '../composables/useEntryOperation'
 import { useSystemState } from '../composables/useSystemState'
 import { useEntryRect } from '../composables/useEntryRect'
+import { useEntryExecution } from '../composables/useEntryExecution'
 import ConnectionView from './ConnectionView.vue'
 import ContainerChildren from './ContainerChildren.vue'
 
@@ -43,18 +50,21 @@ export default {
   setup() {
     const { addContainer } = useEntryOperation()
     const { clearState } = useSystemState()
+    const { executeEntry } = useEntryExecution()
 
-    // Create a top-level container & register it in EntryManager
     const mainContainer = addContainer(null, 'main-area', 0)
 
-    // Template ref for the entry panel
+    const executeRecipe = () => {
+      executeEntry(mainContainer)
+    }
+
     const entryPanelRef = ref(null)
     const entryLayoutMap = useEntryRect(entryPanelRef)
 
-    // Return values and methods to use in <template>
     return {
       mainContainer,
       clearState,
+      executeRecipe,
       entryPanelRef,
       entryLayoutMap
     }
@@ -64,14 +74,34 @@ export default {
 
 <style scoped>
 .recipe-item {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: var(--recipe-bg-color);
+}
+
+.recipe-header {
+  height: 24px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.recipe-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.recipe-content {
   position: relative;
   height: 100%;
-  min-width: 800px;
+  width: 100%;
+  flex: 1;
   display: flex;
   flex-direction: row;
   overflow-y: auto;
-  box-sizing: border-box;
-  background-color: var(--recipe-bg-color);
 }
 
 .background-panel {
@@ -111,5 +141,20 @@ export default {
   height: 1px;
   background-color: var(--recipe-bg-line-color);
   pointer-events: none;
+}
+
+.recipe-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  color: #555;
+  padding: 0;
 }
 </style>
