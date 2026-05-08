@@ -1,5 +1,5 @@
-import { ref, readonly, inject } from 'vue';
-import { useEntryState } from './useEntryState'
+import { inject } from 'vue';
+import { useSystemState } from './useSystemState'
 
 /**
  * Provides entry execution functionality as a composable function
@@ -8,22 +8,23 @@ import { useEntryState } from './useEntryState'
 export function useEntryExecution() {
   const entryExecutionService = inject('entryExecutionService');
   const executionLogService = inject('executionLogService');
-  const { cancelConnection } = useEntryState()
-  const isExecuting = ref(false);
-  
+  const { setExecuting, clearSelection, cancelConnection } = useSystemState()
+
   /**
    * Execute an entry (Block or Container)
    * @param {Entry} entry Entry to execute
    */
   const executeEntry = async (entry) => {
     if (!entry) return;
+    clearSelection();
     cancelConnection();
     
-    isExecuting.value = true;
+    setExecuting(true);
     try {
       await entryExecutionService.executeEntry(entry);
     } finally {
-      isExecuting.value = false;
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setExecuting(false);
     }
   };
 
@@ -46,7 +47,6 @@ export function useEntryExecution() {
   // Return public API
   return {
     executeEntry,
-    isExecuting: readonly(isExecuting),
     getLogs,
     clearLogs
   };

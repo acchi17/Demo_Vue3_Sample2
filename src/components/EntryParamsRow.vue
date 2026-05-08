@@ -29,7 +29,7 @@
 <script>
 import { ref, computed, inject } from 'vue'
 import EntryParamItem from './EntryParamItem.vue'
-import { useEntryState } from '../composables/useEntryState'
+import { useSystemState } from '../composables/useSystemState'
 
 export default {
   name: 'EntryParamsRow',
@@ -49,7 +49,7 @@ export default {
 
   setup(props) {
     const entryParamManager = inject('entryParamManager')
-    const { getConnectingSource } = useEntryState()
+    const { getConnectingSource } = useSystemState()
 
     const paramCategory = ref('input')
 

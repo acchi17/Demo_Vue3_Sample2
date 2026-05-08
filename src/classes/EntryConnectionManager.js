@@ -135,6 +135,22 @@ export default class EntryConnectionManager {
   }
 
   /**
+ * Remove all connections that involve the given entry id.
+ * @param {string} entryId
+ * @returns {number} Number of connections removed
+ */
+  removeConnectionsByEntryId(entryId) {
+    let count = 0;
+    for (const [id, conn] of this._connectionsById.entries()) {
+      if (conn.output.entryId === entryId || conn.input.entryId === entryId) {
+        this._connectionsById.delete(id);
+        count++;
+      }
+    }
+    return count;
+  }
+
+  /**
    * Get a connection by its id.
    * @param {string} connectionId
    * @returns {Object|null}
@@ -190,25 +206,9 @@ export default class EntryConnectionManager {
   }
 
   /**
-   * Remove all connections that involve the given entry id.
-   * @param {string} entryId
-   * @returns {number} Number of connections removed
-   */
-  removeConnectionsByEntryId(entryId) {
-    let count = 0;
-    for (const [id, conn] of this._connectionsById.entries()) {
-      if (conn.output.entryId === entryId || conn.input.entryId === entryId) {
-        this._connectionsById.delete(id);
-        count++;
-      }
-    }
-    return count;
-  }
-
-  /**
    * Clear all connections.
    */
-  clear() {
+  clearConnections() {
     this._connectionsById.clear();
   }
 
@@ -246,7 +246,7 @@ export default class EntryConnectionManager {
    * @returns {number} Number of connections successfully restored
    */
   restoreFromJson(data) {
-    this.clear();
+    this.clearConnections();
 
     if (!data || !Array.isArray(data.connections)) {
       console.warn('EntryConnectionManager.restoreFromJson: no valid "connections" array found');

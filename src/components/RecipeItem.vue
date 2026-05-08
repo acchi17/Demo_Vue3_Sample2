@@ -3,24 +3,32 @@
     class="recipe-item"
     @click="clearState"
   >
-    <div class="background-panel">
-      <div
-        v-for="[id, rect] in entryLayoutMap"
-        :key="id"
-        class="background-line"
-        :style="{ top: rect.y + rect.height / 2 + 'px' }"
-      />
-    </div>
-    <div class="entry-panel" ref="entryPanelRef">
-      <div class="main-container">
-        <ContainerChildren
-          :entry="mainContainer"
-        />
-        <div class="bottom-spacer" />
+    <div class="recipe-content">
+      <div class="recipe-header">
+        <button class="recipe-btn recipe-run-btn" title="Run" @click.stop="executeRecipe"></button>
+        <button class="recipe-btn recipe-clear-btn" title="Clear" @click.stop="clearRecipe"></button>
       </div>
-    </div>
-    <div class="connection-panel">
-      <ConnectionView />
+      <div class="recipe-panel">
+        <div class="background-panel">
+          <div
+            v-for="[id, rect] in entryLayoutMap"
+            :key="id"
+            class="background-line"
+            :style="{ top: rect.y + rect.height / 2 + 'px' }"
+          />
+        </div>
+        <div class="entry-panel" ref="entryPanelRef">
+          <div class="main-container">
+            <ContainerChildren
+              :entry="mainContainer"
+            />
+            <div class="bottom-spacer" />
+          </div>
+        </div>
+        <div class="connection-panel">
+          <ConnectionView />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -28,8 +36,9 @@
 <script>
 import { ref } from 'vue'
 import { useEntryOperation } from '../composables/useEntryOperation'
-import { useEntryState } from '../composables/useEntryState'
+import { useSystemState } from '../composables/useSystemState'
 import { useEntryRect } from '../composables/useEntryRect'
+import { useEntryExecution } from '../composables/useEntryExecution'
 import ConnectionView from './ConnectionView.vue'
 import ContainerChildren from './ContainerChildren.vue'
 
@@ -41,20 +50,28 @@ export default {
   },
 
   setup() {
-    const { addContainer } = useEntryOperation()
-    const { clearState } = useEntryState()
+    const { addContainer, clearContainer } = useEntryOperation()
+    const { clearState } = useSystemState()
+    const { executeEntry } = useEntryExecution()
 
-    // Create a top-level container & register it in EntryManager
-    const mainContainer = addContainer(null, 'main-area', 0)
+    const mainContainer = addContainer(null, 'root-container', 0)
 
-    // Template ref for the entry panel
+    const executeRecipe = () => {
+      executeEntry(mainContainer)
+    }
+
+    const clearRecipe = () => {
+      clearContainer(mainContainer.id)
+    }
+
     const entryPanelRef = ref(null)
     const entryLayoutMap = useEntryRect(entryPanelRef)
 
-    // Return values and methods to use in <template>
     return {
       mainContainer,
       clearState,
+      executeRecipe,
+      clearRecipe,
       entryPanelRef,
       entryLayoutMap
     }
@@ -64,14 +81,29 @@ export default {
 
 <style scoped>
 .recipe-item {
+  background-color: var(--recipe-bg-color);
+}
+
+.recipe-content {
+  height: 100%;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.recipe-header {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.recipe-panel {
   position: relative;
   height: 100%;
-  min-width: 800px;
   display: flex;
   flex-direction: row;
-  overflow-y: auto;
-  box-sizing: border-box;
-  background-color: var(--recipe-bg-color);
+  overflow-y: auto;  
 }
 
 .background-panel {
@@ -81,11 +113,19 @@ export default {
   pointer-events: none;
 }
 
+.background-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--recipe-bg-line-color);
+  pointer-events: none;
+}
+
 .entry-panel {
   position: relative;
   z-index: 1;
   flex: 7;
-  padding: 20px 40px;
 }
 
 .connection-panel {
@@ -95,21 +135,45 @@ export default {
 }
 
 .main-container {
-  height: fit-content;
   width: fit-content;
   min-width: 200px;
+  padding: 20px;
 }
 
 .bottom-spacer {
-  height: 200px;
+  height: 300px;
 }
 
-.background-line {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  height: 1px;
-  background-color: var(--recipe-bg-line-color);
-  pointer-events: none;
+.recipe-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  color: #555;
+  padding: 0;
+}
+
+.recipe-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.recipe-run-btn {
+  background-image: var(--recipe-run-button-image);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.recipe-clear-btn {
+  background-image: var(--recipe-clear-button-image);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 </style>

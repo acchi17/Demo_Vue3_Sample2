@@ -176,24 +176,29 @@ const transformedLogs = computed(() => {
     // Process root executions in reverse order (newest first)
     for (let i = executionsTree.rootExecutions.length - 1; i >= 0; i--) {
       const execution = executionsTree.rootExecutions[i];
-      // Add the execution entry
-      result.push({
-        type: 'entry',
-        key: `entry_${execution.executionId}`,
-        data: execution
-      });
-      
+      const isRootContainer = execution.entryName === 'root-container';
+
+      if (!isRootContainer) {
+        result.push({
+          type: 'entry',
+          key: `entry_${execution.executionId}`,
+          data: execution
+        });
+      }
+
       // If the execution is a container, add container grouping markers
       if (execution.entryType === 'container') {
         // Recursively add child executions
         addChildExecutions(execution.executionId, executionsTree, result);
-        
-        // Container end marker
-        result.push({
-          type: 'container-end',
-          key: `end_${execution.executionId}`,
-          containerName: execution.entryName
-        });
+
+        if (!isRootContainer) {
+          // Container end marker
+          result.push({
+            type: 'container-end',
+            key: `end_${execution.executionId}`,
+            containerName: execution.entryName
+          });
+        }
       }
     }
   } catch (error) {

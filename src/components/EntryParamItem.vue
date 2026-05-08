@@ -40,7 +40,7 @@
 
 <script>
 import { ref, computed } from 'vue'
-import { useEntryState } from '../composables/useEntryState'
+import { useSystemState } from '../composables/useSystemState'
 import ConnectionListView from './ConnectionListView.vue'
 
 export default {
@@ -83,7 +83,7 @@ export default {
       startConnection,
       cancelConnection,
       endConnection,
-    } = useEntryState()
+    } = useSystemState()
 
     const isConnectingSrc = computed(
       () => isConnectingSource(props.entryId, props.paramName, props.paramCategory).value

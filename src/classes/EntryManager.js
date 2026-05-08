@@ -134,6 +134,15 @@ export default class EntryManager {
   }
 
   /**
+   * Get the root entry
+   * @returns {Entry|null} Root entry or null
+   */
+  getRootEntry() {
+    if (!this._rootId) return null;
+    return this._entriesById.get(this._rootId) || null;
+  }
+
+  /**
    * Get the parent of an entry
    * @param {string} entryId - ID of the child entry
    * @returns {Entry|null} Parent entry or null
