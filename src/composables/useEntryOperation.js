@@ -49,6 +49,13 @@ export function useEntryOperation() {
     entryManager.moveEntry(entryId, targetParentId, index)
   }
 
+  const clearContainer = (id) => {
+    const entry = entryManager.getEntry(id)
+    if (!entry || entry.type !== 'container') return
+    const childIds = entry.children.map(c => c.id)
+    childIds.forEach(childId => removeEntry(childId))
+  }
+
   const getAllDescendantIds = (id) => {
     return entryManager.getAllDescendantIds(id)
   }
@@ -63,6 +70,7 @@ export function useEntryOperation() {
     removeEntry,
     reorderEntry,
     moveEntry,
+    clearContainer,
     getAllDescendantIds,
     getParentId,
   }

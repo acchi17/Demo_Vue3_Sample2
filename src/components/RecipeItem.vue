@@ -6,7 +6,7 @@
     <div class="recipe-content">
       <div class="recipe-header">
         <button class="recipe-btn recipe-run-btn" title="Run" @click.stop="executeRecipe"></button>
-        <button class="recipe-btn recipe-clear-btn" title="Clear"></button>
+        <button class="recipe-btn recipe-clear-btn" title="Clear" @click.stop="clearRecipe"></button>
       </div>
       <div class="recipe-panel">
         <div class="background-panel">
@@ -50,14 +50,18 @@ export default {
   },
 
   setup() {
-    const { addContainer } = useEntryOperation()
+    const { addContainer, clearContainer } = useEntryOperation()
     const { clearState } = useSystemState()
     const { executeEntry } = useEntryExecution()
 
-    const mainContainer = addContainer(null, 'main-area', 0)
+    const mainContainer = addContainer(null, 'root-container', 0)
 
     const executeRecipe = () => {
       executeEntry(mainContainer)
+    }
+
+    const clearRecipe = () => {
+      clearContainer(mainContainer.id)
     }
 
     const entryPanelRef = ref(null)
@@ -67,6 +71,7 @@ export default {
       mainContainer,
       clearState,
       executeRecipe,
+      clearRecipe,
       entryPanelRef,
       entryLayoutMap
     }
